@@ -7,6 +7,6 @@ func main() {
 		1883,
 		"go_mqtt_client",
 		"tvhhh",
-		"aio_MoFu92rIavWDwMcI0jnjXCAxSzoy",
+		"PUT_ADAFRUIT_IO_KEY_HERE",
 	)
 }
