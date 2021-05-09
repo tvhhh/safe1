@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/tvhhh/safe1/services/data/models"
 
 	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
@@ -17,7 +18,7 @@ type App struct {
 	DB     *gorm.DB
 }
 
-func (a *App) Initialize(user, password, dbname string, host string) {
+func (a *App) ConnectPostgres(user, password, dbname string, host string) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user, password, dbname)
 
 	var err error
@@ -30,17 +31,44 @@ func (a *App) Initialize(user, password, dbname string, host string) {
 	}
 }
 
-func (a *App) Run() {
-	port := fmt.Sprintf(":%d", 8000)
-
-	if err := http.ListenAndServe(port, a.Router); err != nil {
-		log.Fatal("Failed to listen on port %s", port)
-	} else {
-		log.Info("Listening on port %s", port)
-	}
+func (a *App) InitializeRoutes() {
+	a.Router = mux.NewRouter()
+	a.Router.HandleFunc("/createUser", a.createUser).Methods("POST")
+	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
+	a.Router.HandleFunc("/createDevice", a.createDevice).Methods("POST")
 }
 
-func (a *App) Respond(w http.ResponseWriter, code int, payload interface{}) {
+func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, models.User{}, models.CreateBuilding)
+}
+
+func (a *App) createBuilding(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, models.Building{}, models.CreateBuilding)
+}
+
+func (a *App) createDevice(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, models.Device{}, models.CreateBuilding)
+}
+
+func (a *App) handleRequest(w http.ResponseWriter, r *http.Request, body interface{}, handler func(*gorm.DB, interface{}) (interface{}, error)) {
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&body); err != nil {
+		log.WithFields(log.Fields{"error": err}).Warn("Error decoding payload")
+		a.respond(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	defer r.Body.Close()
+
+	response, err := handler(a.DB, body)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Warn("Error handling request %s", r.URL)
+		a.respond(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	a.respond(w, http.StatusOK, response)
+}
+
+func (a *App) respond(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -48,6 +76,12 @@ func (a *App) Respond(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
-func (a *App) InitializeRoutes() {
+func (a *App) Run(address int) {
+	port := fmt.Sprintf(":%d", address)
 
+	if err := http.ListenAndServe(port, a.Router); err != nil {
+		log.Fatal("Failed to listen on port %s", port)
+	} else {
+		log.Info("Listening on port %s", port)
+	}
 }
