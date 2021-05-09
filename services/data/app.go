@@ -53,7 +53,7 @@ func (a *App) createDevice(w http.ResponseWriter, r *http.Request) {
 func (a *App) handleRequest(w http.ResponseWriter, r *http.Request, body interface{}, handler func(*gorm.DB, interface{}) (interface{}, error)) {
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&body); err != nil {
-		log.WithFields(log.Fields{"error": err}).Warn("Error decoding payload")
+		log.WithFields(log.Fields{"error": err}).Error("Error decoding payload")
 		a.respond(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -61,7 +61,7 @@ func (a *App) handleRequest(w http.ResponseWriter, r *http.Request, body interfa
 
 	response, err := handler(a.DB, body)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Warn("Error handling request %s", r.URL)
+		log.WithFields(log.Fields{"error": err}).Error("Error handling request %s", r.URL)
 		a.respond(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -80,7 +80,7 @@ func (a *App) Run(address int) {
 	port := fmt.Sprintf(":%d", address)
 
 	if err := http.ListenAndServe(port, a.Router); err != nil {
-		log.Fatal("Failed to listen on port %s", port)
+		log.WithFields(log.Fields{"error": err}).Fatal("Failed to listen on port %s", port)
 	} else {
 		log.Info("Listening on port %s", port)
 	}

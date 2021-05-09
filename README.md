@@ -5,21 +5,6 @@ Login to [Adafruit IO](https://io.adafruit.com) by these credentials
 * **Username**: tvhhh
 * **Password**: safe123
 
-## Create a feed
-1. Navigate to **Feeds** tab
-2. Choose **View all**
-3. Click **New Feed** or **New Group**
-
-## Create a dashboard
-1. Navigate to **Dashboards** tab
-2. Choose **View all**
-3. Click **New Dashboard**
-   
-## Create a block in dashboard
-1. Click the settings icon in dashboard screen
-2. Choose **Create New Block**
-3. Choose feed and setup values
-
 # Setup React Native
 
 ## Prerequisite
@@ -64,15 +49,25 @@ cd $PACKAGES-JSON-DIR
 npm install
 ```
 ## Run instructions for Android
-To run this you must have an Android emulator running (quickest way to get started), or a device connected
+Open terminal and run this instruction first
+```
+cd $APP-DIR && npx react-native start
+```
+Open another terminal, to run this you must have an Android emulator running (quickest way to get started), or a device connected
 ```
 cd $APP-DIR && npx react-native run-android
 ```
 ## Run React Native on connected device
 https://reactnative.dev/docs/running-on-device
+
+# Access development server from React Native app (Android device)
+Run React Native as above guides first  
+To connect to development server (i.e. the host running the RN process), you must do port-forwarding
 ```
-# to get the device name
-adb devices 
-# run the following in command prompt
-adb -s $DEVICE-NAME reverse tcp:8081 tcp:8081
+# To get the device name
+adb devices
+
+# Port-forwarding
+adb -s $DEVICE-NAME reverse tcp:8081 tcp:$PORT
+# Now when your device is trying to access local port 8081 (localhost:8081), that request will be routed to your host’s port $PORT.
 ```
