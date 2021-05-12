@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
-import MainNav from './src/navigation/mainNav'
+import Safe1 from './src/navigation/safe1'
 
 class App extends React.Component {
   render() {
-    return <MainNav/>
+    return <Safe1/>
   }
 }
 export default App;
