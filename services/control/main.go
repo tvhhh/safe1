@@ -1,12 +1,14 @@
 package main
 
+import "os"
+
 func main() {
 	a := App{}
-	a.Initialize(
-		"io.adafruit.com",
-		1883,
-		"go_mqtt_client",
-		"tvhhh",
-		"PUT_ADAFRUIT_IO_KEY_HERE",
+	a.SetupAdafruitConfig(
+		os.Getenv("ADAFRUIT_BROKER"),
+		os.Getenv("ADAFRUIT_USERNAME"),
+		os.Getenv("ADAFRUIT_SECRET_KEY"),
 	)
+	a.InitializeRoutes()
+	a.Run(8010)
 }

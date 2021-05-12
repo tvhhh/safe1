@@ -18,7 +18,7 @@ type App struct {
 	DB     *gorm.DB
 }
 
-func (a *App) ConnectPostgres(user, password, dbname string, host string) {
+func (a *App) ConnectPostgres(user, password, dbname, host string) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, user, password, dbname)
 
 	var err error

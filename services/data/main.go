@@ -6,10 +6,10 @@ func main() {
 	a := App{}
 
 	a.ConnectPostgres(
-		os.Getenv("APP_DB_USERNAME"),
-		os.Getenv("APP_DB_PASSWORD"),
-		os.Getenv("APP_DB_NAME"),
-		os.Getenv("APP_DB_HOSTNAME"),
+		os.Getenv("PSQL_USERNAME"),
+		os.Getenv("PSQL_PASSWORD"),
+		os.Getenv("PSQL_DB_NAME"),
+		os.Getenv("PSQL_HOSTNAME"),
 	)
 
 	a.InitializeRoutes()

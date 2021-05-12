@@ -1,6 +1,8 @@
 package models
 
 import (
+	"encoding/json"
+
 	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 )
@@ -19,12 +21,13 @@ func (b *Building) BeforeCreate(db *gorm.DB) error {
 }
 
 func CreateBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
-	b := params.(Building)
+	var b Building
+	byteStream, _ := json.Marshal(params)
+	json.Unmarshal(byteStream, &b)
 
-	err := db.Create(&b).Error
-	if err != nil {
+	if err := db.Create(&b).Error; err != nil {
 		return nil, err
 	}
 
-	return b, nil
+	return &b, nil
 }

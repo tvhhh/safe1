@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -16,12 +17,13 @@ type Device struct {
 }
 
 func CreateDevice(db *gorm.DB, params interface{}) (interface{}, error) {
-	d := params.(Device)
+	var d Device
+	byteStream, _ := json.Marshal(params)
+	json.Unmarshal(byteStream, &d)
 
-	err := db.Create(&d).Error
-	if err != nil {
+	if err := db.Create(&d).Error; err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	return &d, nil
 }
