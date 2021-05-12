@@ -128,7 +128,7 @@ func (c *Client) request(msg []byte) {
 	case "init":
 		clientId := payload.(string)
 		if err := c.initMqtt(c.broker, clientId, c.username, c.password); err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("MQTT server connection error")
+			log.WithFields(log.Fields{"error": err}).Error("MQTT server connection failed")
 		}
 	case "pub":
 		if err := c.publishMqttTopic(topic, payload); err != nil {
