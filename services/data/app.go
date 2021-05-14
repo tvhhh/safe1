@@ -29,6 +29,14 @@ func (a *App) ConnectPostgres(user, password, dbname, host string) {
 			"dsn":   dsn,
 		}).Fatal("Error creating DB")
 	}
+
+	if err := a.DB.AutoMigrate(
+		&models.User{},
+		&models.Building{},
+		&models.Device{},
+	); err != nil {
+		log.WithFields(log.Fields{"error": err}).Fatal("Error migrating DB")
+	}
 }
 
 func (a *App) InitializeRoutes() {
@@ -36,6 +44,7 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/createUser", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
 	a.Router.HandleFunc("/createDevice", a.createDevice).Methods("POST")
+	a.Router.HandleFunc("/getUserBuildings", a.getUserBuildings).Methods("POST")
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
@@ -48,6 +57,10 @@ func (a *App) createBuilding(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createDevice(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, models.Device{}, models.CreateBuilding)
+}
+
+func (a *App) getUserBuildings(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.GetUserBuildings)
 }
 
 func (a *App) handleRequest(w http.ResponseWriter, r *http.Request, body interface{}, handler func(*gorm.DB, interface{}) (interface{}, error)) {
@@ -79,9 +92,8 @@ func (a *App) respond(w http.ResponseWriter, code int, payload interface{}) {
 func (a *App) Run(address int) {
 	port := fmt.Sprintf(":%d", address)
 
+	log.Infof("Listening on port %s", port)
 	if err := http.ListenAndServe(port, a.Router); err != nil {
-		log.WithFields(log.Fields{"error": err}).Fatal("Failed to listen on port %s", port)
-	} else {
-		log.Info("Listening on port %s", port)
+		log.WithFields(log.Fields{"error": err}).Fatalf("Failed to listen on port %s", port)
 	}
 }

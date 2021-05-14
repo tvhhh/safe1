@@ -28,21 +28,16 @@ func send(route string, payload map[string]interface{}) ([]byte, int, error) {
 	}).Info("Response received from data service")
 
 	b, _ := ioutil.ReadAll(res.Body)
-	if res.StatusCode == 200 {
+	if res.StatusCode < 300 {
 		return b, res.StatusCode, nil
-	} else if res.StatusCode == 400 || res.StatusCode == 500 {
-		var response map[string]interface{}
-		json.Unmarshal(b, &response)
-		return nil, res.StatusCode, errors.New(response["error"].(string))
 	} else {
 		return nil, res.StatusCode, errors.New(res.Status)
 	}
 }
 
 func UpdateTopicData(topic string, data map[string]interface{}) error {
-	_, statusCode, err := send("/updateData", map[string]interface{}{"topic": topic, "data": data})
+	_, _, err := send("/updateData", map[string]interface{}{"topic": topic, "data": data})
 	if err != nil {
-		log.WithFields(log.Fields{"code": statusCode, "error": err}).Error("Error calling api UpdateTopicData")
 		return err
 	}
 	return nil

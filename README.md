@@ -68,6 +68,45 @@ To connect to development server (i.e. the host running the RN process), you mus
 adb devices
 
 # Port-forwarding
-adb -s $DEVICE-NAME reverse tcp:8081 tcp:$PORT
-# Now when your device is trying to access local port 8081 (localhost:8081), that request will be routed to your host’s port $PORT.
+adb -s $DEVICE-NAME reverse tcp:8081 tcp:8080
+# Now when your device is trying to access local port 8081 (localhost:8081), that request will be routed to your host’s port 8080.
+```
+
+# Build safe1 services
+
+## Prerequisite
+* [Docker](https://docs.docker.com/get-docker/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+
+**Noted:** If any of below steps fails, recheck and fix until success before moving on.
+
+## Create environment file
+Go to directory `services/control` and create a file named `.env` with following content
+```
+ADAFRUIT_BROKER=io.adafruit.com:1883
+ADAFRUIT_USERNAME=tvhhh
+ADAFRUIT_SECRET_KEY=$KEY
+```
+`$KEY` is the secret key of IO Adafruit, login to my account with given credentials above and get the secret key (please don't generate new key). Because of security policy, if this key is published to github, IO Adafruit will automatically generate a new key.
+
+## Build service Docker images
+Run file `build-services.sh` in `services` directory
+```
+$PATH-TO-SERVICES/build-services.sh
+```
+
+## Create docker volume that will be used by postgres
+```
+docker volume create --name=pgdata
+```
+
+## Compose up to run the containers
+```
+cd $PATH-TO-SERVICES
+docker-compose up -d
+```
+
+## Shutdown all running services
+```
+docker-compose down
 ```

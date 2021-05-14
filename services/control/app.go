@@ -25,8 +25,8 @@ func (a *App) SetupAdafruitConfig(broker, username, key string) {
 	a.secretKey = key
 }
 
-func (a *App) InitializeDataHandler(topicFmt string) {
-	a.pipe = pipe.NewPipe(topicFmt)
+func (a *App) InitializeDataHandler() {
+	a.pipe = pipe.NewPipe(fmt.Sprintf("%s/feeds/bk-iot-.*", a.username))
 	a.pipe.Init(a.broker, a.username, a.secretKey, fmt.Sprintf("%s/feeds/+", a.username))
 }
 
@@ -40,9 +40,8 @@ func (a *App) InitializeRoutes() {
 func (a *App) Run(address int) {
 	port := fmt.Sprintf(":%d", address)
 
+	log.Infof("Listening on port %s", port)
 	if err := http.ListenAndServe(port, a.router); err != nil {
-		log.WithFields(log.Fields{"error": err}).Fatal("Failed to listen on port %s", port)
-	} else {
-		log.Info("Listening on port %s", port)
+		log.WithFields(log.Fields{"error": err}).Fatalf("Failed to listen on port %s", port)
 	}
 }

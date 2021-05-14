@@ -42,22 +42,16 @@ func CreateUser(db *gorm.DB, params interface{}) (interface{}, error) {
 	return &user, nil
 }
 
-func GetDevices(db *gorm.DB, params interface{}) (interface{}, error) {
+func GetUserBuildings(db *gorm.DB, params interface{}) (interface{}, error) {
 	var user User
-	uid := params.(map[string]interface{})["uid"]
+	uid := params.(map[string]string)["uid"]
 
 	if err := db.
-		Model(&User{}).
-		Where("uid = ?", uid).
-		Preload("Buildings.Devices").
+		Model(&User{Uid: uid}).
+		Preload("Buildings").
 		First(&user).Error; err != nil {
 		return nil, err
 	}
 
-	devices := make([]Device, 0)
-	for _, building := range user.Buildings {
-		devices = append(devices, building.Devices...)
-	}
-
-	return devices, nil
+	return user.Buildings, nil
 }

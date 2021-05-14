@@ -1,3 +1,8 @@
+# Node modules
 node_modules/
 
+# Environment files, ignored due to security policy of github
+services/**/*.env*
+
+# Files with suffix draft, just use to test stuffs
 **/*-draft.*

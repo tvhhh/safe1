@@ -9,7 +9,7 @@ func main() {
 		os.Getenv("ADAFRUIT_USERNAME"),
 		os.Getenv("ADAFRUIT_SECRET_KEY"),
 	)
-	a.InitializeDataHandler(os.Getenv("ADAFRUIT_TOPIC_FMT"))
+	a.InitializeDataHandler()
 	a.InitializeRoutes()
 	a.Run(8010)
 }
