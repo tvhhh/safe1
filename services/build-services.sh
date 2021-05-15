@@ -14,5 +14,11 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+docker build "$SCRIPT_DIR/pipe" -t safe1/pipe
+if [ $? -ne 0 ]; then
+  echo "Failed to build docker image safe1/pipe"
+  exit 1
+fi
+
 echo "Successfully built safe1 services"
 exit 0

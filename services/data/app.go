@@ -45,6 +45,7 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
 	a.Router.HandleFunc("/createDevice", a.createDevice).Methods("POST")
 	a.Router.HandleFunc("/getUserBuildings", a.getUserBuildings).Methods("POST")
+	a.Router.HandleFunc("/ping", a.ping).Methods("GET")
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
@@ -61,6 +62,10 @@ func (a *App) createDevice(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getUserBuildings(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.GetUserBuildings)
+}
+
+func (a *App) ping(w http.ResponseWriter, r *http.Request) {
+	log.Info("Pong")
 }
 
 func (a *App) handleRequest(w http.ResponseWriter, r *http.Request, body interface{}, handler func(*gorm.DB, interface{}) (interface{}, error)) {

@@ -8,12 +8,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/tvhhh/safe1/services/control/client"
-	"github.com/tvhhh/safe1/services/control/pipe"
 )
 
 type App struct {
 	broker    string
-	pipe      *pipe.Pipe
 	router    *mux.Router
 	secretKey string
 	username  string
@@ -23,11 +21,6 @@ func (a *App) SetupAdafruitConfig(broker, username, key string) {
 	a.broker = broker
 	a.username = username
 	a.secretKey = key
-}
-
-func (a *App) InitializeDataHandler() {
-	a.pipe = pipe.NewPipe(fmt.Sprintf("%s/feeds/bk-iot-.*", a.username))
-	a.pipe.Init(a.broker, a.username, a.secretKey, fmt.Sprintf("%s/feeds/+", a.username))
 }
 
 func (a *App) InitializeRoutes() {

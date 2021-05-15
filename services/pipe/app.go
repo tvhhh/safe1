@@ -1,4 +1,4 @@
-package pipe
+package main
 
 import (
 	"encoding/json"
@@ -7,26 +7,24 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	log "github.com/sirupsen/logrus"
-	"github.com/tvhhh/safe1/services/control/api"
+	"github.com/tvhhh/safe1/services/pipe/api"
 )
 
-type Pipe struct {
-	client   mqtt.Client
+type App struct {
+	pipe     mqtt.Client
 	topicFmt string
 }
 
-func NewPipe(topicFmt string) *Pipe {
-	return &Pipe{topicFmt: topicFmt}
-}
+func (a *App) Initialize(broker, username, key string) {
+	a.topicFmt = fmt.Sprintf("%s/feeds/bk-iot-.*", username)
 
-func (p *Pipe) Init(broker, username, password string, topic string) error {
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("tcp://%s", broker))
-	opts.SetClientID("control-svc-pipe")
+	opts.SetClientID("pipe-service")
 	opts.SetUsername(username)
-	opts.SetPassword(password)
+	opts.SetPassword(key)
 	opts.SetAutoReconnect(true)
-	opts.SetDefaultPublishHandler(p.messageHandler)
+	opts.SetDefaultPublishHandler(a.messageHandler)
 	opts.SetOnConnectHandler(func(c mqtt.Client) {
 		log.Info("Pipe connected")
 	})
@@ -37,22 +35,20 @@ func (p *Pipe) Init(broker, username, password string, topic string) error {
 		log.Info("Pipe reconnecting")
 	})
 
-	p.client = mqtt.NewClient(opts)
-	if token := p.client.Connect(); token.Wait() && token.Error() != nil {
+	a.pipe = mqtt.NewClient(opts)
+	if token := a.pipe.Connect(); token.Wait() && token.Error() != nil {
 		log.WithFields(log.Fields{"error": token.Error()}).Error("Pipe connection failed")
-		return token.Error()
+		return
 	}
 
-	if err := p.sub(topic); err != nil {
+	if err := a.sub(fmt.Sprintf("%s/feeds/+", username)); err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("Pipe subscription failed")
-		return err
+		return
 	}
-
-	return nil
 }
 
-func (p *Pipe) messageHandler(client mqtt.Client, msg mqtt.Message) {
-	if matched, err := regexp.MatchString(p.topicFmt, msg.Topic()); err != nil {
+func (a *App) messageHandler(client mqtt.Client, msg mqtt.Message) {
+	if matched, err := regexp.MatchString(a.topicFmt, msg.Topic()); err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("Error from regex")
 	} else if !matched {
 		return
@@ -72,10 +68,17 @@ func (p *Pipe) messageHandler(client mqtt.Client, msg mqtt.Message) {
 	}
 }
 
-func (p *Pipe) sub(topic string) error {
-	if token := p.client.Subscribe(topic, 1, nil); token.Wait() && token.Error() != nil {
+func (a *App) sub(topic string) error {
+	if token := a.pipe.Subscribe(topic, 1, nil); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 	log.WithFields(log.Fields{"topic": topic}).Info("Subscribed")
 	return nil
+}
+
+func (a *App) Run() {
+	log.Info("Running pipe service")
+
+	keepAlive := make(chan struct{})
+	<-keepAlive
 }

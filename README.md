@@ -81,7 +81,7 @@ adb -s $DEVICE-NAME reverse tcp:8081 tcp:8080
 **Noted:** If any of below steps fails, recheck and fix until success before moving on.
 
 ## Create environment file
-Go to directory `services/control` and create a file named `.env` with following content
+Go to directory `services` and create a file named `adafruit.env` with following content
 ```
 ADAFRUIT_BROKER=io.adafruit.com:1883
 ADAFRUIT_USERNAME=tvhhh
