@@ -105,6 +105,16 @@ docker volume create --name=pgdata
 cd $PATH-TO-SERVICES
 docker-compose up -d
 ```
+After successfully finishing above steps, the output of this following command should be like this
+```
+~ ❯ docker ps
+CONTAINER ID   IMAGE                                 COMMAND                  CREATED          STATUS          PORTS                                                                                                                                  NAMES
+20c691facc07   nginx                                 "/docker-entrypoint.…"   14 seconds ago   Up 13 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp                                                                                                  services_nginx_1
+8e46db9b4dfd   safe1/control                         "/app/services/contr…"   15 seconds ago   Up 13 seconds   8010/tcp                                                                                                                               services_control_1
+74cd7f25f45e   safe1/pipe                            "/app/services/pipe"     15 seconds ago   Up 13 seconds   9000/tcp                                                                                                                               services_pipe_1
+99fd1cbe61d1   safe1/data                            "/app/services/data"     15 seconds ago   Up 14 seconds   8000/tcp                                                                                                                               services_data_1
+78457a77e765   postgres                              "docker-entrypoint.s…"   16 seconds ago   Up 15 seconds   5432/tcp                                                                                                                               services_postgres_1
+```
 
 ## Shutdown all running services
 ```
