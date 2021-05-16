@@ -27,7 +27,9 @@ class Home extends React.Component<Props> {
         <View style={styles.statusContainer}>
           <View style={styles.statusZone}><Text style={{fontSize:30, color: '#FFFFFF', opacity:1}}>This is status zone</Text></View>
         </View>
+
         <View style={styles.buttonContainer}>
+
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -42,6 +44,8 @@ class Home extends React.Component<Props> {
               <Text style={styles.buttonSecondaryText}>Statistics and Analysis</Text>
             </View>
           </TouchableOpacity>
+
+
           <TouchableOpacity style={styles.button}>
             <View style={styles.iconBox}>
               <Feather name ="sliders" color='white' size={40}/>
@@ -51,6 +55,8 @@ class Home extends React.Component<Props> {
               <Text style={styles.buttonSecondaryText}>Control your registered devices</Text>
             </View>
           </TouchableOpacity>
+
+
           <TouchableOpacity style={styles.button}>
             <View style={styles.iconBox}>
               <Feather name ="home" color='white' size={40}/>
@@ -60,7 +66,14 @@ class Home extends React.Component<Props> {
               <Text style={styles.buttonSecondaryText}>Manage your buildings</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              this.props.navigation.navigate('Notification');
+            }}
+          >
             <View style={styles.iconBox}>
               <Feather name ="bell" color='white' size={40}/>
             </View>
@@ -69,6 +82,8 @@ class Home extends React.Component<Props> {
               <Text style={styles.buttonSecondaryText}>Manage your notifications</Text>
             </View>
           </TouchableOpacity>
+
+
           <TouchableOpacity style={styles.button}> 
             <View style={styles.iconBox}>
               <Feather name="settings" color='white' size={40}/>

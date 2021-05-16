@@ -2,7 +2,7 @@ import React from 'react';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { Home, Dashboard, Login } from '@/views';
+import { Home, Dashboard,Notification, Login } from './views';
 
 const { Navigator, Screen } = createStackNavigator()
 
@@ -13,6 +13,7 @@ class Safe1 extends React.Component{
         <Navigator>
           <Screen name="Home" component={Home} options={{headerShown: false}}></Screen>
           <Screen name="Dashboard" component={Dashboard} options={{headerStyle: {backgroundColor: 'transparent'}}}></Screen>
+          <Screen name="Notification" component={Notification} options={{ title: "NOTIFICATION", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
           <Screen name="Login" component={Login}></Screen>
         </Navigator>
       </NavigationContainer>
