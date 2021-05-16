@@ -4,7 +4,9 @@ import LinearGradient from 'react-native-linear-gradient'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Feather from 'react-native-vector-icons/Feather'
 const {height, width} = Dimensions.get('screen')
-
+interface Props {
+    navigation: any
+  }
 class Home extends React.Component{
     render(){
         return (
@@ -51,7 +53,10 @@ class Home extends React.Component{
                             <Text style = {styles.buttonSecondaryText}>Manage your building</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style = {styles.button}>
+                    <TouchableOpacity style = {styles.button}
+                        onPress = {() => {
+                        this.props.navigation.navigate('Notification');}}
+                    >
                         <View style = {styles.iconBox}>
                             <Feather name = "bell" color = 'white' size = {40}/>
                         </View>
