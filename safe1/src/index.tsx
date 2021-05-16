@@ -6,7 +6,7 @@ import { Home, Dashboard, Login } from '@/views';
 
 const { Navigator, Screen } = createStackNavigator()
 
-class Safe1 extends React.Component{
+export default class Safe1 extends React.Component{
   render() {
     return (
       <NavigationContainer>
@@ -19,4 +19,3 @@ class Safe1 extends React.Component{
     )
   }
 }
-export default Safe1;

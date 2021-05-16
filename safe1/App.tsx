@@ -1,5 +1,5 @@
-import React from 'react'
-import Safe1 from './src/'
+import React from 'react';
+import Safe1 from './src';
 
 class App extends React.Component {
   render() {

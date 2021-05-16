@@ -1,20 +1,16 @@
-import React, { FC } from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 
-const App : FC = () => {
-    return (
-        <View style = {styles.container}>
-            <Text>Login Screen</Text>
-        </View>
-    )
+export default class Login extends React.Component {
+  render() {
+    return <></>
+  }
 }
 
-export default App;
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
-})
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});

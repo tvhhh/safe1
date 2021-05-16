@@ -25,7 +25,9 @@ class Home extends React.Component<Props> {
       >
         <View style={styles.headerCotainer}></View>
         <View style={styles.statusContainer}>
-          <View style={styles.statusZone}><Text style={{fontSize:30, color: '#FFFFFF', opacity:1}}>This is status zone</Text></View>
+          <View style={styles.statusZone}>
+            <Text style={{fontSize:30, color: '#FFFFFF', opacity:1}}>This is status zone</Text>
+          </View>
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
