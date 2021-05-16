@@ -1,11 +1,28 @@
 import React from 'react';
-import { View, Text, StyleSheet,Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet,Image} from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from 'react-native-elements'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import {ListItem, Icon } from 'react-native-elements'
+import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 const Tab = createBottomTabNavigator();
-
+const Room = [
+    {
+      name: "Kitchen",
+      device: ["Temperature", "Gas Concentration"]
+    },
+    {
+        name: "Living Room",
+      device: ["Temperature", "Gas Concentration"]
+    },
+    {
+        name: "BedRoom",
+      device: ["Temperature"]
+    },
+    {
+        name: "BathRoom",
+      device: ["Temperature"]
+    }
+  ];
 const DeviceCard = (props: any) => {
     if(props.nameDevice == "Temperature"){
         return <TouchableOpacity style={{ marginLeft: 15, marginBottom: 15, flexDirection: 'row' }}>
@@ -52,7 +69,17 @@ const DeviceCard = (props: any) => {
 }
 
 const RoomCard = (props: any) => {
-    if (props.nameRoom == "Kitchen") {
+    if (props.nameRoom == "Living Room") {
+        return <View>
+            <View style={roomCardStyle.line}></View>
+            <Text 
+                style={roomCardStyle.nameRoom}>{props.nameRoom}</Text>
+            <DeviceCard 
+                nameDevice="Temperature" time="14:00:03" data="32°C" 
+            />
+            </View>
+    }
+    else{
     return <View>
         <View style={roomCardStyle.line}></View>
         <Text 
@@ -65,32 +92,7 @@ const RoomCard = (props: any) => {
             nameDevice="Temperature" time="14:00:03" data="30°C" 
         />
         </View>
-  } else if (props.nameRoom == "Living Room") {
-    return <View>
-        <View style={roomCardStyle.line}></View>
-        <Text 
-            style={roomCardStyle.nameRoom}>{props.nameRoom}</Text>
-        <DeviceCard 
-            nameDevice="Gas Concentration" time="14:00:03" data="60ppm" 
-        />
-        <DeviceCard 
-            nameDevice="Temperature" time="14:00:03" data="32°C" 
-        />
-        </View>
-  } else {
-    return <View>
-        <View style={roomCardStyle.line}></View>
-        <Text 
-            style={roomCardStyle.nameRoom}>{props.nameRoom}
-        </Text>
-        <DeviceCard  
-            nameDevice="Gas Concentration" time="14:00:03" data="53ppm" 
-        />
-        <DeviceCard 
-            nameDevice="Temperature" time="14:00:03" data="38°C" 
-        />
-        </View>
-  }
+  } 
 }
 
 const Body = (props: any) => {
@@ -116,11 +118,21 @@ return (
         <Text 
             style={bodyStyle.dayTime}>Today, {props.day}
         </Text>
+        {/* <View>{
+                Room.map((l, i) => (
+                <ListItem key={i} bottomDivider>
+                    <ListItem.Content>
+                    <RoomCard nameRoom={l.name} />
+                    <ListItem.Title>{l.name}</ListItem.Title>
+                    <ListItem.Subtitle>{l.device}</ListItem.Subtitle>
+                    </ListItem.Content>
+                </ListItem>
+                ))
+            }
+        </View> */}
         <RoomCard nameRoom="Kitchen" />
         <RoomCard nameRoom="Living Room" />
         <RoomCard nameRoom="BedRoom"/>
-        <RoomCard />
-        <RoomCard />
         <RoomCard />
         </ScrollView>
   );

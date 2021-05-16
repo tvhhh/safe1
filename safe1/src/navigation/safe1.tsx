@@ -1,24 +1,24 @@
 import React from 'react'
-import { createStackNavigator} from '@react-navigation/stack'
-import { NavigationContainer} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack'
+import { NavigationContainer } from '@react-navigation/native';
 import Home from '../screens/home'
 import Dashboard from '../screens/dashboard'
 import Login from '../screens/login'
 import SignUp from '../screens/signup'
 import Notification from '../screens/notification';
 
-const {Navigator, Screen} = createStackNavigator()
+const { Navigator, Screen } = createStackNavigator()
 
-class Safe1 extends React.Component{
+class Safe1 extends React.Component {
     render() {
         return (
             <NavigationContainer>
                 <Navigator>
-                    <Screen name = "Home" component = {Home} options = {{headerShown: false}}></Screen>
-                    <Screen name = "Dashboard" component = {Dashboard} options = {{headerStyle: {backgroundColor: 'transparent'}}}></Screen>
-                    <Screen name = "Notification" component = {Notification} options = {{headerStyle: false}}></Screen>
-                    <Screen name = "Login" component = {Login}></Screen>
-                    <Screen name = "SignUp" component = {SignUp}></Screen>
+                    <Screen name="Home" component={Home} options={{ headerShown: false }}></Screen>
+                    <Screen name="Dashboard" component={Dashboard} options={{ headerStyle: { backgroundColor: 'transparent' } }}></Screen>
+                    <Screen name="Notification" component={Notification} options={{ title: "NOTIFICATION", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
+                    <Screen name="Login" component={Login}></Screen>
+                    <Screen name="SignUp" component={SignUp}></Screen>
                 </Navigator>
             </NavigationContainer>
         )
