@@ -1,12 +1,16 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Feather from 'react-native-vector-icons/Feather'
 const {height, width} = Dimensions.get('screen')
 
-class Home extends React.Component{
+interface Props {
+  navigation: any
+}
+
+class Home extends React.Component<Props>{
     render(){
+        const { navigate } = this.props.navigation;
         return (
             <LinearGradient 
                 colors = {['#4F9FFF', '#002150']} 
@@ -22,7 +26,7 @@ class Home extends React.Component{
                     <TouchableOpacity
                         style = {styles.button}
                         onPress = {() => {
-                            this.props.navigation.navigate('Dashboard');
+                            navigate('Dashboard');
                         }}
                     >
                         <View style = {styles.iconBox}>
@@ -33,7 +37,10 @@ class Home extends React.Component{
                             <Text style = {styles.buttonSecondaryText}>Statistics and Analysis</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style = {styles.button}>
+                    <TouchableOpacity style = {styles.button}
+                        onPress = {() => {
+                            navigate('Remotecontrol');
+                        }}>
                         <View style = {styles.iconBox}>
                             <Feather name = "sliders" color = 'white' size = {40}/>
                         </View>

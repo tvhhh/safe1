@@ -3,6 +3,7 @@ import { createStackNavigator} from '@react-navigation/stack'
 import { NavigationContainer} from '@react-navigation/native';
 import Home from '../screens/home'
 import Dashboard from '../screens/dashboard'
+import Remotecontrol from '../screens/remotecontrol'
 import Login from '../screens/login'
 import SignUp from '../screens/signup'
 
@@ -15,6 +16,7 @@ class Safe1 extends React.Component{
                 <Navigator>
                     <Screen name = "Home" component = {Home} options = {{headerShown: false}}></Screen>
                     <Screen name = "Dashboard" component = {Dashboard} options = {{headerStyle: {backgroundColor: 'transparent'}}}></Screen>
+                    <Screen name = "Remotecontrol" component = {Remotecontrol} options = {{ headerShown: false }}></Screen>
                     <Screen name = "Login" component = {Login}></Screen>
                     <Screen name = "SignUp" component = {SignUp}></Screen>
                 </Navigator>
