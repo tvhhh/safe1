@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1093645070689:android:11abbb0e8041affa429520",
+        "mobilesdk_app_id": "1:1093645070689:android:0470b725050cab0c429520",
         "android_client_info": {
-          "package_name": "com.mdp.safe1"
+          "package_name": "com.safe1"
         }
       },
       "oauth_client": [
