@@ -71,7 +71,7 @@ class Home extends React.Component<Props> {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              this.props.navigation.navigate('Notification');
+              this.props.navigation.navigate('NotificationHistory');
             }}
           >
             <View style={styles.iconBox}>
