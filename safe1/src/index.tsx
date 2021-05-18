@@ -1,21 +1,14 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import Safe1Container from '@/containers';
+import store from '@/redux/store';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
-import { Home, Dashboard, Login } from '@/views';
-
-const { Navigator, Screen } = createStackNavigator()
-
-export default class Safe1 extends React.Component{
+export default class Safe1 extends React.Component {
   render() {
     return (
-      <NavigationContainer>
-        <Navigator>
-          <Screen name="Home" component={Home} options={{headerShown: false}}></Screen>
-          <Screen name="Dashboard" component={Dashboard} options={{headerStyle: {backgroundColor: 'transparent'}}}></Screen>
-          <Screen name="Login" component={Login}></Screen>
-        </Navigator>
-      </NavigationContainer>
-    )
+      <Provider store={store}>
+        <Safe1Container />
+      </Provider>
+    );
   }
 }

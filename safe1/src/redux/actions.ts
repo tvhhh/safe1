@@ -10,7 +10,7 @@ export interface Action {
 }
 
 const actions = {
-  setCurrentUser: (payload: User): Action => ({ type: ActionType.SET_CURRENT_USER, payload: payload })
+  setCurrentUser: (payload: User | null): Action => ({ type: ActionType.SET_CURRENT_USER, payload: payload })
 };
 
 export default actions;
