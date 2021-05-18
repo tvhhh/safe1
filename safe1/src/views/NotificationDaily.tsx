@@ -12,19 +12,43 @@ const Tab = createBottomTabNavigator();
 const RoomList = [
     {
         title: "Kitchen",
-        data: ["Temperature", "Gas Concentration"]
+        data:[
+            {
+                nameDevice:["Temperature", "Gas Concentration"],
+                data:["32°C","1"],
+                time:"14:00:03"
+            }
+        ]
     },
     {
         title: "Living Room",
-        data: ["Temperature", "Gas Concentration"]
+        data:[
+            {
+                nameDevice:["Temperature", "Gas Concentration"],
+                data:["38°C","0"],
+                time:"15:00:03"
+            }
+        ]
     },
     {
         title: "BedRoom",
-        data: ["Temperature","Gas"]
+        data:[
+            {
+                nameDevice:["Temperature", ""],
+                data:["38°C","1"],
+                time:"16:00:03"
+            }
+        ]
     },
     {
         title: "BathRoom",
-        data: ["Temperature"]
+        data:[
+            {
+                nameDevice:["Temperature", ""],
+                data:["32°C","0"],
+                time:"10:00:03"
+            }
+        ]
     }
 ];
 const DeviceCard = (props: any) => {
@@ -49,7 +73,7 @@ const DeviceCard = (props: any) => {
             </Text>
         </View >
     }
-    else {
+    else if(props.nameDevice == "Gas Concentration")  {
         return <View style={{ marginLeft: 15, marginBottom: 15, flexDirection: 'row' }}>
             <View style={deviceCardStyle.iconLayout}>
                 <Image
@@ -69,13 +93,19 @@ const DeviceCard = (props: any) => {
             </Text>
         </View >
     }
+    else{
+        return <Text></Text>
+    }
 
 }
 
 const RoomCard = (props: any) => {
     return <View>
         <DeviceCard
-            nameDevice={props.nameDevice} time="14:00:03" data="32°C"
+            nameDevice={props.nameDevice[0]} time={props.time} data={props.data[0]}
+        />
+        <DeviceCard
+            nameDevice={props.nameDevice[1]} time={props.time} data={props.data[1]}
         />
     </View>
 }
@@ -105,8 +135,8 @@ const Body = (props: any) => {
             </Text>
             <SectionList
                 sections={RoomList}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => <RoomCard nameDevice={item} />}
+                keyExtractor={(item,index) => item.time}
+                renderItem={({ item }) => <RoomCard nameDevice={item.nameDevice} time ={item.time} data={item.data} />}
                 renderSectionHeader={({ section: { title } }) => (
                     <View>
                         <View style={roomCardStyle.line}></View>
@@ -126,7 +156,7 @@ class NotificationDaily extends React.Component<Props> {
     render() {
         return (
             <View style={styles.option}>
-                <Body day="14 April" />
+                <Body/>
             </View>
         )
     }

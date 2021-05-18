@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, SectionList, Text, StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { State, TouchableOpacity } from 'react-native-gesture-handler';
 import NotificationDaily from './NotificationDaily'
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,28 +14,65 @@ const Tab = createBottomTabNavigator();
 const RoomList = [
     {
         title: "14 April",
-        data: ["Temperature", "Gas Concentration"],
-        nameRoom: ["Living Room"],
-        state: ["Safety"]
+        state: "Safety",
+        data:[
+            {
+                nameDevice:["Temperature", "Gas Concentration"],
+                nameRoom: "Living Room",
+                data:["32°C","0"],
+                time:"14:00:03"
+            }
+        ]
     },
-    {
+    {   
         title: "13 April",
-        data: ["Temperature", "Gas Concentration"],
-        nameRoom: ["Living Room"],
-        state: ["Insecurity"]
-    },
+        state: "Insecurity",
+        data:[
+            {
+                nameDevice:["Temperature", "Gas Concentration"],
+                nameRoom: "BedRoom",  
+                data:["39°C","1"],
+                time:"12:00:03"
+            }
+        ]
+    },    
     {
         title: "12 April",
-        data: ["Temperature", "Gas"],
-        nameRoom: ["Living Room"],
-        state: ["Safety"]
+        state: "Insecurity",
+        data:[
+            {
+                nameDevice:["Temperature",""],
+                nameRoom: "Living Room",
+                data:["39°C"],
+                time:"8:00:03"
+            }
+        ]
     },
     {
         title: "11 April",
-        data: ["Temperature"],
-        nameRoom: ["Living Room"],
-        state: ["Insecurity"]
-    }
+        state: "Safety",
+        data:[
+            {
+                nameDevice:["Temperature", "Gas Concentration"],
+                nameRoom: "Kitchen",            
+                data:["30°C","0"],
+                time:"19:00:03"
+            }
+        ]
+    },
+    {
+        title: "10 April",
+        state: "Insecurity",
+        data:[
+            {
+                nameDevice:["","Gas Concentration"],
+                nameRoom: "Living Room",
+                data:["","1"],
+                time:"8:00:03"
+            }
+        ]
+    },
+
 ];
 const DeviceCard = (props: any) => {
     if (props.nameDevice == "Temperature") {
@@ -60,7 +97,7 @@ const DeviceCard = (props: any) => {
             </Text>
         </View >
     }
-    else {
+    else if(props.nameDevice == "Gas Concentration") {
         return <View style={{ marginLeft: 15, marginBottom: 15, flexDirection: 'row' }}>
             <View style={deviceCardStyle.iconLayout}>
                 <Image
@@ -81,18 +118,24 @@ const DeviceCard = (props: any) => {
             </Text>
         </View >
     }
+    else{
+        return <Text></Text>
+    }
 
 }
 
 const RoomCard = (props: any) => {
     return <View>
         <DeviceCard
-            nameDevice={props.nameDevice} time="14:00:03" roomName="Living Room" data="32°C"
+            nameDevice={props.nameDevice[0]} time={props.time} roomName={props.roomName} data={props.data[0]}
+        />
+        <DeviceCard
+            nameDevice={props.nameDevice[1]} time={props.time} roomName={props.roomName} data={props.data[1]}
         />
     </View>
 }
 
-const Body = (props : any) => {
+const Body = (props: any) => {
     return (
         <View style={styles.body}>
             <View>
@@ -104,9 +147,9 @@ const Body = (props : any) => {
             </View>
             <SectionList
                 sections={RoomList}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => <RoomCard nameDevice={item} />}
-                renderSectionHeader={({ section: { title, state } }) => (
+                keyExtractor={(item,index) => item.nameRoom}
+                renderItem={({ item }) => <RoomCard nameDevice={item.nameDevice} roomName={item.nameRoom} time ={item.time} data={item.data}/>}
+                renderSectionHeader={({ section: {title,state}}) => (
                     <View>
                         <View style={roomCardStyle.line}></View>
                         <TouchableOpacity onPress={() => {
@@ -116,7 +159,7 @@ const Body = (props : any) => {
                                 <Text
                                     style={bodyStyle.dayTime}>{title}
                                 </Text>
-                                <Text style={bodyStyle.state}> {state} </Text>
+                                <Text style={[state == "Safety" ? bodyStyle.secureState : bodyStyle.insecureState]}> {state} </Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -127,10 +170,11 @@ const Body = (props : any) => {
 }
 
 class NotificationHistory extends React.Component<Props> {
+    
     render() {
         return (
             <View style={styles.option}>
-                <Body day="14 April" state="Safety" navigate = {this.props.navigation}/>
+                <Body navigate = {this.props.navigation}/>
             </View>
         )
     }
@@ -166,12 +210,19 @@ const bodyStyle = StyleSheet.create({
         fontSize: 18,
         color: "#aac4ec"
     },
-    state: {
+    secureState: {
         marginLeft: "auto",
         marginTop: 10,
         marginRight: 10,
         fontSize: 20,
         color: "green"
+    },
+    insecureState: {
+        marginLeft: "auto",
+        marginTop: 10,
+        marginRight: 10,
+        fontSize: 20,
+        color: "red"
     }
 })
 const roomCardStyle = StyleSheet.create({
