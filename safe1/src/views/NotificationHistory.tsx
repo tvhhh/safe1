@@ -110,7 +110,7 @@ const Body = (props : any) => {
                     <View>
                         <View style={roomCardStyle.line}></View>
                         <TouchableOpacity onPress={() => {
-                            this.props.navigation.navigate('NotificationDaily');
+                            props.navigate.navigate('NotificationDaily');
                         }}>
                             <View style={{ flexDirection: "row" }}>
                                 <Text
@@ -130,7 +130,7 @@ class NotificationHistory extends React.Component<Props> {
     render() {
         return (
             <View style={styles.option}>
-                <Body day="14 April" state="Safety" />
+                <Body day="14 April" state="Safety" navigate = {this.props.navigation}/>
             </View>
         )
     }
