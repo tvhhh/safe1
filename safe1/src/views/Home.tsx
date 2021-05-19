@@ -10,7 +10,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import { Avatar, Label } from '@/components';
+
+import store from '@/redux/store';
+import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
+import StorageService from '@/services/storage.service';
 
 interface Props {
   navigation: any,
@@ -39,6 +43,8 @@ export default class Home extends React.Component<Props, State> {
   async signOut() {
     try {
       await AuthService.signOut();
+      store.dispatch(actions.setCurrentUser(null));
+      await StorageService.setUser(null);
     } catch (err) {
       console.error(`Error signing out: ${err}`);
     }

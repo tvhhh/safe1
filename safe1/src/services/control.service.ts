@@ -1,4 +1,7 @@
 import { controlUrl } from '@/api/url';
+import Message from '@/models/messages';
+import store from '@/redux/store';
+import actions from '@/redux/actions';
 
 class ControlService {
   public ws: WebSocket | undefined;
@@ -6,15 +9,21 @@ class ControlService {
   connect() {
     this.ws = new WebSocket(controlUrl);
     this.ws.onopen = () => {};
-    this.ws.onmessage = (event: WebSocketMessageEvent) => {};
+    this.ws.onmessage = (event: WebSocketMessageEvent) => {
+      if (event.data) this.handleMessage(event.data as Message);
+    };
     this.ws.onerror = (event: WebSocketErrorEvent) => {
-      console.error(`Error establishing Websocket: ${event.message}`);
+      console.error(`Error establishing Websocket: ${event}`);
       setTimeout(this.connect, 1000);
     };
-    this.ws.onclose = (event: WebSocketCloseEvent) => {};
+    this.ws.onclose = (event: WebSocketCloseEvent) => {
+      console.log(`Closing Websocket: ${event}`);
+    };
   }
 
-  coordinateMessage(message: any) {}
+  handleMessage(message: Message) {
+    store.dispatch(actions.updateData(message));
+  }
 
   dispatchMessage(action: string, payload: any) {
     this.ws?.send(JSON.stringify({

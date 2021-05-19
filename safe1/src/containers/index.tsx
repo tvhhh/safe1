@@ -24,7 +24,7 @@ interface Props extends ConnectedProps<typeof connector> {
 
 class Safe1Container extends React.Component<Props> {
   async componentDidMount() {
-    const user = await StorageService.getUser();
+    let user = await StorageService.getUser();
     if (user != null) {
       this.props.setCurrentUser(user as User);
     }
