@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { View } from 'react-native'
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import SliderEntry from '../utils/sliderEntry';
+import SliderEntry from '../utils/SliderEntry';
 import { sliderWidth, itemWidth } from '../styles/sliderEntry';
 import styles, { colors } from '../styles/carousel';
 import {ENTRIES1} from '../assets/entries';

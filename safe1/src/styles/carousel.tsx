@@ -51,6 +51,7 @@ export default StyleSheet.create({
         color: 'rgba(255, 255, 255, 0.75)',
         fontSize: 13,
         fontStyle: 'italic',
+        fontFamily: 'Roboto',
         textAlign: 'center'
     },
     slider: {

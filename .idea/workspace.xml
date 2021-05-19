@@ -3,16 +3,35 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="9bad9083-2307-47bd-8428-bf1333bfd96b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/safe1/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/safe1/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/src/components/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/components/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/src/navigation/safe1.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/navigation/safe1.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/src/screens/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/screens/home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/safe1/src/components/avatarpile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/components/avatarpile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/safe1/src/components/carousel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/components/carousel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/safe1/src/components/roombutons.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/safe1/src/screens/remotecontrol.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/screens/remotecontrol.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,14 +64,30 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="92" y="92" width="1182" height="544" key="AVDManager" timestamp="1621059379470">
+    <state x="401" y="166" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1621344555645">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="92" y="92" width="1182" height="544" key="AVDManager/0.0.1366.728@0.0.1366.728" timestamp="1621059379470" />
-    <state x="163" y="0" key="SettingsEditor" timestamp="1620969205259">
+    <state x="401" y="166" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.728@0.0.1366.728" timestamp="1621344555645" />
+    <state x="92" y="92" width="1182" height="544" key="AVDManager" timestamp="1621347805613">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="163" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1620969205259" />
+    <state x="92" y="92" width="1182" height="544" key="AVDManager/0.0.1366.728@0.0.1366.728" timestamp="1621347805613" />
+    <state x="120" y="0" key="SettingsEditor" timestamp="1621347316831">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="120" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1621347316831" />
   </component>
 </project>

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import FacePile from '../utils/avatarpile';
- 
-var RNFS = require('react-native-fs')
+import FacePile from '../utils/AvatarPile';
 
 const FACES = [
   {

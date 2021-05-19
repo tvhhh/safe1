@@ -1,12 +1,14 @@
 import React from 'react'
-import {View, Text, StyleSheet, Dimensions} from 'react-native'
+import {View, Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import RoomDevicesCarousel from '../components/carousel'
-import RoomButtons from '../components/roombutons'
-import AvatarPile from '../components/avatarpile'
+import RoomDevicesCarousel from '../components/Carousel'
+import RoomButtons from '../components/RoomButtons'
+import AvatarPile from '../components/AvatarPile'
+import SectionGrid from '../utils/SectionGrid';
+import Feather from 'react-native-vector-icons/Feather'
 
 const {height, width} = Dimensions.get('screen')
 
@@ -38,6 +40,15 @@ class Remotecontrol extends React.Component<Props>{
                     onContentSizeChange = {this.onContentSizeChange}
                     contentContainerStyle={{flexGrow: 1}}
                 >
+                    <TouchableOpacity
+                        style = {styles.outButton}
+                        onPress = {() => {
+                            navigate('Home');
+                        }}
+                    >
+                        <Feather name = "x" color = 'white' size = {40}/>
+                    </TouchableOpacity>
+
                     <View>
                         <Avatar
                             size="large"
@@ -51,6 +62,7 @@ class Remotecontrol extends React.Component<Props>{
                         </View>
                     </View>
 
+                    
                     <View style = {styles.roomDevices1}>
                         <Text style = {styles.primaryText}>Devices</Text>
                         <View style = {styles.allToggle}>
@@ -89,6 +101,11 @@ export default Remotecontrol;
 const styles = StyleSheet.create({
     container: {
         flex: 1
+    },
+    outButton: {
+        position: 'absolute',
+        left: width/1.2,
+        top: height/25,
     },
     avatar: {
         width: 67,
@@ -137,14 +154,14 @@ const styles = StyleSheet.create({
         width: 84,
         height: height/3,
         left: 24,
-        top: height/1.9,
+        top: height/1.95,
     },
     allToggle:{
         position: 'absolute',
         left: width/1.25,
     },
     roomButtons:{
-        top: height/8,
+        top: height/8.5,
     },
     residents: {
         position: 'absolute',
