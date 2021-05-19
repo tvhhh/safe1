@@ -59,10 +59,10 @@ export default StyleSheet.create({
         overflow: 'visible' // for custom animations
     },
     sliderContentContainer: {
-        paddingVertical: 10 // for custom animation
+        paddingVertical: 10, // for custom animation
     },
     paginationContainer: {
-        paddingVertical: 0
+        paddingVertical: 0,
     },
     paginationDot: {
         justifyContent: 'center',

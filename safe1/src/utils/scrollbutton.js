@@ -123,7 +123,7 @@ ScrollingButtonMenu.propTypes = {
 ScrollingButtonMenu.defaultProps = {
     upperCase: false,
     textStyle: {
-        position: 'absolute',
+        // position: 'absolute',
         fontFamily: 'Roboto', 
         padding: 10,
         color: '#ffffff',
@@ -148,25 +148,27 @@ ScrollingButtonMenu.defaultProps = {
 
 const styles = StyleSheet.create({
     scrollArea: {
-        paddingTop: 15,
+        paddingTop: 5,
+        paddingHorizontal:12,
     },
     scroll: {},
     scrollContainer: {},
     tabItem: {
         borderRadius: 5,
         backgroundColor: '#FFFFFF',
-        padding: 10,
+        // padding: 10,
         paddingLeft: 15,
         paddingRight: 15,
-        width: screenWidth/3,
+        width: (screenWidth - 44)/3,
     },
     tabItemText: {
         color: '#000000',
         fontFamily: 'Roboto',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '500',
         fontStyle: 'normal',
         textAlign: 'center',
+        paddingTop: 5,
         lineHeight: 20,
     },
     tabItemFocused: {

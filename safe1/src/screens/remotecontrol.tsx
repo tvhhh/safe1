@@ -7,8 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import RoomDevicesCarousel from '../components/Carousel'
 import RoomButtons from '../components/RoomButtons'
 import AvatarPile from '../components/AvatarPile'
-import SectionGrid from '../utils/SectionGrid';
 import Feather from 'react-native-vector-icons/Feather'
+import List from '../components/SectionGrid'
 
 const {height, width} = Dimensions.get('screen')
 
@@ -87,6 +87,10 @@ class Remotecontrol extends React.Component<Props>{
                     </View>
                     <View style = {styles.avatarPile}>
                         <AvatarPile/>
+                    </View>
+
+                    <View>
+                        <List/>
                     </View>
 
                 </ScrollView>
@@ -168,7 +172,7 @@ const styles = StyleSheet.create({
         width: 150,
         height: height/3,
         left: 24,
-        top: height/1.3,
+        top: height/1.285,
     },
     avatarPile: {
         position: 'absolute',

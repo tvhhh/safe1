@@ -23,14 +23,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9bad9083-2307-47bd-8428-bf1333bfd96b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/src/components/avatarpile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/components/avatarpile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/src/components/carousel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/components/carousel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/safe1/src/components/roombutons.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/safe1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/safe1.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/safe1/src/components/SectionGrid.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/components/SectionGrid.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/safe1/src/screens/remotecontrol.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/safe1/src/screens/remotecontrol.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -81,13 +76,13 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="401" y="166" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.728@0.0.1366.728" timestamp="1621344555645" />
-    <state x="92" y="92" width="1182" height="544" key="AVDManager" timestamp="1621347805613">
+    <state x="92" y="92" width="1182" height="544" key="AVDManager" timestamp="1621404307290">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="92" y="92" width="1182" height="544" key="AVDManager/0.0.1366.728@0.0.1366.728" timestamp="1621347805613" />
-    <state x="120" y="0" key="SettingsEditor" timestamp="1621347316831">
+    <state x="92" y="92" width="1182" height="544" key="AVDManager/0.0.1366.728@0.0.1366.728" timestamp="1621404307290" />
+    <state x="120" y="0" key="SettingsEditor" timestamp="1621404297956">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="120" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1621347316831" />
+    <state x="120" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1621404297956" />
   </component>
 </project>
