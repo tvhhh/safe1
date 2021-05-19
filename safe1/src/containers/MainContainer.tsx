@@ -12,7 +12,7 @@ export default class MainContainer extends React.Component{
       <NavigationContainer>
         <Navigator>
           <Screen name="Home" component={Home} options={{headerShown: false}}></Screen>
-          <Screen name="Dashboard" component={Dashboard} options={{headerStyle: {backgroundColor: 'transparent'}}}></Screen>
+          <Screen name="Dashboard" component={Dashboard} options={{headerTransparent: true, headerTintColor: 'white'}}></Screen>
         </Navigator>
       </NavigationContainer>
     )

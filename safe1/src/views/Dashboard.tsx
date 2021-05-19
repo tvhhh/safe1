@@ -5,48 +5,71 @@ import {
   Text,
   View,
 } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import LinearGradient from 'react-native-linear-gradient'
+import {LineChart} from 'react-native-chart-kit'
+import { BackgroundImage } from 'react-native-elements/dist/config';
 
 const {height, width} = Dimensions.get('screen')
-const data = {
-  labels: ["January", "February", "March", "April", "May", "June"],
-  datasets: [
-    {
-      data: [20, 45, 28, 80, 99, 43],
-      color: (opacity = 1) => `rgba(25, 65, 244, ${opacity})`, // optional
-      strokeWidth: 2 // optional
-    }
-  ],
-  legend: ["Rainy Days"] // optional
-};
-const chartConfig = {
-  backgroundGradientFrom: "#1E2923",
-  backgroundGradientFromOpacity: 0.1,
-  backgroundGradientTo: "#08130D",
-  backgroundGradientToOpacity: 1,
-  color: (opacity = 1) => `rgba(76, 25, 16, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false // optional
-};
 
 class Dashboard extends React.Component {
   render(){
+    let lineChartProps = {
+      data: {
+        labels: ["January", "February", "March", "April", "May", "June", "July"],
+        datasets: [
+          {
+            data: [
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100
+            ]
+          }
+        ]
+      },
+      width: width * 1.2, // from react-native
+      height: 220,
+      yAxisLabel: "$",
+      yAxisSuffix: "k",
+      yAxisInterval: 1, // optional, defaults to 1
+      chartConfig: {
+        strokeWidth: 2,
+        backgroundGradientFromOpacity: 0,
+        backgroundGradientToOpacity: 0,
+        backgroundGradientTo: "#ffa726",
+        decimalPlaces: 2, // optional, defaults to 2dp
+        color: () => `rgba(141, 193, 255, 1)`,
+        labelColor: () => `rgba(255, 255, 255, 1)`,
+        style: {
+          borderRadius: 16
+        },
+        propsForDots: {
+          r: "0",
+        },
+        propsForBackgroundLines: {
+          strokeDasharray: "", // solid background lines with no dashes
+          opacity: 0.15
+        }
+      },
+      withHorizontalLabels: false,
+      withHorizontalLines: false,
+      bezier: true,
+      style: styles.chartContainer
+    }
     return (
-      <View style={styles.container}>
-        <View style={styles.chart}>
-          <LineChart
-          data={data}
-          width={width}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-          />
+      <LinearGradient 
+        colors={['#4F9FFF', '#002150']} 
+        style={styles.container}
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 0.5}}
+      >
+        <View style={styles.headerContainer}></View>
+        <LineChart {...lineChartProps}/>
+        <View style={styles.optionContainer}>
         </View>
-        <View style={styles.option}>
-          <Text>asdasdas</Text>
-        </View>
-      </View>
+      </LinearGradient>
     )
   }
 }
@@ -56,15 +79,18 @@ export default Dashboard;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue'
   },
-  chart: {
-    height: height/2
+  headerContainer: {
+    flex: 1
   },
-  option: {
-    flexDirection: 'row',
-    borderRadius: 30,
+  chartContainer: {
+    flex: 6,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  optionContainer: {
+    flex: 6,
     backgroundColor: 'white',
-    height: height/2
+    borderRadius: 16,
   }
 });
