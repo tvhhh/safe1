@@ -3,21 +3,13 @@ package models
 import (
 	"encoding/json"
 
-	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 )
 
 type Building struct {
-	ID      uuid.UUID `json:"id" gorm:"primaryKey"`
-	Name    string    `json:"name"`
-	Address string    `json:"address"`
-	Devices []Device  `gorm:"foreignKey:Building"`
-}
-
-func (b *Building) BeforeCreate(db *gorm.DB) error {
-	var err error
-	b.ID, err = uuid.NewV4()
-	return err
+	Address string   `json:"address"`
+	Devices []Device `gorm:"foreignKey:Building"`
+	Name    string   `json:"name" gorm:"primaryKey"`
 }
 
 func CreateBuilding(db *gorm.DB, params interface{}) (interface{}, error) {

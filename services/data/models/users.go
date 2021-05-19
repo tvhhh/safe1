@@ -35,7 +35,7 @@ func CreateUser(db *gorm.DB, params interface{}) (interface{}, error) {
 	byteStream, _ := json.Marshal(params)
 	json.Unmarshal(byteStream, &user)
 
-	if err := db.Create(&user).Error; err != nil {
+	if err := db.FirstOrCreate(&user).Error; err != nil {
 		return nil, err
 	}
 

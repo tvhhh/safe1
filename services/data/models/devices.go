@@ -2,18 +2,15 @@ package models
 
 import (
 	"encoding/json"
-	"time"
 
-	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 )
 
 type Device struct {
-	Building  uuid.UUID `json:"building"`
-	Name      string    `json:"name"`
-	Topic     string    `json:"topic" gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Building string `json:"building"`
+	Name     string `json:"name" gorm:"primaryKey"`
+	Topic    string `json:"topic"`
+	Data     []Data `gorm:"foreignKey:Device"`
 }
 
 func CreateDevice(db *gorm.DB, params interface{}) (interface{}, error) {

@@ -34,6 +34,7 @@ func (a *App) ConnectPostgres(user, password, dbname, host string) {
 		&models.User{},
 		&models.Building{},
 		&models.Device{},
+		&models.Data{},
 	); err != nil {
 		log.WithFields(log.Fields{"error": err}).Fatal("Error migrating DB")
 	}
@@ -45,6 +46,7 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
 	a.Router.HandleFunc("/createDevice", a.createDevice).Methods("POST")
 	a.Router.HandleFunc("/getUserBuildings", a.getUserBuildings).Methods("POST")
+	a.Router.HandleFunc("/updateData", a.updateData).Methods("POST")
 	a.Router.HandleFunc("/ping", a.ping).Methods("GET")
 }
 
@@ -62,6 +64,10 @@ func (a *App) createDevice(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getUserBuildings(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.GetUserBuildings)
+}
+
+func (a *App) updateData(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.UpdateData)
 }
 
 func (a *App) ping(w http.ResponseWriter, r *http.Request) {
