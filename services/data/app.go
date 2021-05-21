@@ -34,6 +34,7 @@ func (a *App) ConnectPostgres(user, password, dbname, host string) {
 		&models.User{},
 		&models.Building{},
 		&models.Device{},
+		&models.Data{},
 	); err != nil {
 		log.WithFields(log.Fields{"error": err}).Fatal("Error migrating DB")
 	}
@@ -43,29 +44,34 @@ func (a *App) InitializeRoutes() {
 	a.Router = mux.NewRouter()
 	a.Router.HandleFunc("/createUser", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
-	a.Router.HandleFunc("/createDevice", a.createDevice).Methods("POST")
+	a.Router.HandleFunc("/getBuilding", a.getBuilding).Methods("POST")
 	a.Router.HandleFunc("/getUserBuildings", a.getUserBuildings).Methods("POST")
+	a.Router.HandleFunc("/updateData", a.updateData).Methods("POST")
 	a.Router.HandleFunc("/ping", a.ping).Methods("GET")
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
-	a.handleRequest(w, r, models.User{}, models.CreateBuilding)
+	a.handleRequest(w, r, models.User{}, models.CreateUser)
 }
 
 func (a *App) createBuilding(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, models.Building{}, models.CreateBuilding)
 }
 
-func (a *App) createDevice(w http.ResponseWriter, r *http.Request) {
-	a.handleRequest(w, r, models.Device{}, models.CreateBuilding)
+func (a *App) getBuilding(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.GetBuilding)
 }
 
 func (a *App) getUserBuildings(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.GetUserBuildings)
 }
 
+func (a *App) updateData(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.UpdateData)
+}
+
 func (a *App) ping(w http.ResponseWriter, r *http.Request) {
-	log.Info("Pong")
+	a.respond(w, http.StatusOK, "Pong")
 }
 
 func (a *App) handleRequest(w http.ResponseWriter, r *http.Request, body interface{}, handler func(*gorm.DB, interface{}) (interface{}, error)) {

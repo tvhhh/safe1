@@ -3,7 +3,6 @@ module github.com/tvhhh/safe1/services/data
 go 1.16
 
 require (
-	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
 	github.com/sirupsen/logrus v1.8.1

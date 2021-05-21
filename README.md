@@ -68,8 +68,8 @@ To connect to development server (i.e. the host running the RN process), you mus
 adb devices
 
 # Port-forwarding
-adb -s $DEVICE-NAME reverse tcp:8081 tcp:8080
-# Now when your device is trying to access local port 8081 (localhost:8081), that request will be routed to your host’s port 8080.
+adb -s $DEVICE-NAME reverse tcp:3000 tcp:80
+# Now when your device is trying to access local port 3000 (localhost:3000), that request will be routed to your host’s port 80.
 ```
 
 # Build safe1 services
@@ -120,3 +120,49 @@ CONTAINER ID   IMAGE                                 COMMAND                  CR
 ```
 docker-compose down
 ```
+
+# Step by step to build and run services
+Open file `.env` in `safe1/safe1` directory and edit as follow
+```
+# If you use your Android device
+API_URL=localhost:3000
+
+# If you use Android emulator
+API_URL=10.0.2.2
+```
+
+Build and run services
+```
+# Go to safe1/services directory
+cd $PATH-TO-SERVICES
+
+# Build docker images
+./build-services.sh
+
+# Run Docker compose
+docker-compose up -d
+```
+
+Open a terminal and run React Native start (remember to run in RN directory)
+```
+npx react-native start
+```
+
+Open another terminal and run React Native
+```
+npx react-native run-android
+
+# If you use your device
+adb reverse tcp:3000 tcp:80
+```
+
+Once app is successfully built and run, login then choose My Buildings option and create a building with any name and address, and register just 1 device with name `LED` and topic `tvhhh/feeds/bk-iot-led`
+
+Open My Buildings tab, you'll see the latest received data
+
+Open terminal and run this command to test receiving data
+```
+# Remember to replace $ADAFRUIT-KEY with my secret key on IO Adafruit
+mosquitto_pub -h io.adafruit.com -p 1883 -u tvhhh -P $ADAFRUIT-KEY -t tvhhh/feeds/bk-iot-led -m "{\"id\":\"1\",\"name\":\"LED\",\"data\":\"5\",\"unit\":\"\"}"
+```
+You can use any arbitrary data value (string format), the data is expected to be displayed on app screen immediately.

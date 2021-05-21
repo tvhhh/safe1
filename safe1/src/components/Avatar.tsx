@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { connect, ConnectedProps } from 'react-redux';
-import User from '@/models/users';
+import { User } from '@/models';
 import { State } from '@/redux/state';
 
 const mapStateToProps = (state: State) => ({

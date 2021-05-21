@@ -15,7 +15,6 @@ import (
 
 type Client struct {
 	broker     string
-	closeChan  chan struct{}
 	mqttClient mqtt.Client
 	msgChan    chan []byte
 	mu         sync.Mutex
@@ -26,12 +25,11 @@ type Client struct {
 
 func New(conn *websocket.Conn, broker, username, password string) *Client {
 	return &Client{
-		broker:    broker,
-		closeChan: make(chan struct{}),
-		msgChan:   make(chan []byte),
-		password:  password,
-		username:  username,
-		wsConn:    conn,
+		broker:   broker,
+		msgChan:  make(chan []byte),
+		password: password,
+		username: username,
+		wsConn:   conn,
 	}
 }
 
@@ -55,6 +53,8 @@ func Serve(w http.ResponseWriter, r *http.Request, broker, username, password st
 
 	go c.waitToReceive()
 	go c.listenToMsgChan()
+
+	c.handleDisconnect()
 }
 
 // WebSocket part
@@ -73,14 +73,8 @@ func (c *Client) waitToReceive() {
 }
 
 func (c *Client) listenToMsgChan() {
-loop:
-	for {
-		select {
-		case msg := <-c.msgChan:
-			c.respond(msg)
-		case <-c.closeChan:
-			break loop
-		}
+	for msg := range c.msgChan {
+		c.respond(msg)
 	}
 }
 
@@ -151,6 +145,15 @@ func (c *Client) respond(msg []byte) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.wsConn.WriteMessage(websocket.TextMessage, msg)
+}
+
+func (c *Client) handleDisconnect() {
+	c.wsConn.SetCloseHandler(func(code int, text string) error {
+		if c.mqttClient != nil {
+			c.mqttClient.Disconnect(250)
+		}
+		return nil
+	})
 }
 
 // End WebSocket part
