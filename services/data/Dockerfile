@@ -28,7 +28,7 @@ RUN apk add ca-certificates
 COPY --from=build_base /tmp/services/data/out/data /app/services/data
 
 # This container exposes port 8080 to the outside world
-EXPOSE 8010
+EXPOSE 8000
 
 # Run the binary program produced by `go install`
 CMD ["/app/services/data"]
