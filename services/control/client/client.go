@@ -78,27 +78,27 @@ func (c *Client) listenToMsgChan() {
 	}
 }
 
-func (c *Client) validateWsMessage(pack map[string]interface{}) (string, string, interface{}, error) {
+func (c *Client) validateWsMessage(pack map[string]interface{}) (string, string, string, error) {
 	var action string
 	var topic string
-	var payload interface{}
+	var payload string
 
 	if a, ok := pack["action"]; !ok {
-		return "", "", nil, errors.New("missing action")
+		return "", "", "", errors.New("missing action")
 	} else {
 		action = a.(string)
 	}
 
 	if t, ok := pack["topic"]; !ok {
-		return "", "", nil, errors.New("missing topic")
+		return "", "", "", errors.New("missing topic")
 	} else {
 		topic = t.(string)
 	}
 
 	if p, ok := pack["payload"]; !ok {
-		return "", "", nil, errors.New("missing payload")
+		return "", "", "nil", errors.New("missing payload")
 	} else {
-		payload = p
+		payload = p.(string)
 	}
 
 	return action, topic, payload, nil
@@ -120,7 +120,7 @@ func (c *Client) request(msg []byte) {
 
 	switch action {
 	case "init":
-		clientId := payload.(string)
+		clientId := payload
 		if err := c.initMqtt(c.broker, clientId, c.username, c.password); err != nil {
 			log.WithFields(log.Fields{"error": err}).Error("MQTT server connection failed")
 		}
@@ -152,6 +152,7 @@ func (c *Client) handleDisconnect() {
 		if c.mqttClient != nil {
 			c.mqttClient.Disconnect(250)
 		}
+		close(c.msgChan)
 		return nil
 	})
 }
@@ -166,7 +167,7 @@ func (c *Client) initMqtt(broker, clientId, username, password string) error {
 	opts.SetClientID(clientId)
 	opts.SetUsername(username)
 	opts.SetPassword(password)
-	opts.SetAutoReconnect(true)
+	opts.SetAutoReconnect(false)
 	opts.SetCleanSession(false)
 	opts.SetDefaultPublishHandler(c.mqttMessageHandler)
 	opts.SetOnConnectHandler(c.mqttConnectHandler)
@@ -223,7 +224,7 @@ func (c *Client) unsubscribeMqttTopic(topic string) error {
 	return nil
 }
 
-func (c *Client) publishMqttTopic(topic string, msg interface{}) error {
+func (c *Client) publishMqttTopic(topic string, msg string) error {
 	if c.mqttClient == nil {
 		return errors.New("MQTT client not established yet")
 	}

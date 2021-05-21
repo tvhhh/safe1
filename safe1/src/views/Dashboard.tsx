@@ -1,10 +1,8 @@
 import React from 'react';
 import {
-  Animated,
   Dimensions,
   StyleSheet,
   Text,
-  TextInputBase,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -14,22 +12,30 @@ import Label from '@/components/Label'
 import Feather from 'react-native-vector-icons/Feather'
 import { TabView, SceneMap } from 'react-native-tab-view'
 
-const {height, width} = Dimensions.get('screen')
+const { width } = Dimensions.get('screen');
 
 interface Props {
   navigation: any,
 };
 
-class Dashboard extends React.Component<Props> {
-  state = {
-    index: 0,
-    routes: [
-      { key: 'day', title: 'Day' },
-      { key: 'hour', title: 'Hour' },
-      { key: 'minute', title: 'Minute' },
-      { key: 'second', title: 'Second' },
-    ],
-  };
+interface State {
+  index: number,
+  routes: any
+};
+
+class Dashboard extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      index: 0,
+      routes: [
+        { key: 'day', title: 'Day' },
+        { key: 'hour', title: 'Hour' },
+        { key: 'minute', title: 'Minute' },
+        { key: 'second', title: 'Second' },
+      ],
+    };
+  }
 
   _handleIndexChange = (index: any) => this.setState({ index });
   _renderTabBar = (props: any) => {
@@ -55,7 +61,7 @@ class Dashboard extends React.Component<Props> {
                 borderColor: `rgba(255, 255, 255, ${opacity}`,
                 
               }}
-              onPress={() => {this.setState({ index: i });console.log('' + opacity.toString())}}>
+              onPress={() => this.setState({ index: i })}>
               <Text style={{ opacity: opacity, color: 'white' }}>{route.title}</Text>
             </TouchableOpacity>
           );
@@ -63,6 +69,7 @@ class Dashboard extends React.Component<Props> {
       </View>
     );
   };
+
   render(){
     let lineChartProps = {
       data: {
@@ -165,7 +172,6 @@ class Dashboard extends React.Component<Props> {
             buttonPrimaryTextColor='black'
             buttonSecondaryTextColor='black'
             iconBoxColor = '#F8E7E7'
-            
           />
         </View>
       </LinearGradient>

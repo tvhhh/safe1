@@ -37,27 +37,20 @@ export default class Label extends React.Component<Props> {
   }
 };
 
-Label.defaultProps = {
-  buttonPrimaryTextColor: 'white',
-  buttonSecondaryTextColor: 'white',
-  iconBoxColor: 'rgba(255, 255, 255, 0.2)',
-  borderBottomWidth: 0
-}
-
 const styles = (props: any) => StyleSheet.create({
   button: {
     padding: 10,
     borderRadius: 5,
     flexDirection: 'row',
-    borderBottomWidth: props.borderBottomWidth,
+    borderBottomWidth: props.borderBottomWidth || 0,
     borderColor: `rgba(128, 128, 128, 0.15)`
   },
   buttonPrimaryText: {
-    color: props.buttonPrimaryTextColor,
+    color: props.buttonPrimaryTextColor || 'white',
     fontSize: 16,
   },
   buttonSecondaryText: {
-    color: props.buttonSecondaryTextColor,
+    color: props.buttonSecondaryTextColor || 'white',
     opacity: 0.75,
     fontSize: 12,
   },
@@ -66,7 +59,7 @@ const styles = (props: any) => StyleSheet.create({
     paddingLeft: 30
   },
   iconBox: {
-    backgroundColor: props.iconBoxColor,
+    backgroundColor: props.iconBoxColor || 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     aspectRatio: 1,

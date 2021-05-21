@@ -4,7 +4,7 @@ import store from '@/redux/store';
 import actions from '@/redux/actions';
 
 class ControlService {
-  public ws: WebSocket | undefined;
+  public ws?: WebSocket;
 
   connect = () => {
     this.ws = new WebSocket(controlUrl);
@@ -58,7 +58,7 @@ class ControlService {
     this.dispatchMessage({
       action: "pub",
       topic: device.topic,
-      payload: msg
+      payload: JSON.stringify(msg)
     });
   }
 
@@ -67,11 +67,11 @@ class ControlService {
   }
 
   dispatchMessage = (request: Request) => {
-    this.ws?.send(JSON.stringify(request));
+    if (this.ws) this.ws.send(JSON.stringify(request));
   }
 
   close = () => {
-    this.ws?.close();
+    if (this.ws) this.ws.close();
   }
 };
 

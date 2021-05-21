@@ -13,6 +13,7 @@ import { User } from '@/models';
 import store from '@/redux/store';
 import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
+import ControlService from '@/services/control.service';
 import DataService from '@/services/data.service';
 
 const { height, width } = Dimensions.get('screen');
