@@ -1,8 +1,8 @@
 import React from 'react';
 import {View} from 'react-native';
 
-import {Styles} from '../styles/sectionGrid';
-import {ListItem} from '../utils/listItem';
+import {Styles} from '@/styles/sectionGrid';
+import {ListItem} from '@/utils/ListItem';
 
 const ItemList = [
   { id: 1, 
