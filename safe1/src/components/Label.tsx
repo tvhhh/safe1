@@ -10,52 +10,67 @@ interface Props {
   name: string,
   description: string,
   icon: JSX.Element,
-  onPress: () => void
+  onPress: () => void,
+  buttonPrimaryTextColor?: string,
+  buttonSecondaryTextColor?: string,
+  iconBoxColor?: string,
+  borderBottomWidth?: number
 }
 
 export default class Label extends React.Component<Props> {
   render() {
     return (
       <TouchableOpacity
-        style={styles.button}
+        style={styles(this.props).button}
         onPress={this.props.onPress}
       >
-        <View style={styles.iconBox}>
+        <View style={styles(this.props).iconBox}>
           {this.props.icon}
         </View>
-        <View style={styles.buttonTextContainer}>
-          <Text style={styles.buttonPrimaryText}>{this.props.name}</Text>
-          <Text style={styles.buttonSecondaryText}>{this.props.description}</Text>
+        <View style={styles(this.props).buttonTextContainer}>
+          <Text style={styles(this.props).buttonPrimaryText}>{this.props.name}</Text>
+          {this.props.description ? 
+          <Text style={styles(this.props).buttonSecondaryText}>{this.props.description}</Text>: null}
         </View>
       </TouchableOpacity>
     );
   }
 };
 
-const styles = StyleSheet.create({
+Label.defaultProps = {
+  buttonPrimaryTextColor: 'white',
+  buttonSecondaryTextColor: 'white',
+  iconBoxColor: 'rgba(255, 255, 255, 0.2)',
+  borderBottomWidth: 0
+}
+
+const styles = (props: any) => StyleSheet.create({
   button: {
     padding: 10,
     borderRadius: 5,
     flexDirection: 'row',
+    borderBottomWidth: props.borderBottomWidth,
+    borderColor: `rgba(128, 128, 128, 0.15)`
   },
   buttonPrimaryText: {
-    color: 'white',
+    color: props.buttonPrimaryTextColor,
     fontSize: 16,
   },
   buttonSecondaryText: {
-    color: 'white',
+    color: props.buttonSecondaryTextColor,
     opacity: 0.75,
     fontSize: 12,
   },
   buttonTextContainer: {
+    justifyContent: 'center',
     paddingLeft: 30
   },
   iconBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: props.iconBoxColor,
     justifyContent: 'center',
     alignItems: 'center',
     aspectRatio: 1,
-    borderRadius: 10,
+    borderRadius: 16,
     padding: 6,
   }
 });

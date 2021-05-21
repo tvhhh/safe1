@@ -52,6 +52,10 @@ export default class Home extends React.Component<Props, State> {
     }
   }
 
+  // pingTest()  {
+  //   fetch("http://10.0.2.2:8080/data/ping", {method: "GET"}).catch((error) => {console.log(error)})
+  // }
+
   render() {
     return (
       <LinearGradient 
@@ -76,7 +80,7 @@ export default class Home extends React.Component<Props, State> {
             name="Dashboard" 
             description="Statistics and Analysis" 
             icon={<Feather name="activity" color='white' size={40}/>}
-            onPress={this.navigate("Dashboard")}
+            onPress={this.navigate('Dashboard')}
           />
           <Label 
             name="Remote Control" 

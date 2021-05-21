@@ -1,52 +1,174 @@
 import React from 'react';
 import {
+  Animated,
   Dimensions,
   StyleSheet,
   Text,
+  TextInputBase,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import LinearGradient from 'react-native-linear-gradient'
+import { LineChart } from 'react-native-chart-kit'
+import Label from '@/components/Label'
+import Feather from 'react-native-vector-icons/Feather'
+import { TabView, SceneMap } from 'react-native-tab-view'
 
 const {height, width} = Dimensions.get('screen')
-const data = {
-  labels: ["January", "February", "March", "April", "May", "June"],
-  datasets: [
-    {
-      data: [20, 45, 28, 80, 99, 43],
-      color: (opacity = 1) => `rgba(25, 65, 244, ${opacity})`, // optional
-      strokeWidth: 2 // optional
-    }
-  ],
-  legend: ["Rainy Days"] // optional
-};
-const chartConfig = {
-  backgroundGradientFrom: "#1E2923",
-  backgroundGradientFromOpacity: 0.1,
-  backgroundGradientTo: "#08130D",
-  backgroundGradientToOpacity: 1,
-  color: (opacity = 1) => `rgba(76, 25, 16, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false // optional
+
+interface Props {
+  navigation: any,
 };
 
-class Dashboard extends React.Component {
-  render(){
+class Dashboard extends React.Component<Props> {
+  state = {
+    index: 0,
+    routes: [
+      { key: 'day', title: 'Day' },
+      { key: 'hour', title: 'Hour' },
+      { key: 'minute', title: 'Minute' },
+      { key: 'second', title: 'Second' },
+    ],
+  };
+
+  _handleIndexChange = (index: any) => this.setState({ index });
+  _renderTabBar = (props: any) => {
+    const inputRange = props.navigationState.routes.map((x: any, i: any) => i);
+
     return (
-      <View style={styles.container}>
-        <View style={styles.chart}>
-          <LineChart
-          data={data}
-          width={width}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
+      <View style={styles.tabBar}>
+        {props.navigationState.routes.map((route: any, i: any) => {
+          const opacity = props.position.interpolate({
+            inputRange,
+            outputRange: inputRange.map((inputIndex: any) =>
+              inputIndex === i ? 1 : 0.5
+            ),
+          });
+
+          return (
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                borderBottomWidth: 1,
+                padding: 16,
+                borderColor: `rgba(255, 255, 255, ${opacity}`,
+                
+              }}
+              onPress={() => {this.setState({ index: i });console.log('' + opacity.toString())}}>
+              <Text style={{ opacity: opacity, color: 'white' }}>{route.title}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  };
+  render(){
+    let lineChartProps = {
+      data: {
+        labels: ["January", "February", "March", "April", "May", "June", "July"],
+        datasets: [
+          {
+            data: [
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100,
+              Math.random() * 100
+            ]
+          }
+        ]
+      },
+      width: width * 1.2, // from react-native
+      height: 220,
+      yAxisLabel: "$",
+      yAxisSuffix: "k",
+      yAxisInterval: 1, // optional, defaults to 1
+      chartConfig: {
+        strokeWidth: 2,
+        backgroundGradientFromOpacity: 0,
+        backgroundGradientToOpacity: 0,
+        backgroundGradientTo: "#ffa726",
+        color: () => `rgba(141, 193, 255, 1)`,
+        labelColor: () => 'white',
+        style: {
+          borderRadius: 16
+        },
+        propsForDots: {
+          r: "0",
+        },
+        propsForBackgroundLines: {
+          strokeDasharray: "", // solid background lines with no dashes
+          opacity: 0.15
+        }
+      },
+      withHorizontalLabels: false,
+      withHorizontalLines: false,
+      bezier: true,
+      style: styles.chart
+    }
+    const Route = () => (
+      <LineChart {...lineChartProps}/>
+    );
+
+    return (
+      <LinearGradient 
+        colors={['#4F9FFF', '#002150']} 
+        style={styles.container}
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 0.5}}
+      >
+        <View style={styles.headerContainer}></View>
+        <TabView
+          lazy
+          navigationState={this.state}
+          renderScene={SceneMap({
+            day: Route,
+            hour: Route,
+            minute: Route,
+            second: Route
+          })}
+          onIndexChange={this._handleIndexChange}
+          initialLayout={{ width: Dimensions.get('window').width }}
+          style={styles.chartContainer}
+          renderTabBar = {this._renderTabBar}
+        />
+        
+        
+        <View style={styles.optionContainer}>
+          <Label
+            name = "Gas Concentration"
+            description = "Manage gas leakage frequency"
+            icon={<Feather name="activity" color='#713BDB' size={40}/>}
+            onPress = {() => {}}
+            buttonPrimaryTextColor='black'
+            buttonSecondaryTextColor='black'
+            iconBoxColor = '#F8E7E7'
+            borderBottomWidth= {0.5}
+          />
+          <Label
+            name = "Temperature"
+            description = "Manage temperature pattern"
+            icon={<Feather name="thermometer" color='#FF0000' size={40}/>}
+            onPress = {() => {}}
+            buttonPrimaryTextColor='black'
+            buttonSecondaryTextColor='black'
+            iconBoxColor = '#F8E7E7'
+            borderBottomWidth= {0.5}
+          />
+          <Label
+            name = "Export"
+            description = "Export logs"
+            icon={<Feather name="external-link" color='#713BDB' size={40}/>}
+            onPress = {() => {}}
+            buttonPrimaryTextColor='black'
+            buttonSecondaryTextColor='black'
+            iconBoxColor = '#F8E7E7'
+            
           />
         </View>
-        <View style={styles.option}>
-          <Text>asdasdas</Text>
-        </View>
-      </View>
+      </LinearGradient>
     )
   }
 }
@@ -56,15 +178,32 @@ export default Dashboard;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue'
+  },
+  headerContainer: {
+    flex: 1.5
+  },
+  filterContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+  chartContainer: {
+    flex: 5
   },
   chart: {
-    height: height/2
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  option: {
-    flexDirection: 'row',
-    borderRadius: 30,
+  optionContainer: {
+    flex: 4,
+    paddingLeft: 10,
     backgroundColor: 'white',
-    height: height/2
-  }
+    opacity: 1,
+    justifyContent: 'center',
+    borderTopStartRadius: 16,
+    borderTopEndRadius: 16,
+  },
+  tabBar: {
+    flexDirection: 'row'
+  },
 });
