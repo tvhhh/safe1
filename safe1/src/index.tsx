@@ -1,25 +1,34 @@
 import React from 'react';
+import { AppState, AppStateStatus, StatusBar } from 'react-native';
+import { Provider } from 'react-redux';
+import Safe1Container from '@/containers';
+import StorageService from '@/services/storage.service';
+import store from '@/redux/store';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
-import { Home, Dashboard,NotificationHistory,NotificationDaily, Login } from './views';
+export default class Safe1 extends React.Component {
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+    StatusBar.setBackgroundColor('transparent');
+    StatusBar.setTranslucent(true);
+  }
 
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
 
-const { Navigator, Screen } = createStackNavigator()
+  handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'background' || nextAppState === 'inactive') {
+      StorageService.setUser(store.getState().currentUser);
+      StorageService.setBuildings(store.getState().buildings);
+      if (store.getState().defaultBuilding) StorageService.setDefaultBuilding(store.getState().defaultBuilding);
+    }
+  }
 
-class Safe1 extends React.Component{
   render() {
     return (
-      <NavigationContainer>
-        <Navigator>
-          <Screen name="Home" component={Home} options={{headerShown: false}}></Screen>
-          <Screen name="Dashboard" component={Dashboard} options={{headerStyle: {backgroundColor: 'transparent'}}}></Screen>
-          <Screen name="NotificationHistory" component={NotificationHistory} options={{ title: "NOTIFICATION", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
-          <Screen name="NotificationDaily" component={NotificationDaily}options={{ title: "NOTIFICATION DAILY", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
-          <Screen name="Login" component={Login}></Screen>
-        </Navigator>
-      </NavigationContainer>
-    )
+      <Provider store={store}>
+        <Safe1Container />
+      </Provider>
+    );
   }
-}
-export default Safe1;
+};

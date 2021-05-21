@@ -1,6 +1,14 @@
-import Home from './home'
-import Dashboard from './dashboard'
-import Login from './login'
-import NotificationHistory from './NotificationHistory'
-import NotificationDaily from './NotificationDaily'
-export {Home, Dashboard, NotificationHistory, NotificationDaily , Login}
+import CreateBuilding from '@/views/CreateBuilding';
+import Dashboard from '@/views/Dashboard';
+import Home from '@/views/Home';
+import MyBuildings from '@/views/MyBuildings';
+import NotificationHistory from '@/views/NotificationHistory'
+import NotificationDaily from '@/views/NotificationDaily'
+export {
+  CreateBuilding,
+  Dashboard,
+  Home,
+  MyBuildings,
+  NotificationHistory,
+  NotificationDaily
+};

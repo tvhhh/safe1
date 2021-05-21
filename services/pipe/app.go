@@ -62,7 +62,7 @@ func (a *App) messageHandler(client mqtt.Client, msg mqtt.Message) {
 		return
 	}
 
-	if err := api.UpdateTopicData(msg.Topic(), payload); err != nil {
+	if err := api.UpdateTopicData(payload); err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("Error calling api UpdateTopicData")
 		return
 	}
