@@ -98,7 +98,7 @@ export default class Home extends React.Component<Props, State> {
             name="Notification" 
             description="Manage your notifications" 
             icon={<Feather name ="bell" color='white' size={40}/>}
-            onPress={() => {}}
+            onPress={this.navigate('NotificationHistory')}
           />
           <Label 
             name="Settings" 

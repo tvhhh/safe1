@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, SectionList, Text, StyleSheet, Image } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { State, TouchableOpacity } from 'react-native-gesture-handler';
 import NotificationDaily from './NotificationDaily'
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,7 +10,7 @@ interface Props {
     navigation: any
 }
 
-const Tab = createBottomTabNavigator();
+// const Tab = createBottomTabNavigator();
 const RoomList = [
     {
         title: "14 April",

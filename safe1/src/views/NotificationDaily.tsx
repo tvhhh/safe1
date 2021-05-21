@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, SectionList, Text, StyleSheet, Image } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -8,7 +8,7 @@ interface Props {
     navigation: any
   }
 
-const Tab = createBottomTabNavigator();
+// const Tab = createBottomTabNavigator();
 const RoomList = [
     {
         title: "Kitchen",
