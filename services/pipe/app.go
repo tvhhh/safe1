@@ -23,7 +23,7 @@ func (a *App) Initialize(broker, username, key string) {
 	opts.SetClientID("pipe-service")
 	opts.SetUsername(username)
 	opts.SetPassword(key)
-	opts.SetAutoReconnect(true)
+	opts.SetAutoReconnect(false)
 	opts.SetDefaultPublishHandler(a.messageHandler)
 	opts.SetOnConnectHandler(func(c mqtt.Client) {
 		log.Info("Pipe connected")
