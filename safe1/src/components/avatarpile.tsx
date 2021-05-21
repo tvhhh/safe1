@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import FacePile from '../utils/AvatarPile';
+import FacePile from '../utils/avatarPile';
 
 const FACES = [
   {

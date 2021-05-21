@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 
 import {Styles} from '../styles/sectionGrid';
-import {ListItem} from '../utils/ListItem';
+import {ListItem} from '../utils/listItem';
 
 const ItemList = [
   { id: 1, 
