@@ -8,14 +8,28 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+
+import { User } from '@/models';
+import store from '@/redux/store';
+import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
+import DataService from '@/services/data.service';
 
 const { height, width } = Dimensions.get('screen');
 
 export default class SignInContainer extends React.Component {
-  async signInWithGoogle() {
+  async signIn() {
     try {
-      await AuthService.signInWithGoogle();
+      let user = await AuthService.signInWithGoogle();
+      if (user == null) return;
+      let respondedUser = await DataService.createUser(user as User);
+      if (respondedUser === undefined) return;
+      store.dispatch(actions.setCurrentUser(respondedUser));
+      let respondedBuildings = await DataService.getUserBuildings({ uid: respondedUser.uid });
+      if (respondedBuildings === undefined) return;
+      store.dispatch(actions.setBuildings(respondedBuildings));
+      if (respondedBuildings.length === 0) return;
+      store.dispatch(actions.setDefaultBuilding(respondedBuildings[0]));
     } catch (err) {
       console.error(`Error signing in: ${err}`);
     }
@@ -47,7 +61,7 @@ export default class SignInContainer extends React.Component {
             style={styles.button}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Dark}
-            onPress={this.signInWithGoogle}
+            onPress={this.signIn}
           />
         </View>
       </LinearGradient>

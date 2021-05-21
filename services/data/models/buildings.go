@@ -3,21 +3,16 @@ package models
 import (
 	"encoding/json"
 
-	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 )
 
 type Building struct {
-	ID      uuid.UUID `json:"id" gorm:"primaryKey"`
-	Name    string    `json:"name"`
-	Address string    `json:"address"`
-	Devices []Device  `gorm:"foreignKey:Building"`
-}
-
-func (b *Building) BeforeCreate(db *gorm.DB) error {
-	var err error
-	b.ID, err = uuid.NewV4()
-	return err
+	Address string   `json:"address"`
+	Devices []Device `json:"devices" gorm:"foreignKey:Building;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Name    string   `json:"name" gorm:"primaryKey"`
+	Members []User   `json:"members" gorm:"many2many:user_buildings;references:Uid;joinReferences:UserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	OwnerID string   `json:"ownerId"`
+	Owner   User     `json:"owner" gorm:"foreignKey:OwnerID"`
 }
 
 func CreateBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
@@ -26,6 +21,23 @@ func CreateBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
 	json.Unmarshal(byteStream, &b)
 
 	if err := db.Create(&b).Error; err != nil {
+		return nil, err
+	}
+
+	return &b, nil
+}
+
+func GetBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
+	payload := params.(map[string]interface{})
+	buildingName := payload["buildingName"].(string)
+
+	var b Building
+	if err := db.
+		Model(&Building{Name: buildingName}).
+		Preload("Devices").
+		Preload("Owner").
+		Preload("Members").
+		First(&b).Error; err != nil {
 		return nil, err
 	}
 

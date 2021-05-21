@@ -35,8 +35,8 @@ func send(route string, payload map[string]interface{}) ([]byte, int, error) {
 	}
 }
 
-func UpdateTopicData(topic string, data map[string]interface{}) error {
-	_, _, err := send("/updateData", map[string]interface{}{"topic": topic, "data": data})
+func UpdateTopicData(data map[string]interface{}) error {
+	_, _, err := send("/updateData", data)
 	if err != nil {
 		return err
 	}

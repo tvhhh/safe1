@@ -10,7 +10,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import { Avatar, Label } from '@/components';
+
+import store from '@/redux/store';
+import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
+import ControlService from '@/services/control.service';
+import StorageService from '@/services/storage.service';
 
 interface Props {
   navigation: any,
@@ -36,9 +41,12 @@ export default class Home extends React.Component<Props, State> {
     return () => this.props.navigation.navigate(screenName);
   }
 
-  async signOut() {
+  signOut = async () => {
     try {
       await AuthService.signOut();
+      ControlService.close();
+      store.dispatch(actions.resetState());
+      await StorageService.clear();
     } catch (err) {
       console.error(`Error signing out: ${err}`);
     }
@@ -81,10 +89,10 @@ export default class Home extends React.Component<Props, State> {
             onPress={() => {}}
           />
           <Label 
-            name="Your Buildings" 
-            description="Manage your buildings"
+            name="My Buildings" 
+            description="Manage buildings"
             icon={<Feather name ="home" color='white' size={40}/>}
-            onPress={() => {}}
+            onPress={this.navigate("My Buildings")}
           />
           <Label 
             name="Notification" 
@@ -116,6 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     alignItems: 'center',
     paddingHorizontal: 20,
+    paddingTop: 15
   },
   overlay: {
     flexDirection: 'row',
