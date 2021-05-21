@@ -1,6 +1,6 @@
 export default interface Message {
   id: string,
   name: string,
-  data: number | string,
+  data: string,
   unit: string
 };

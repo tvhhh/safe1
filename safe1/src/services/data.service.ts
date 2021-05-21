@@ -1,7 +1,6 @@
 import { dataUrl } from '@/api/url';
 import HttpService from '@/services/http.service';
-import Building from '@/models/buildings';
-import User from '@/models/users';
+import { Building, User } from '@/models';
 
 class DataService {
   createUser(payload: User): Promise<User | void> {
@@ -15,6 +14,13 @@ class DataService {
     return HttpService.post(`${dataUrl}/createBuilding`, payload)
       .then(response => response.json())
       .then(json => json as Building)
+      .catch(err => console.error(err));
+  }
+
+  getUserBuildings(payload: any): Promise<Building[] | void> {
+    return HttpService.post(`${dataUrl}/getUserBuildings`, payload)
+      .then(response => response.json())
+      .then(json => json as Building[])
       .catch(err => console.error(err));
   }
 
