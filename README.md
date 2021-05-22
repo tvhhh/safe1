@@ -194,7 +194,9 @@ To switch default building, you have to go to My Buildings screen and choose ano
 
 So your work is handling with the information of **defaultBuilding**, also notice the case that **defaultBuilding** is undefined when you are not in any building.
 
-# Debug hints when Docker containers does not run properly
+# Debug hints when Docker containers do not run properly
+Remember to run `build-services.sh` again when you pull any new version.
+
 If you run **docker ps** and see **STATUS** of `safe1/data` is **Restarting ...s ago**, it means the init scripts of postgres are not executed when you start Docker compose, so you have to manually exec postgres and do some stuffs
 ```
 # You can find out $POSTGRES-CONTAINER-ID in docker ps
@@ -225,6 +227,7 @@ docker exec -it $POSTGRES-CONTAINER-ID sh
 > # Any SQL command to retrieve the data
 ```
 
+# Backend services
 It is necessary to understand the function of our Docker containers to easily debug without asking me (tvhhh), I'll briefly say that
 * `safe1/data` is to handle the data and store/query from the PSQL. To understand more about this service, you can read the Golang source code `services/data` and the `safe1/services/data.service.ts` in React Native project.
 * `safe1/control` is the service between our application and Adafruit server, we connect to this service via **WebSocket** and it connects to the Adafruit via **MQTT**, through this service we receive messages from Adafruit as well as publishing messages back to server. To understand more about this service, you can read the Golang source code `services/control` and the `safe1/services/control.service.ts` in React Native project. You should also learn more about mechanism of WebSocket and MQTT by yourself.
