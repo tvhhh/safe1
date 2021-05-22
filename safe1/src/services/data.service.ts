@@ -1,27 +1,34 @@
 import { dataUrl } from '@/api/url';
 import HttpService from '@/services/http.service';
-import { Building, User } from '@/models';
+import { Building, Device, User } from '@/models';
 
 class DataService {
-  createUser(payload: User): Promise<User | void> {
+  createUser(payload: User): Promise<User | null> {
     return HttpService.post(`${dataUrl}/createUser`, payload)
-      .then(response => response.json())
-      .then(json => json as User)
-      .catch(err => console.error(err));
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as User : null)
+      .catch(err => { console.error(err); return null });
   }
 
-  createBuilding(payload: Building): Promise<Building | void> {
+  createBuilding(payload: Building): Promise<Building | null> {
     return HttpService.post(`${dataUrl}/createBuilding`, payload)
-      .then(response => response.json())
-      .then(json => json as Building)
-      .catch(err => console.error(err));
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Building : null)
+      .catch(err => { console.error(err); return null });
   }
 
-  getUserBuildings(payload: any): Promise<Building[] | void> {
+  getUserBuildings(payload: any): Promise<Building[] | null> {
     return HttpService.post(`${dataUrl}/getUserBuildings`, payload)
-      .then(response => response.json())
-      .then(json => json as Building[])
-      .catch(err => console.error(err));
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Building[] : null)
+      .catch(err => { console.error(err); return null });
+  }
+
+  updateDeviceProtection(payload: any): Promise<Device | null> {
+    return HttpService.post(`${dataUrl}/updateDeviceProtection`, { deviceName: payload.name, protection: payload.protection })
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Device : null)
+      .catch(err => { console.error(err); return null });
   }
 
   ping() {
