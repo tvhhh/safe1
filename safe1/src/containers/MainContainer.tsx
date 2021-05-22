@@ -2,17 +2,11 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MyBuildingsContainer from '@/containers/MyBuildingsContainer';
-import { Home, Dashboard,NotificationHistory,NotificationDaily } from '@/views';
-
-import ControlService from '@/services/control.service';
+import { Home, Dashboard, NotificationHistory, NotificationDaily } from '@/views';
 
 const { Navigator, Screen } = createStackNavigator();
 
 export default class MainContainer extends React.Component {
-  componentDidMount() {
-    ControlService.connect();
-  }
-
   render() {
     return (
       <NavigationContainer>

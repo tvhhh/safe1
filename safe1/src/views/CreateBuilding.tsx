@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackButton, Input } from '@/components';
@@ -47,6 +48,15 @@ interface CustomState {
   buildingSettings: Building
 };
 
+const defaultDevice: Device = {
+  name: "",
+  topic: "",
+  deviceType: "gas",
+  region: "",
+  protection: false,
+  data: []
+};
+
 class CreateBuilding extends React.Component<Props, CustomState> {
   constructor(props: Props) {
     super(props);
@@ -54,13 +64,7 @@ class CreateBuilding extends React.Component<Props, CustomState> {
       buildingSettings: {
         name: "",
         address: "",
-        devices: [
-          {
-            name: "",
-            topic: "",
-            data: []
-          }
-        ],
+        devices: [{...defaultDevice}],
         members: this.props.currentUser ? [this.props.currentUser] : [],
         owner: this.props.currentUser
       },
@@ -91,13 +95,29 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     }
   }
 
+  onChangeDeviceRegion = (index: number) => {
+    return (text: string) => {
+      let devices = this.state.buildingSettings.devices;
+      devices[index].region = text;
+      this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
+    }
+  }
+
+  onChangeDeviceType = (index: number) => {
+    return (value: any) => {
+      let devices = this.state.buildingSettings.devices;
+      devices[index].deviceType = value;
+      this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
+    }
+  }
+
   addDeviceInput = () => {
     this.setState({ 
       buildingSettings: {
         ...this.state.buildingSettings,
         devices: [ 
           ...this.state.buildingSettings.devices,
-          { name: "", topic: "", data: [] }
+          {...defaultDevice}
         ]
       }
     });
@@ -106,31 +126,55 @@ class CreateBuilding extends React.Component<Props, CustomState> {
   renderDeviceInputs = (item: Device, index: number) => {
     return (
       <View style={styles.deviceInformationContainer} key={index.toLocaleString()}>
-        <Input 
-          style={{ flex: 1, marginHorizontal: 3 }}
-          placeholder="Device's name"
-          fontSize={14}
-          value={item.name}
-          onChangeText={this.onChangeDeviceName(index)}
-        />
-        <Input 
-          style={{ flex: 1, marginHorizontal: 3 }}
-          placeholder="Device's topic"
-          fontSize={14}
-          value={item.topic}
-          onChangeText={this.onChangeDeviceTopic(index)}
-        />
+        <View style={styles.deviceInformationRow}>
+          <Input 
+            style={{ flex: 1, marginHorizontal: 3 }}
+            placeholder="Device's name"
+            fontSize={14}
+            value={item.name}
+            onChangeText={this.onChangeDeviceName(index)}
+          />
+          <Input 
+            style={{ flex: 1, marginHorizontal: 3 }}
+            placeholder="Device's topic"
+            fontSize={14}
+            value={item.topic}
+            onChangeText={this.onChangeDeviceTopic(index)}
+          />
+        </View>
+        <View style={styles.deviceInformationRow}>
+          <Input 
+            style={{ flex: 1, marginHorizontal: 3 }}
+            placeholder="Device's region"
+            fontSize={14}
+            value={item.region}
+            onChangeText={this.onChangeDeviceRegion(index)}
+          />
+          <Picker
+            style={{ flex: 1, marginHorizontal: 3, color: 'white' }}
+            selectedValue={item.deviceType}
+            onValueChange={(itemValue) => this.onChangeDeviceType(index)(itemValue)}>
+            <Picker.Item label="Gas" value="gas" />
+            <Picker.Item label="Temperature" value="temperature" />
+            <Picker.Item label="Humidity" value="humidity" />
+            <Picker.Item label="Buzzer" value="buzzer" />
+            <Picker.Item label="Power" value="power" />
+            <Picker.Item label="Servo" value="servo" />
+            <Picker.Item label="Sprinkler" value="sprinkler" />
+            <Picker.Item label="Fan" value="fan" />
+          </Picker>
+        </View>
       </View>
     );
   }
 
   onSubmit = () => {
     let building = this.state.buildingSettings;
-    building.devices = building.devices.filter((device: any) => device.name.trim().length * device.topic.trim().length > 0);
+    building.devices = building.devices.filter((device: Device) => device.name.trim().length * device.topic.trim().length * device.region.trim().length > 0);
     this.setState({ buildingSettings: { ...building } });
     DataService.createBuilding(building)
       .then(response => {
-        if (response === undefined) return;
+        if (response === null) return;
         ControlService.sub(response);
         this.props.addBuilding(response);
         if (this.props.defaultBuilding === undefined) this.props.setDefaultBuilding(response);
@@ -208,6 +252,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   deviceInformationContainer: {
+    padding: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 20,
+    marginVertical: 2
+  },
+  deviceInformationRow: {
     flexDirection: 'row'
   },
   addButtonContainer: {
