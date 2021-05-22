@@ -1,10 +1,20 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { View, Text, Image, StyleSheet, Animated } from 'react-native'
+import { View, Text, Image, StyleSheet, Animated, ImageStyle, TextStyle, ViewStyle } from 'react-native'
 
+type face = {
+  id: number,
+  imageUrl: Object
+}
 
+interface Props {
+  imageStyle: ImageStyle | undefined,
+  circleSize: number,
+  face: face,
+  offset: number,
+}
 
-class Circle extends PureComponent {
+class Circle extends PureComponent<Props> {
   render () {
     const { imageStyle, circleSize, face, offset } = this.props
     const innerCircleSize = circleSize * 2
@@ -31,14 +41,14 @@ class Circle extends PureComponent {
   }
 }
 
-export function renderFacePile (faces = [], numFaces) {
+export function renderFacePile (faces: Array<face>, numFaces: number) {
   const entities = [...faces.reverse()]
   if (!entities.length) return {
     facesToRender: [],
     overflow: 0
   }
 
-  const facesWithImageUrls = entities.filter(e => e.imageUrl)
+  const facesWithImageUrls = entities.filter((e: face) => e.imageUrl)
   if (!facesWithImageUrls.length) return {
     facesToRender: [],
     overflow: 0
@@ -53,23 +63,39 @@ export function renderFacePile (faces = [], numFaces) {
   }
 }
 
-export default class FacePile extends PureComponent {
-  static propTypes = {
-    faces: PropTypes.arrayOf(
-      PropTypes.shape({
-        imageUrl: PropTypes.number
-      })
-    ).isRequired,
-    circleSize: PropTypes.number,
-    hideOverflow: PropTypes.bool,
-    containerStyle: PropTypes.instanceOf(StyleSheet),
-    circleStyle: PropTypes.instanceOf(StyleSheet),
-    imageStyle: PropTypes.instanceOf(StyleSheet),
-    overflowStyle: PropTypes.instanceOf(StyleSheet),
-    overflowLabelStyle: PropTypes.instanceOf(StyleSheet),
-    render: PropTypes.func,
-    numFaces: PropTypes.number
-  }
+interface FacePileProps {
+  faces: Array<face>,
+  circleSize: number,
+  hideOverflow?: boolean,
+  containerStyle?: any,
+  overflowStyle?: any,
+  overflowLabelStyle?:any,
+  imageStyle?: ImageStyle,
+  circleStyle?: ViewStyle,
+  render?: Function,
+  numFaces: number,
+  offset: number
+}
+
+
+
+export default class FacePile extends PureComponent<FacePileProps> {
+  // static propTypes = {
+  //   faces: PropTypes.arrayOf(
+  //     PropTypes.shape({
+  //       imageUrl: PropTypes.number
+  //     })
+  //   ).isRequired,
+  //   circleSize: PropTypes.number,
+  //   hideOverflow: PropTypes.bool,
+  //   containerStyle: PropTypes.instanceOf(StyleSheet),
+  //   circleStyle: PropTypes.instanceOf(StyleSheet),
+  //   imageStyle: PropTypes.instanceOf(StyleSheet),
+  //   overflowStyle: PropTypes.instanceOf(StyleSheet),
+  //   overflowLabelStyle: PropTypes.instanceOf(StyleSheet),
+  //   render: PropTypes.func,
+  //   numFaces: PropTypes.number
+  // }
 
   static defaultProps = {
     circleSize: 32,
@@ -78,7 +104,7 @@ export default class FacePile extends PureComponent {
     hideOverflow: false,
   }
 
-  _renderOverflowCircle = overflow => {
+  _renderOverflowCircle = (overflow: number) => {
     const {
       circleStyle,
       overflowStyle,
@@ -92,10 +118,7 @@ export default class FacePile extends PureComponent {
 
     return (
       <View
-        style={[
-          styles.circle,
-          circleStyle
-        ]}
+        style={circleStyle}
       >
         <View
           style={[
@@ -125,15 +148,14 @@ export default class FacePile extends PureComponent {
     )
   }
 
-  _renderFace = (face, index) => {
-    const { circleStyle, imageStyle, circleSize, offset } = this.props
+  _renderFace = (face: face, index: number) => {
+    const { imageStyle, circleSize, offset } = this.props
     if (face && !face.imageUrl) return null
 
     return (
       <Circle
         key={face.id || index}
         face={face}
-        circleStyle={circleStyle}
         imageStyle={imageStyle}
         circleSize={circleSize}
         offset={offset}

@@ -48,7 +48,8 @@ class Safe1Container extends React.Component<Props> {
   }
 
   render() {
-    return (this.props.currentUser ? <MainContainer/> : <SignInContainer/>);
+    // return (this.props.currentUser ? <MainContainer/> : <SignInContainer/>);
+    return(<MainContainer/>)
   }
 };
 

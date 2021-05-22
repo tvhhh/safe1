@@ -16,11 +16,11 @@ interface Props {
   navigation: any
 }
 
-class Remotecontrol extends React.Component<Props>{
+class RemoteControl extends React.Component<Props>{
   state = {
     screenHeight : 0
   };
-  onContentSizeChange = (contentWidth, contentHeight) => {
+  onContentSizeChange = (contentWidth: number, contentHeight: number) => {
     this.setState({screenHeight: contentHeight})
   }
 
@@ -100,7 +100,7 @@ class Remotecontrol extends React.Component<Props>{
   }
 }
 
-export default Remotecontrol;
+export default RemoteControl;
 
 const styles = StyleSheet.create({
   container: {

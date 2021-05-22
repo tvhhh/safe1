@@ -29,8 +29,8 @@ export default class AvatarPile extends Component {
   render () {
     return (
       <FacePile 
-          numFaces={4} 
-          faces={FACES}
+        numFaces={4} 
+        faces={FACES}
       />
     );
   }

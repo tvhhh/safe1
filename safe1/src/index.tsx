@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppState, AppStateStatus, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
-import Safe1Container from '@/containers';
+import Safe1Container from '@/containers/index';
 import StorageService from '@/services/storage.service';
 import store from '@/redux/store';
 
