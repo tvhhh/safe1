@@ -4,7 +4,8 @@ import { colors } from './carousel';
 const IS_IOS = Platform.OS === 'ios';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
-function wp (percentage) {
+
+function wp (percentage: number) {
     const value = (percentage * viewportWidth) / 100;
     return Math.round(value);
 }
@@ -42,7 +43,9 @@ export default StyleSheet.create({
         marginBottom: IS_IOS ? 0 : -1, // Prevent a random Android rendering issue
         backgroundColor: 'white',
         borderTopLeftRadius: entryBorderRadius,
-        borderTopRightRadius: entryBorderRadius
+        borderTopRightRadius: entryBorderRadius,
+        borderBottomLeftRadius: entryBorderRadius,
+        borderBottomRightRadius: entryBorderRadius
     },
     imageContainerEven: {
         backgroundColor: colors.black
@@ -52,9 +55,8 @@ export default StyleSheet.create({
         resizeMode: 'cover',
         borderRadius: IS_IOS ? entryBorderRadius : 0,
         borderTopLeftRadius: entryBorderRadius,
-        borderTopRightRadius: entryBorderRadius
+        borderTopRightRadius: entryBorderRadius,
     },
-    // image's border radius is buggy on iOS; let's hack it!
     radiusMask: {
         position: 'absolute',
         bottom: 0,
@@ -67,33 +69,24 @@ export default StyleSheet.create({
         backgroundColor: colors.black
     },
     textContainer: {
+        position: 'absolute',
         justifyContent: 'center',
-        paddingTop: 20 - entryBorderRadius,
-        paddingBottom: 20,
-        paddingHorizontal: 16,
-        backgroundColor: 'white',
+        padding: 13,
+        backgroundColor: colors.black,
+        bottom: 30,
+        left: itemWidth/4,
+        width: itemWidth/2,
+        opacity: 0.8,
+        borderTopLeftRadius: entryBorderRadius,
+        borderTopRightRadius: entryBorderRadius,
         borderBottomLeftRadius: entryBorderRadius,
         borderBottomRightRadius: entryBorderRadius
     },
-    textContainerEven: {
-        backgroundColor: colors.black
-    },
     title: {
-        color: colors.black,
-        fontSize: 13,
+        color: '#FFFFFF',
+        fontSize: 20,
         fontWeight: 'bold',
-        letterSpacing: 0.5
-    },
-    titleEven: {
-        color: 'white'
-    },
-    subtitle: {
-        marginTop: 6,
-        color: colors.gray,
-        fontSize: 12,
-        fontStyle: 'italic'
-    },
-    subtitleEven: {
-        color: 'rgba(255, 255, 255, 0.7)'
+        letterSpacing: 0.5,
+        textAlign: 'left',
     }
 });

@@ -1,18 +1,23 @@
 import React, { Component } from 'react'
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
-import PropTypes from 'prop-types'
 import { ParallaxImage } from 'react-native-snap-carousel'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from '../styles/sliderEntry'
 
-export default class SliderEntry extends Component {
+const DEVICE = 'sensors'
 
-    static propTypes = {
-        data: PropTypes.object.isRequired,
-        even: PropTypes.bool,
-        parallax: PropTypes.bool,
-        parallaxProps: PropTypes.object
-    };
+interface Props {
+    data: {
+        title: string, 
+        num: string,
+        illustration: string
+    },
+    even: boolean,
+    parallax: boolean,
+    parallaxProps: Object
+}
 
+export default class SliderEntry extends Component<Props> {
     get image () {
         const { data: { illustration }, parallax, parallaxProps, even } = this.props;
 
@@ -35,15 +40,28 @@ export default class SliderEntry extends Component {
     }
 
     render () {
-        const { data: { title, subtitle }, even } = this.props;
+        const { data: { title, num }, even } = this.props;
 
-        const uppercaseTitle = title ? (
-            <Text
-              style={[styles.title, even ? styles.titleEven : {}]}
-              numberOfLines={2}
-            >
-                { title.toUpperCase() }
-            </Text>
+        const Title = num ? (
+            <View style={styles.textContainer}>
+                <Text
+                    style={styles.title}
+                    numberOfLines={2}
+                >
+                    { num.toUpperCase()} {DEVICE}
+                </Text>
+                <Icon 
+                    name={'circle-slice-8'}
+                    size={20}
+                    color={'green'}
+                    style={{    
+                        position: 'absolute',
+                        padding: 13,
+                        right: 0,
+                    }}
+                />
+            </View>
+            
         ) : false;
 
         return (
@@ -55,17 +73,8 @@ export default class SliderEntry extends Component {
                 <View style={styles.shadow} />
                 <View style={[styles.imageContainer, even ? styles.imageContainerEven : {}]}>
                     { this.image }
-                    <View style={[styles.radiusMask, even ? styles.radiusMaskEven : {}]} />
                 </View>
-                <View style={[styles.textContainer, even ? styles.textContainerEven : {}]}>
-                    { uppercaseTitle }
-                    <Text
-                      style={[styles.subtitle, even ? styles.subtitleEven : {}]}
-                      numberOfLines={2}
-                    >
-                        { subtitle }
-                    </Text>
-                </View>
+                { Title }
             </TouchableOpacity>
         );
     }
