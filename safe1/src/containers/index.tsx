@@ -5,7 +5,6 @@ import { State } from '@/redux/state';
 import actions, { Action } from '@/redux/actions';
 import MainContainer from '@/containers/MainContainer';
 import SignInContainer from '@/containers/SignInContainer';
-import DataService from '@/services/data.service';
 import StorageService from '@/services/storage.service';
 
 const mapStateToProps = (state: State) => ({
@@ -34,18 +33,18 @@ interface Props extends ConnectedProps<typeof connector> {
 class Safe1Container extends React.Component<Props> {
   async componentDidMount() {
     let user = await StorageService.getUser();
-    if (user === null) return;
-    this.props.setCurrentUser(user as User);
-    let buildings = await DataService.getUserBuildings({ uid: user.uid });
-    if (buildings === null) {
-      buildings = await StorageService.getBuildings();
-      if (buildings === null) return;
+    if (user !== null) {
+      this.props.setCurrentUser(user as User);
+    }
+    let buildings = await StorageService.getBuildings();
+    if (buildings !== null) {
       this.props.setBuildings(buildings as Building[]);
     }
-    if (buildings.length === 0) return;
+    if (buildings === null || buildings.length === 0) return;
     let defaultBuilding = await StorageService.getDefaultBuilding();
-    if (defaultBuilding === null) return;
-    this.props.setDefaultBuilding(defaultBuilding as Building);
+    if (defaultBuilding !== null) {
+      this.props.setDefaultBuilding(defaultBuilding as Building);
+    }
   }
 
   render() {

@@ -7,12 +7,11 @@ import (
 )
 
 type User struct {
-	Uid         string     `json:"uid" gorm:"primaryKey"`
-	DisplayName string     `json:"displayName"`
-	Email       string     `json:"email"`
-	PhoneNumber string     `json:"phoneNumber"`
-	PhotoURL    string     `json:"photoURL"`
-	Invitations []Building `json:"invitations" gorm:"many2many:user_invitations;foreignKey:Uid;joinForeignKey:UserId"`
+	Uid         string `json:"uid" gorm:"primaryKey"`
+	DisplayName string `json:"displayName"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phoneNumber"`
+	PhotoURL    string `json:"photoURL"`
 }
 
 func CreateUser(db *gorm.DB, params interface{}) (interface{}, error) {
@@ -39,49 +38,6 @@ func GetUserBuildings(db *gorm.DB, params interface{}) (interface{}, error) {
 		Preload("Members").
 		Preload("Devices").
 		Find(&b).Error; err != nil {
-		return nil, err
-	}
-
-	return &b, nil
-}
-
-func GetInvitations(db *gorm.DB, params interface{}) (interface{}, error) {
-	uid := params.(map[string]interface{})["uid"].(string)
-
-	var b []Building
-	if err := db.Model(&User{Uid: uid}).Association("Invitations").Find(&b); err != nil {
-		return nil, err
-	}
-
-	return &b, nil
-}
-
-func AcceptInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
-	payload := params.(map[string]interface{})
-	uid := payload["uid"].(string)
-	buildingName := payload["buildingName"].(string)
-
-	u := User{Uid: uid}
-	b := Building{Name: buildingName}
-	if err := db.Model(&u).Association("Invitations").Delete(&b); err != nil {
-		return nil, err
-	}
-
-	if err := db.Model(&b).Association("Members").Append(&u); err != nil {
-		return nil, err
-	}
-
-	return &b, nil
-}
-
-func DeclineInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
-	payload := params.(map[string]interface{})
-	uid := payload["uid"].(string)
-	buildingName := payload["buildingName"].(string)
-
-	u := User{Uid: uid}
-	b := Building{Name: buildingName}
-	if err := db.Model(&u).Association("Invitations").Delete(&b); err != nil {
 		return nil, err
 	}
 

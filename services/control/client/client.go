@@ -127,29 +127,14 @@ func (c *Client) request(msg []byte) {
 	case "pub":
 		if err := c.publishMqttTopic(topic, payload); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error publishing topic")
-			response := fmt.Sprintf("Publishing %s failed", topic)
-			c.respond([]byte(response))
-		} else {
-			response := fmt.Sprintf("Successfully published %s", topic)
-			c.respond([]byte(response))
 		}
 	case "sub":
 		if err := c.subscribeMqttTopic(topic); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error subscribing topic")
-			response := fmt.Sprintf("Subscribing %s failed", topic)
-			c.respond([]byte(response))
-		} else {
-			response := fmt.Sprintf("Successfully subscribed %s", topic)
-			c.respond([]byte(response))
 		}
 	case "unsub":
 		if err := c.unsubscribeMqttTopic(topic); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error unsubscribing topic")
-			response := fmt.Sprintf("Unsubscribing %s failed", topic)
-			c.respond([]byte(response))
-		} else {
-			response := fmt.Sprintf("Successfully unsubscribed %s", topic)
-			c.respond([]byte(response))
 		}
 	default:
 		log.WithFields(log.Fields{"action": action}).Warn("Unknown action")
@@ -221,7 +206,7 @@ func (c *Client) subscribeMqttTopic(topic string) error {
 	if c.mqttClient == nil {
 		return errors.New("MQTT client not established yet")
 	}
-	if token := c.mqttClient.Subscribe(fmt.Sprintf("%s/feeds/%s", c.username, topic), 1, nil); token.Wait() && token.Error() != nil {
+	if token := c.mqttClient.Subscribe(topic, 1, nil); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 	log.WithFields(log.Fields{"topic": topic}).Info("Subscribed")
@@ -232,7 +217,7 @@ func (c *Client) unsubscribeMqttTopic(topic string) error {
 	if c.mqttClient == nil {
 		return errors.New("MQTT client not established yet")
 	}
-	if token := c.mqttClient.Unsubscribe(fmt.Sprintf("%s/feeds/%s", c.username, topic)); token.Wait() && token.Error() != nil {
+	if token := c.mqttClient.Unsubscribe(topic); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 	log.WithFields(log.Fields{"topic": topic}).Info("Unsubscribed")
@@ -243,7 +228,7 @@ func (c *Client) publishMqttTopic(topic string, msg string) error {
 	if c.mqttClient == nil {
 		return errors.New("MQTT client not established yet")
 	}
-	if token := c.mqttClient.Publish(fmt.Sprintf("%s/feeds/%s", c.username, topic), 0, false, msg); token.Wait() && token.Error() != nil {
+	if token := c.mqttClient.Publish(topic, 0, false, msg); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 	log.WithFields(log.Fields{"topic": topic}).Info("Published")

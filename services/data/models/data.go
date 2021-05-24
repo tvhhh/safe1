@@ -29,7 +29,7 @@ func UpdateData(db *gorm.DB, params interface{}) (interface{}, error) {
 		"Value":  payload["data"],
 	}
 
-	if err := db.Model(&Data{}).Create(data).Error; err != nil {
+	if err := db.Create(data).Error; err != nil {
 		return nil, err
 	}
 
