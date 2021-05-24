@@ -1,8 +1,7 @@
 import React from 'react';
 import { AppState, AppStateStatus, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
-import Safe1Container from '@/containers';
-import ControlService from '@/services/control.service';
+import Safe1Container from '@/containers/index';
 import StorageService from '@/services/storage.service';
 import store from '@/redux/store';
 
@@ -22,7 +21,6 @@ export default class Safe1 extends React.Component {
       StorageService.setUser(store.getState().currentUser);
       StorageService.setBuildings(store.getState().buildings);
       if (store.getState().defaultBuilding) StorageService.setDefaultBuilding(store.getState().defaultBuilding);
-      ControlService.close();
     }
   }
 

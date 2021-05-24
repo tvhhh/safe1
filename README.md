@@ -1,8 +1,3 @@
-**Please read this document and relevant documentations carefully to reduce time wasted for debugging and struggling.**
-
-**Author:** [tvhhh](https://github.com/tvhhh)  
-**Last updated:** 2021, May 22
-
 # Setup server on Adafruit IO
 
 ## Authentication
@@ -127,16 +122,13 @@ docker-compose down
 ```
 
 # Step by step to build and run services
-Open file `url.ts` in `safe1/src/api` directory and edit as follow
+Open file `.env` in `safe1/safe1` directory and edit as follow
 ```
 # If you use your Android device
-const apiUrl = "localhost:3000"
+API_URL=localhost:3000
 
 # If you use Android emulator
-const apiUrl = "10.0.2.2"
-
-# Or another option that always works
-const apiUrl = "YOUR_IP_ADDRESS"
+API_URL=10.0.2.2
 ```
 
 Build and run services
@@ -164,76 +156,13 @@ npx react-native run-android
 adb reverse tcp:3000 tcp:80
 ```
 
-Once app is successfully built and run, login then choose My Buildings option and create a building with any name and address and register some devices.
+Once app is successfully built and run, login then choose My Buildings option and create a building with any name and address, and register just 1 device with name `LED` and topic `tvhhh/feeds/bk-iot-led`
 
-Remember that the topic of a device must be one of follows, please choose appropriate topic to avoid data misuse
-* Gas sensor: `bk-iot-gas`
-* Temperature sensor: `bk-iot-temp-humid`
-* Relay (used for power system, sprinkler, and fan): `bk-iot-relay`
-* Buzzer: `bk-iot-speaker`
-* Just testing: `bk-iot-led`
-  
-Another thing to remember is that names of devices MUST BE UNIQUE, since devices of the same type would subscribe same topic.
+Open My Buildings tab, you'll see the latest received data
 
-# The React Native redux state
-Redux is one of the most useful tools of React Native to build MVC architecture. We have concepts of store, action, and reducer. I'll not say too much about these since they are all available on the [Redux documentation](https://redux.js.org/introduction/getting-started). Instead I'll introduce the models as well as saved state of our application
-## Models
-All declared models in `safe1/src/models`
-
-## State
+Open terminal and run this command to test receiving data
 ```
-type State = {
-  currentUser: User | null,
-  buildings: Building[],
-  defaultBuilding?: Building
-};
+# Remember to replace $ADAFRUIT-KEY with my secret key on IO Adafruit
+mosquitto_pub -h io.adafruit.com -p 1883 -u tvhhh -P $ADAFRUIT-KEY -t tvhhh/feeds/bk-iot-led -m "{\"id\":\"1\",\"name\":\"LED\",\"data\":\"5\",\"unit\":\"\"}"
 ```
-The **currentUser** is yourself which contains the uid. The **buildings** is the list of the buildings that you belong to. The **defaultBuilding** is what you almost work with. Since we only see the received data of just one **defaultBuilding**, so the data displayed on Dashboard, Notification as well as the devices in Remote Control screen is from this building. 
-
-To switch default building, you have to go to My Buildings screen and choose another one but this is my part. 
-
-So your work is handling with the information of **defaultBuilding**, also notice the case that **defaultBuilding** is undefined when you are not in any building.
-
-# Debug hints when Docker containers do not run properly
-Remember to run `build-services.sh` again when you pull any new version.
-
-If you run **docker ps** and see **STATUS** of `safe1/data` is **Restarting ...s ago**, it means the init scripts of postgres are not executed when you start Docker compose, so you have to manually exec postgres and do some stuffs
-```
-# You can find out $POSTGRES-CONTAINER-ID in docker ps
-docker exec -it $POSTGRES-CONTAINER-ID sh
-
-> psql -U postgres
-
-# Now you successfully login to postgres server, let's create database and user
-> create database safe1;
-> create user safe1admin with password 'securepassword';
-> grant all privileges on database safe1 to safe1admin;
-
-# Ctrl+D to exit
-```
-
-In case you want to check the database, do as follow
-```
-docker exec -it $POSTGRES-CONTAINER-ID sh
-> psql -U postgres
-> \c safe1
-
-# Show the list of tables
-> \dt
-
-# Show the columns of a table
-> \d+ table_name
-
-> # Any SQL command to retrieve the data
-```
-
-# Backend services
-It is necessary to understand the function of our Docker containers to easily debug without asking me (tvhhh), I'll briefly say that
-* `safe1/data` is to handle the data and store/query from the PSQL. To understand more about this service, you can read the Golang source code `services/data` and the `safe1/services/data.service.ts` in React Native project.
-* `safe1/control` is the service between our application and Adafruit server, we connect to this service via **WebSocket** and it connects to the Adafruit via **MQTT**, through this service we receive messages from Adafruit as well as publishing messages back to server. To understand more about this service, you can read the Golang source code `services/control` and the `safe1/services/control.service.ts` in React Native project. You should also learn more about mechanism of WebSocket and MQTT by yourself.
-* `safe1/pipe` is not too relavent to our Frontend, it subscribes Adafruit server all the time to receive messages and update the data in our PSQL, our application does not communicate with this. To understand more about this service, you can read the Golang source code `services/pipe`.
-
-To read the logs of a Docker container, use this command
-```
-docker logs $CONTAINER_ID
-```
+You can use any arbitrary data value (string format), the data is expected to be displayed on app screen immediately.

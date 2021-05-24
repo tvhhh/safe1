@@ -11,47 +11,26 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import { Avatar, Label } from '@/components';
 
-import { connect, ConnectedProps } from 'react-redux';
-import { State } from '@/redux/state';
 import store from '@/redux/store';
 import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
 import ControlService from '@/services/control.service';
 import StorageService from '@/services/storage.service';
 
-const mapStateToProps = (state: State) => ({
-  isConnected: state.isConnected,
-});
-
-const connector = connect(mapStateToProps);
-
-interface Props extends ConnectedProps<typeof connector> {
+interface Props {
   navigation: any,
-  isConnected: boolean
 };
 
-interface HomeState {
+interface State {
   showOverlay: boolean
 };
 
-class Home extends React.Component<Props, HomeState> {
+export default class Home extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       showOverlay: false
     };
-  }
-
-  componentDidMount() {
-    if (!this.props.isConnected) {
-      ControlService.connect();
-    }
-  }
-
-  connect = () => {
-    if (!this.props.isConnected) {
-      ControlService.connect();
-    }
   }
 
   toggleOverlay() {
@@ -73,6 +52,10 @@ class Home extends React.Component<Props, HomeState> {
     }
   }
 
+  // pingTest()  {
+  //   fetch("http://10.0.2.2:8080/data/ping", {method: "GET"}).catch((error) => {console.log(error)})
+  // }
+
   render() {
     return (
       <LinearGradient 
@@ -81,10 +64,6 @@ class Home extends React.Component<Props, HomeState> {
         start={{x: 0, y: 0}}
         end={{x: 0, y: 0.5}}
       >
-        {this.props.isConnected ? null : 
-          <TouchableOpacity style={styles.reconnectButton} onPress={this.connect}>
-            <Text style={styles.hotline}>Disconnected! Try again</Text>
-          </TouchableOpacity>}
         <View style={styles.headerCotainer}>
           <Avatar size="medium" onPress={this.toggleOverlay.bind(this)} />
           {this.state.showOverlay ? 
@@ -136,20 +115,9 @@ class Home extends React.Component<Props, HomeState> {
   }
 };
 
-export default connector(Home);
-
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  reconnectButton: {
-    position: 'absolute',
-    top: 20,
-    backgroundColor: 'red',
-    width: Dimensions.get('screen').width,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20
   },
   headerCotainer: {
     flex: 1,

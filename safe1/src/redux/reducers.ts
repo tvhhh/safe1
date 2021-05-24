@@ -13,8 +13,6 @@ const reducer: Reducer<State, Action> = (state=initialState, action: Action): St
     return initialState;
   case ActionType.SET_BUILDINGS:
     return { ...state, buildings: action.payload };
-  case ActionType.SET_CONNECTION:
-    return { ...state, isConnected: action.payload };
   case ActionType.SET_CURRENT_USER:
     return { ...state, currentUser: action.payload };
   case ActionType.SET_DEFAULT_BUILDING:

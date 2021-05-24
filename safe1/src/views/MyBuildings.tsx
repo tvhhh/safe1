@@ -9,6 +9,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building } from '@/models';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import ControlService from '@/services/control.service';
 
 const mapStateToProps = (state: State) => ({
   buildings: state.buildings,
@@ -24,6 +26,17 @@ interface Props extends ConnectedProps<typeof connector> {
 };
 
 class MyBuildings extends React.Component<Props> {
+  publish = () => {
+    ControlService.pub(
+      { name: "LED", topic: "tvhhh/feeds/bk-iot-led", data: [] }, 
+      {
+        id: "1",
+        name: "LED",
+        data: "20",
+        unit: ""
+      });
+  }
+
   render() {
     return (
       <LinearGradient 
@@ -42,6 +55,9 @@ class MyBuildings extends React.Component<Props> {
             {this.props.defaultBuilding?.devices[0].data && this.props.defaultBuilding?.devices[0].data.length > 0 ? 
               this.props.defaultBuilding?.devices[0].data[this.props.defaultBuilding?.devices[0].data.length-1].value : 0}
           </Text>
+          <TouchableOpacity style={{ backgroundColor: 'red' }} onPress={this.publish}>
+            <Text style={{ color:'white' }}>Publish</Text>
+          </TouchableOpacity>
         </View>
       </LinearGradient>
     );

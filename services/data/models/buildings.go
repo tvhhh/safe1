@@ -43,17 +43,3 @@ func GetBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
 
 	return &b, nil
 }
-
-func InviteUser(db *gorm.DB, params interface{}) (interface{}, error) {
-	payload := params.(map[string]interface{})
-	uid := payload["uid"].(string)
-	buildingName := payload["buildingName"].(string)
-
-	u := User{Uid: uid}
-	b := Building{Name: buildingName}
-	if err := db.Model(&u).Association("Invitations").Append(&b); err != nil {
-		return nil, err
-	}
-
-	return map[string]interface{}{"success": true}, nil
-}

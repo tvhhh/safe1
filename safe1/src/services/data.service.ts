@@ -1,34 +1,27 @@
 import { dataUrl } from '@/api/url';
 import HttpService from '@/services/http.service';
-import { Building, Device, User } from '@/models';
+import { Building, User } from '@/models';
 
 class DataService {
-  createUser(payload: User): Promise<User | null> {
+  createUser(payload: User): Promise<User | void> {
     return HttpService.post(`${dataUrl}/createUser`, payload)
-      .then(response => response.status === 200 ? response.json() : null)
-      .then(json => json !== null ? json as User : null)
-      .catch(err => { console.error(err); return null });
+      .then(response => response.json())
+      .then(json => json as User)
+      .catch(err => console.error(err));
   }
 
-  createBuilding(payload: Building): Promise<Building | null> {
+  createBuilding(payload: Building): Promise<Building | void> {
     return HttpService.post(`${dataUrl}/createBuilding`, payload)
-      .then(response => response.status === 200 ? response.json() : null)
-      .then(json => json !== null ? json as Building : null)
-      .catch(err => { console.error(err); return null });
+      .then(response => response.json())
+      .then(json => json as Building)
+      .catch(err => console.error(err));
   }
 
-  getUserBuildings(payload: any): Promise<Building[] | null> {
+  getUserBuildings(payload: any): Promise<Building[] | void> {
     return HttpService.post(`${dataUrl}/getUserBuildings`, payload)
-      .then(response => response.status === 200 ? response.json() : null)
-      .then(json => json !== null ? json as Building[] : null)
-      .catch(err => { console.error(err); return null });
-  }
-
-  updateDeviceProtection(payload: any): Promise<Device | null> {
-    return HttpService.post(`${dataUrl}/updateDeviceProtection`, { deviceName: payload.name, protection: payload.protection })
-      .then(response => response.status === 200 ? response.json() : null)
-      .then(json => json !== null ? json as Device : null)
-      .catch(err => { console.error(err); return null });
+      .then(response => response.json())
+      .then(json => json as Building[])
+      .catch(err => console.error(err));
   }
 
   ping() {

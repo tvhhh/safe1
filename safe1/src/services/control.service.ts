@@ -8,12 +8,10 @@ class ControlService {
 
   connect = () => {
     this.ws = new WebSocket(controlUrl);
-    store.dispatch(actions.setConnection(true));
     this.ws.onopen = this.init;
     this.ws.onmessage = (event: WebSocketMessageEvent) => {
       try {
         if (event.data) {
-          console.log(event.data);
           this.handleMessage(JSON.parse(event.data) as Message);
         }
       } catch (err) {
@@ -21,12 +19,9 @@ class ControlService {
       }
     };
     this.ws.onerror = (event: WebSocketErrorEvent) => {
-      store.dispatch(actions.setConnection(false));
       console.error(`Error establishing Websocket: ${event.message}`);
     };
     this.ws.onclose = (event: WebSocketCloseEvent) => {
-      store.dispatch(actions.setConnection(false));
-      this.close();
       console.log(`Closing Websocket: ${event.message}`);
     };
   }
@@ -44,7 +39,7 @@ class ControlService {
       this.dispatchMessage({
         action: "sub",
         topic: device.topic,
-        payload: ""
+        payload: null
       })
     });
   }
@@ -54,7 +49,7 @@ class ControlService {
       this.dispatchMessage({
         action: "unsub",
         topic: device.topic,
-        payload: ""
+        payload: null
       })
     });
   }
@@ -76,7 +71,6 @@ class ControlService {
   }
 
   close = () => {
-    store.dispatch(actions.setConnection(false));
     if (this.ws) this.ws.close();
   }
 };
