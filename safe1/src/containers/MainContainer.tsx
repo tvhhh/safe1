@@ -2,8 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MyBuildingsContainer from '@/containers/MyBuildingsContainer';
-import { Home, Dashboard, NotificationHistory, NotificationDaily } from '@/views';
-import RemoteControl from '@/views/RemoteControl';
+import { Home, Dashboard, NotificationHistory, NotificationDaily, RemoteControl } from '@/views';
 
 const { Navigator, Screen } = createStackNavigator();
 
