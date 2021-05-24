@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/tvhhh/safe1/services/pipe/api"
 )
@@ -20,13 +21,17 @@ func (a *App) Initialize(broker, username, key string) {
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("tcp://%s", broker))
-	opts.SetClientID("pipe-service")
+	opts.SetClientID(uuid.NewString())
 	opts.SetUsername(username)
 	opts.SetPassword(key)
 	opts.SetAutoReconnect(false)
 	opts.SetDefaultPublishHandler(a.messageHandler)
 	opts.SetOnConnectHandler(func(c mqtt.Client) {
 		log.Info("Pipe connected")
+		if err := a.sub(fmt.Sprintf("%s/feeds/+", username)); err != nil {
+			log.WithFields(log.Fields{"error": err}).Error("Pipe subscription failed")
+			return
+		}
 	})
 	opts.SetConnectionLostHandler(func(c mqtt.Client, err error) {
 		log.WithFields(log.Fields{"error": err}).Error("Pipe disconnected")
@@ -38,11 +43,6 @@ func (a *App) Initialize(broker, username, key string) {
 	a.pipe = mqtt.NewClient(opts)
 	if token := a.pipe.Connect(); token.Wait() && token.Error() != nil {
 		log.WithFields(log.Fields{"error": token.Error()}).Error("Pipe connection failed")
-		return
-	}
-
-	if err := a.sub(fmt.Sprintf("%s/feeds/+", username)); err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("Pipe subscription failed")
 		return
 	}
 }

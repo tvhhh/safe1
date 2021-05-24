@@ -24,10 +24,10 @@ export default class SignInContainer extends React.Component {
       let user = await AuthService.signInWithGoogle();
       if (user == null) return;
       let respondedUser = await DataService.createUser(user as User);
-      if (respondedUser === undefined) return;
+      if (respondedUser === null) return;
       store.dispatch(actions.setCurrentUser(respondedUser));
       let respondedBuildings = await DataService.getUserBuildings({ uid: respondedUser.uid });
-      if (respondedBuildings === undefined) return;
+      if (respondedBuildings === null) return;
       store.dispatch(actions.setBuildings(respondedBuildings));
       if (respondedBuildings.length === 0) return;
       store.dispatch(actions.setDefaultBuilding(respondedBuildings[0]));
