@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { colors } from './carousel';
+import { itemHeight } from './roomSliderEntry';
 
 const IS_IOS = Platform.OS === 'ios';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -24,7 +25,7 @@ export default StyleSheet.create({
         width: itemWidth,
         height: slideHeight,
         paddingHorizontal: itemHorizontalMargin,
-        paddingBottom: 18 // needed for shadow
+        paddingBottom: 10 // needed for shadow
     },
     shadow: {
         position: 'absolute',
@@ -44,8 +45,6 @@ export default StyleSheet.create({
         backgroundColor: 'white',
         borderTopLeftRadius: entryBorderRadius,
         borderTopRightRadius: entryBorderRadius,
-        borderBottomLeftRadius: entryBorderRadius,
-        borderBottomRightRadius: entryBorderRadius
     },
     imageContainerEven: {
         backgroundColor: colors.black
@@ -56,17 +55,6 @@ export default StyleSheet.create({
         borderRadius: IS_IOS ? entryBorderRadius : 0,
         borderTopLeftRadius: entryBorderRadius,
         borderTopRightRadius: entryBorderRadius,
-    },
-    radiusMask: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: entryBorderRadius,
-        backgroundColor: 'white'
-    },
-    radiusMaskEven: {
-        backgroundColor: colors.black
     },
     textContainer: {
         position: 'absolute',
@@ -88,5 +76,34 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         letterSpacing: 0.5,
         textAlign: 'left',
+    },
+    roomTextContainer: {
+        justifyContent: 'center',
+        paddingTop: 10 - entryBorderRadius,
+        paddingBottom: 10,
+        paddingHorizontal: 16,
+        backgroundColor: 'white',
+        borderBottomLeftRadius: entryBorderRadius,
+        borderBottomRightRadius: entryBorderRadius
+    },
+    textContainerEven: {
+        backgroundColor: colors.black
+    },
+    titleEven: {
+        color: 'white'
+    },
+    topTextContainer: {
+        position: 'absolute',
+        justifyContent: 'center',
+        padding: 8,
+        backgroundColor: colors.black,
+        bottom: itemHeight/4,
+        left: itemWidth/4,
+        width: itemWidth/2,
+        opacity: 0.8,
+        borderTopLeftRadius: entryBorderRadius,
+        borderTopRightRadius: entryBorderRadius,
+        borderBottomLeftRadius: entryBorderRadius,
+        borderBottomRightRadius: entryBorderRadius
     }
 });

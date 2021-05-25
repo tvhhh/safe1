@@ -43,7 +43,7 @@ export default class SliderEntry extends Component<Props> {
         const { data: { title, num }, even } = this.props;
 
         const Title = num ? (
-            <View style={styles.textContainer}>
+            <View style={styles.topTextContainer}>
                 <Text
                     style={styles.title}
                     numberOfLines={2}
@@ -63,6 +63,14 @@ export default class SliderEntry extends Component<Props> {
             </View>
             
         ) : false;
+        
+        const uppercaseTitle = title ? (
+            <Text
+              style={[styles.title, , even ? styles.titleEven : {color: 'black'}]}
+            >
+                { title }
+            </Text>
+        ) : false;
 
         return (
             <TouchableOpacity
@@ -74,7 +82,10 @@ export default class SliderEntry extends Component<Props> {
                 <View style={[styles.imageContainer, even ? styles.imageContainerEven : {}]}>
                     { this.image }
                 </View>
-                { Title }
+                <View style={[styles.roomTextContainer, even ? styles.textContainerEven : {}]}>
+                    { uppercaseTitle }
+                </View>
+                {Title}
             </TouchableOpacity>
         );
     }

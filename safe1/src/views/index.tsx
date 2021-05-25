@@ -5,6 +5,9 @@ import MyBuildings from '@/views/MyBuildings';
 import NotificationHistory from '@/views/NotificationHistory'
 import NotificationDaily from '@/views/NotificationDaily'
 import RemoteControl from '../views/RemoteControl'
+import OptionScreen from '@/views/OptionScreen'
+import RooomScreen from '@/views/RoomScreen'
+
 export {
   CreateBuilding,
   Dashboard,
@@ -12,5 +15,7 @@ export {
   MyBuildings,
   NotificationHistory,
   NotificationDaily,
-  RemoteControl
+  RemoteControl,
+  OptionScreen,
+  RooomScreen
 };

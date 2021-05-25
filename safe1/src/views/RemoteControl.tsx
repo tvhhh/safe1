@@ -66,7 +66,12 @@ class RemoteControl extends React.Component<Props>{
           <View style = {styles.roomDevices1}>
             <Text style = {styles.primaryText}>Devices</Text>
             <View style = {styles.allToggle}>
-              <Text style = {styles.secondaryText}>All</Text>
+              <Text 
+                style = {styles.secondaryText} 
+                onPress = {() => navigate('RooomScreen')}
+              >
+                All
+              </Text>
             </View>
             
           </View>
@@ -75,7 +80,12 @@ class RemoteControl extends React.Component<Props>{
           <View style = {styles.roomDevices2}>
             <Text style = {styles.primaryText}>Rooms</Text>
             <View style = {styles.allToggle}>
-              <Text style = {styles.secondaryText}>All</Text>
+              <Text 
+                style = {styles.secondaryText}
+                onPress = {() => navigate('OptionScreen')}
+              >
+                All
+              </Text>
             </View>
           </View>
           <View style = {styles.roomButtons}>
