@@ -1,62 +1,61 @@
 import React from 'react';
-import { View, SectionList, Text, StyleSheet, Image } from 'react-native';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from 'react-native-elements'
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import RoomButtons from '@/components/RoomButtons';
+import ProtectionGrid from '@/components/ProctectionGrid';
+
+const {height, width} = Dimensions.get('screen')
 
 interface Props {
   navigation: any
   }
 
+const active = 'activated';
+const num = 4;
 
-const Body = (props: any) => {
+const Body = () => {
   return (
     <View style={styles.body}>
-      <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity>
-          <Text
-            style={bodyStyle.detail}>More details
-        </Text>
-        </TouchableOpacity>
-        <View style={bodyStyle.iconLayout}>
-          <TouchableOpacity>
-            <Icon
-              name='search-outline'
-              type='ionicon'
-              color='#aac4ec'
-              size={23}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <Text
-        style={bodyStyle.dayTime}>Today, {props.day}
+      <Text style={bodyStyles.intro} numberOfLines={2}>
+        {num} protection options in the kitchen are 
+        <Text style={{fontWeight: 'bold', color: '#1EC639'}}> {active} </Text> 
       </Text>
-      {/* <SectionList
-        sections={RoomList}
-        keyExtractor={(item,index) => item.time}
-        renderItem={({ item }) => <RoomCard nameDevice={item.nameDevice} time ={item.time} data={item.data} />}
-        renderSectionHeader={({ section: { title } }) => (
-          <View>
-            <View style={roomCardStyle.line}></View>
-            <TouchableOpacity>
-              <Text
-                style={roomCardStyle.nameRoom}>{title}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      /> */}
+      <ProtectionGrid/>
     </View>
   );
 }
 
 class OptionScreen extends React.Component<Props> {
   render() {
+    const { navigate } = this.props.navigation;
     return (
-      <View style={styles.option}>
-        <Body/>
-      </View>
+      <LinearGradient 
+        colors = {['#4F9FFF', '#002150']} 
+        style = {styles.container}
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 0.5}}
+      >
+        
+        <TouchableOpacity
+          style = {styles.outButton}
+          onPress = {() => {
+          navigate('RemoteControl');
+          }}
+        >
+          <Icon name = {'keyboard-backspace'} color = {'#fff'} size = {40}/>
+        </TouchableOpacity>
+
+        <View style = {styles.roomDevices}>
+          <Text style = {styles.primaryText}>Kitchen</Text>
+        </View>
+        <View style = {styles.roomButtons}>
+          <RoomButtons/>
+        </View>
+        
+        <Body/>   
+      </LinearGradient>  
     )
   }
 }
@@ -64,47 +63,58 @@ class OptionScreen extends React.Component<Props> {
 export default OptionScreen;
 
 const styles = StyleSheet.create({
-  option: {
-    flex: 1,
-    backgroundColor: '#6495ed',
+  container:{
+    flex: 1
   },
   body: {
     flex: 1,
     backgroundColor: "white",
+    position: 'relative',
+    top: height/17,
+    bottom: height/18,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
-  tinyLogo: {
-    width: 50,
-    height: 50,
+  outButton: {
+    position: 'relative',
+    left: width/20,
+    top: height/25,
+    zIndex: 999,
+  },
+  roomDevices: {
+    position: 'absolute',
+    width: width/1,
+    top: height/25,
+    marginTop: 10,
+    left: width/10,
+  },
+  primaryText: {
+    fontFamily: 'Roboto',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    fontSize: 30,
+    lineHeight: 30,
+    letterSpacing: -0.24,
+    color: '#FFFFFF',
+    right: width/10,
+    textAlign: 'center'
+  },
+  roomButtons:{
+    top: height/22.5,
   },
 })
 
-const bodyStyle = StyleSheet.create({
-  detail: {
-    marginLeft: 30,
+const bodyStyles = StyleSheet.create({
+  intro: {
+    fontFamily: 'Roboto',
+    fontStyle: 'normal',
+    fontWeight: '500',
     marginTop: 20,
-    fontSize: 23,
-    color: "#41628a"
-  },
-  iconLayout: {
-    justifyContent: 'center',
-    marginTop: 15,
-    marginLeft: "auto",
-    marginRight: 25,
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    borderColor: "#aac4ec",
-    borderWidth: 0.6,
-    backgroundColor: "#fff"
-  },
-  dayTime: {
-    marginLeft: 30,
-    marginTop: 10,
-    fontSize: 23,
-    color: "#aac4ec"
+    marginHorizontal: 20,
+    fontSize: 30,
+    lineHeight: 50,
+    textAlign: 'left'
   }
 })
-
-

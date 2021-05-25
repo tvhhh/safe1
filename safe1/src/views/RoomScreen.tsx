@@ -11,10 +11,6 @@ interface Props {
 }
 
 class RemoteControl extends React.Component<Props>{
-  state = {
-    screenHeight : 0
-  };
-
   render(){
     const { navigate } = this.props.navigation;
     return (
