@@ -71,6 +71,15 @@ func AcceptInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
 		return nil, err
 	}
 
+	if err := db.
+		Model(&Building{Name: buildingName}).
+		Preload("Owner").
+		Preload("Members").
+		Preload("Devices").
+		First(&b).Error; err != nil {
+		return nil, err
+	}
+
 	return &b, nil
 }
 
@@ -85,5 +94,5 @@ func DeclineInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	return &b, nil
+	return map[string]interface{}{"success": true}, nil
 }
