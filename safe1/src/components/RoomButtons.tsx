@@ -17,10 +17,10 @@ export default class roombuttons extends Component {
   render () {
     return (
       <View>
-      <ScrollingButtonMenu 
-        items={buttons}
-        selected={buttons[1].id}
-      />
+        <ScrollingButtonMenu 
+          items={buttons}
+          selected={buttons[1].id}
+        />
       </View>
     );
   }

@@ -1,16 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Button } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RoomButtons from '@/components/RoomButtons';
 import ProtectionGrid from '@/components/ProctectionGrid';
+import ThermoMonitor from '@/components/ThermoMonitor';
+import HumidityMonitor from '@/components/HumidityMonitor';
+import { useNavigation } from '@react-navigation/native';
+
 
 const {height, width} = Dimensions.get('screen')
 
 interface Props {
   navigation: any
-  }
+}
 
 const active = 'activated';
 const num = 4;
@@ -23,6 +26,57 @@ const Body = () => {
         <Text style={{fontWeight: 'bold', color: '#1EC639'}}> {active} </Text> 
       </Text>
       <ProtectionGrid/>
+    </View>
+  );
+}
+
+const AppButton = () => {
+  const navigation = useNavigation();
+  return (
+  <View style={{alignItems: 'center'}}>
+    <TouchableOpacity
+      onPress={() => {navigation.navigate('RemoteControl');}}
+      style={[
+        {
+          paddingHorizontal: 8,
+          paddingVertical: 6,
+          marginTop: 30,
+          height: 50,
+          elevation: 6,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
+          width: 150,
+        } ,
+        { backgroundColor: '#434FEA' }
+      ]}
+    >
+      <Text style={{ fontSize: 24, fontFamily: 'Roboto', textAlign: 'center', color: '#fff' }}>
+        More
+      </Text>
+    </TouchableOpacity>
+  </View>
+  )
+}
+
+
+const temp = '27\u00b0\C';
+const humid = '55 %'
+const Thermo = () => { 
+  return (
+    <View style={styles.body}>
+      <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
+        Now, Temperature is
+        <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {temp} </Text> 
+      </Text>
+      <ThermoMonitor/>
+      <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
+        And Humidity is
+        <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {humid} </Text> 
+      </Text>
+      <HumidityMonitor/>
+      <AppButton/>
     </View>
   );
 }
@@ -54,7 +108,7 @@ class OptionScreen extends React.Component<Props> {
           <RoomButtons/>
         </View>
         
-        <Body/>   
+        <Thermo/>   
       </LinearGradient>  
     )
   }
@@ -114,7 +168,10 @@ const bodyStyles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 20,
     fontSize: 30,
-    lineHeight: 50,
+    lineHeight: 40,
     textAlign: 'left'
+  },
+  introThermo: {
+    textAlign: 'center'
   }
 })
