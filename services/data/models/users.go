@@ -37,7 +37,7 @@ func GetUserBuildings(db *gorm.DB, params interface{}) (interface{}, error) {
 		Where("user_buildings.user_id = ?", uid).
 		Preload("Owner").
 		Preload("Members").
-		Preload("Devices").
+		Preload("Devices.Data", "time > now()-'1 day'::interval").
 		Find(&b).Error; err != nil {
 		return nil, err
 	}
@@ -71,6 +71,15 @@ func AcceptInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
 		return nil, err
 	}
 
+	if err := db.
+		Model(&Building{Name: buildingName}).
+		Preload("Owner").
+		Preload("Members").
+		Preload("Devices.Data", "time > now()-'1 day'::interval").
+		First(&b).Error; err != nil {
+		return nil, err
+	}
+
 	return &b, nil
 }
 
@@ -85,5 +94,5 @@ func DeclineInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	return &b, nil
+	return map[string]interface{}{"success": true}, nil
 }

@@ -1,7 +1,7 @@
 **Please read this document and relevant documentations carefully to reduce time wasted for debugging and struggling.**
 
 **Author:** [tvhhh](https://github.com/tvhhh)  
-**Last updated:** 2021, May 22
+**Last updated:** 2021, May 29
 
 # Setup server on Adafruit IO
 
@@ -91,6 +91,8 @@ Go to directory `services` and create a file named `adafruit.env` with following
 ADAFRUIT_BROKER=io.adafruit.com:1883
 ADAFRUIT_USERNAME=tvhhh
 ADAFRUIT_SECRET_KEY=$KEY
+ADAFRUIT_USERNAME_1=RinnnnN
+ADAFRUIT_SECRET_KEY_1=$KEY
 ```
 `$KEY` is the secret key of IO Adafruit, login to my account with given credentials above and get the secret key (please don't generate new key). Because of security policy, if this key is published to github, IO Adafruit will automatically generate a new key.
 
@@ -171,6 +173,7 @@ Remember that the topic of a device must be one of follows, please choose approp
 * Temperature sensor: `bk-iot-temp-humid`
 * Relay (used for power system, sprinkler, and fan): `bk-iot-relay`
 * Buzzer: `bk-iot-speaker`
+* Servo: `bk-iot-servo`
 * Just testing: `bk-iot-led`
   
 Another thing to remember is that names of devices MUST BE UNIQUE, since devices of the same type would subscribe same topic.
@@ -232,6 +235,7 @@ It is necessary to understand the function of our Docker containers to easily de
 * `safe1/data` is to handle the data and store/query from the PSQL. To understand more about this service, you can read the Golang source code `services/data` and the `safe1/services/data.service.ts` in React Native project.
 * `safe1/control` is the service between our application and Adafruit server, we connect to this service via **WebSocket** and it connects to the Adafruit via **MQTT**, through this service we receive messages from Adafruit as well as publishing messages back to server. To understand more about this service, you can read the Golang source code `services/control` and the `safe1/services/control.service.ts` in React Native project. You should also learn more about mechanism of WebSocket and MQTT by yourself.
 * `safe1/pipe` is not too relavent to our Frontend, it subscribes Adafruit server all the time to receive messages and update the data in our PSQL, our application does not communicate with this. To understand more about this service, you can read the Golang source code `services/pipe`.
+* `safe1/auto` coming soon.
 
 To read the logs of a Docker container, use this command
 ```
