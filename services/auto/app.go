@@ -194,7 +194,7 @@ func (a *App) updateProtectionPolicy(w http.ResponseWriter, r *http.Request) {
 	for _, device := range body {
 		deviceType := device["deviceType"].(string)
 		if deviceType == "gas" || deviceType == "temperature" {
-			inputDevices = append(inputDevices, device["deviceName"].(string))
+			inputDevices = append(inputDevices, device["name"].(string))
 		} else {
 			deviceInfo := map[string]interface{}{
 				"name":       device["name"].(string),
