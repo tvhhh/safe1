@@ -20,5 +20,11 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+docker build "$SCRIPT_DIR/auto" -t safe1/auto
+if [ $? -ne 0 ]; then
+  echo "Failed to build docker image safe1/auto"
+  exit 1
+fi
+
 echo "Successfully built safe1 services"
 exit 0

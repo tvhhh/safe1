@@ -15,10 +15,21 @@ services:
             - PSQL_PASSWORD=securepassword
             - PSQL_DB_NAME=safe1
             - PSQL_HOSTNAME=postgres
+            - AUTO_SERVICE_URL=http://auto:9010
         depends_on:
             - postgres
     pipe:
         image: safe1/pipe
+        pull_policy: never
+        restart: unless-stopped
+        env_file:
+            - ./adafruit.env
+        environment:
+            - DATA_SERVICE_URL=http://data:8000
+        depends_on:
+            - data
+    auto:
+        image: safe1/auto
         pull_policy: never
         restart: unless-stopped
         env_file:

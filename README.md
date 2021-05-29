@@ -92,9 +92,9 @@ ADAFRUIT_BROKER=io.adafruit.com:1883
 ADAFRUIT_USERNAME=tvhhh
 ADAFRUIT_SECRET_KEY=$KEY
 ADAFRUIT_USERNAME_1=RinnnnN
-ADAFRUIT_SECRET_KEY_1=$KEY
+ADAFRUIT_SECRET_KEY_1=$KEY_1
 ```
-`$KEY` is the secret key of IO Adafruit, login to my account with given credentials above and get the secret key (please don't generate new key). Because of security policy, if this key is published to github, IO Adafruit will automatically generate a new key.
+`$KEY` and `$KEY_1` are the secret keys of IO Adafruit, login to my account with given credentials above and get the secret key (please don't generate new key). Because of security policy, if this key is published to github, IO Adafruit will automatically generate a new key.
 
 ## Build service Docker images
 Run file `build-services.sh` in `services` directory
@@ -235,7 +235,8 @@ It is necessary to understand the function of our Docker containers to easily de
 * `safe1/data` is to handle the data and store/query from the PSQL. To understand more about this service, you can read the Golang source code `services/data` and the `safe1/services/data.service.ts` in React Native project.
 * `safe1/control` is the service between our application and Adafruit server, we connect to this service via **WebSocket** and it connects to the Adafruit via **MQTT**, through this service we receive messages from Adafruit as well as publishing messages back to server. To understand more about this service, you can read the Golang source code `services/control` and the `safe1/services/control.service.ts` in React Native project. You should also learn more about mechanism of WebSocket and MQTT by yourself.
 * `safe1/pipe` is not too relavent to our Frontend, it subscribes Adafruit server all the time to receive messages and update the data in our PSQL, our application does not communicate with this. To understand more about this service, you can read the Golang source code `services/pipe`.
-* `safe1/auto` coming soon.
+* `safe1/auto` is the automation service to automatically trigger protection mode of output devices. The client also does not communicate directly with this service. Instead they update the protection mode of each device to the data service, then `safe1/data` sends this information to the `safe1/auto`. Whenever gas or temperature exceeds the threshold, all output devices with configured protection mode will be triggered immediately.
+* **NOTED:** Beside the automation service, we should also provide users (actually only building owners) ability to manually access and control their devices via user interface.
 
 To read the logs of a Docker container, use this command
 ```

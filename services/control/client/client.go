@@ -196,7 +196,7 @@ func (c *Client) initMqtt(clientId string) error {
 		return token.Error()
 	}
 
-	c.mqttClient1 = c.initMqttClient(c.broker, clientId, c.username1, c.password1)
+	c.mqttClient1 = c.initMqttClient(c.broker, fmt.Sprintf("%s-1", clientId), c.username1, c.password1)
 	if token := c.mqttClient1.Connect(); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
