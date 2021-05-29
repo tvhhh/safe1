@@ -15,6 +15,13 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const (
+	INIT  = "init"
+	PUB   = "pub"
+	SUB   = "sub"
+	UNSUB = "unsub"
+)
+
 type Client struct {
 	broker      string
 	mqttClient  mqtt.Client
@@ -103,7 +110,7 @@ func (c *Client) validateWsMessage(pack map[string]interface{}) (string, string,
 	}
 
 	if p, ok := pack["payload"]; !ok {
-		return "", "", "nil", errors.New("missing payload")
+		return "", "", "", errors.New("missing payload")
 	} else {
 		payload = p.(string)
 	}
@@ -126,12 +133,12 @@ func (c *Client) request(msg []byte) {
 	}
 
 	switch action {
-	case "init":
+	case INIT:
 		clientId := payload
 		if err := c.initMqtt(clientId); err != nil {
 			log.WithFields(log.Fields{"error": err}).Error("MQTT server connection failed")
 		}
-	case "pub":
+	case PUB:
 		if err := c.publishMqttTopic(topic, payload); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error publishing topic")
 			response := fmt.Sprintf("Publishing %s failed", topic)
@@ -140,7 +147,7 @@ func (c *Client) request(msg []byte) {
 			response := fmt.Sprintf("Successfully published %s", topic)
 			c.respond([]byte(response))
 		}
-	case "sub":
+	case SUB:
 		if err := c.subscribeMqttTopic(topic); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error subscribing topic")
 			response := fmt.Sprintf("Subscribing %s failed", topic)
@@ -149,7 +156,7 @@ func (c *Client) request(msg []byte) {
 			response := fmt.Sprintf("Successfully subscribed %s", topic)
 			c.respond([]byte(response))
 		}
-	case "unsub":
+	case UNSUB:
 		if err := c.unsubscribeMqttTopic(topic); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error unsubscribing topic")
 			response := fmt.Sprintf("Unsubscribing %s failed", topic)
@@ -221,6 +228,7 @@ func (c *Client) mqttConnectHandler(client mqtt.Client) {
 func (c *Client) mqttConnectLostHandler(client mqtt.Client, err error) {
 	log.WithFields(log.Fields{"error": err}).Error("MQTT broker disconnected")
 	c.respond([]byte("MQTT server disconnected"))
+	c.wsConn.Close()
 }
 
 func (c *Client) mqttReconnectingHandler(client mqtt.Client, opts *mqtt.ClientOptions) {

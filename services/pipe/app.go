@@ -21,14 +21,14 @@ func (a *App) Initialize(broker, username, key, username1, key1 string) {
 		log.WithFields(log.Fields{"error": token.Error()}).Error("Pipe connection failed")
 		return
 	}
-	a.sub(a.pipe, "bk-iot-led", "bk-iot-speaker", "bk-iot-temp-humid")
+	a.sub(a.pipe, username, "bk-iot-temp-humid")
 
 	a.pipe1 = a.setupMqttConfig(broker, username1, key1)
 	if token := a.pipe1.Connect(); token.Wait() && token.Error() != nil {
 		log.WithFields(log.Fields{"error": token.Error()}).Error("Pipe1 connection failed")
 		return
 	}
-	a.sub(a.pipe1, "bk-iot-relay", "bk-iot-servo", "bk-iot-gas")
+	a.sub(a.pipe1, username1, "bk-iot-gas")
 }
 
 func (a *App) setupMqttConfig(broker, username, key string) mqtt.Client {
@@ -67,9 +67,9 @@ func (a *App) messageHandler(client mqtt.Client, msg mqtt.Message) {
 	}
 }
 
-func (a *App) sub(client mqtt.Client, topics ...string) error {
+func (a *App) sub(client mqtt.Client, username string, topics ...string) error {
 	for _, topic := range topics {
-		if token := client.Subscribe(topic, 1, nil); token.Wait() && token.Error() != nil {
+		if token := client.Subscribe(fmt.Sprintf("%s/feeds/%s", username, topic), 1, nil); token.Wait() && token.Error() != nil {
 			log.WithFields(log.Fields{"error": token.Error()}).Error("Error subscribing")
 		}
 		log.WithFields(log.Fields{"topic": topic}).Info("Subscribed")
