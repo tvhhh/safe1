@@ -329,7 +329,7 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
         <Overlay
           isVisible={this.state.showInviteBoxOverlay}
           toggle={this.toggleInviteBoxOverlay}
-          height={height/4}
+          height={height/5}
           children={
             <View style={styles.emailInputContainer}>
               <TextInput
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   },
   role: {
     color: 'rgba(255, 255, 255, 0.6)',
-    fontSize: 16
+    fontSize: 14
   },
   kickButtonContainer: {
     flex: 1,
@@ -452,7 +452,8 @@ const styles = StyleSheet.create({
   emailInput: {
     fontSize: 16,
     paddingHorizontal: 10,
-    color: 'rgba(0, 0, 0, 0.8)'
+    color: 'rgba(0, 0, 0, 0.8)',
+    width: '90%'
   },
   inviteButtonContainer: {
     alignItems: 'center',
