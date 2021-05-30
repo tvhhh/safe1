@@ -21,7 +21,7 @@ func (a *App) Initialize(broker, username, key, username1, key1 string) {
 		log.WithFields(log.Fields{"error": token.Error()}).Error("Pipe connection failed")
 		return
 	}
-	a.sub(a.pipe, username, "bk-iot-led", "bk-iot-speaker", "bk-iot-temp-humid")
+	a.sub(a.pipe, username, "bk-iot-led", "bk-iot-speaker", "bk-iot-temp-humid", "bk-iot-drv")
 
 	a.pipe1 = a.setupMqttConfig(broker, username1, key1)
 	if token := a.pipe1.Connect(); token.Wait() && token.Error() != nil {

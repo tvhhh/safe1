@@ -4,6 +4,7 @@ var Topics = []string{
 	"bk-iot-led",
 	"bk-iot-speaker",
 	"bk-iot-temp-humid",
+	"bk-iot-drv",
 }
 
 var Topics1 = []string{

@@ -7,8 +7,8 @@ var TriggerProtection = map[string]interface{}{
 		"unit": "",
 	},
 	"fan": map[string]string{
-		"id":   "11",
-		"data": "1",
+		"id":   "10",
+		"data": "255",
 		"unit": "",
 	},
 	"power": map[string]string{
