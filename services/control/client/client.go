@@ -7,33 +7,47 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/tvhhh/safe1/services/control/utils"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/websocket"
 )
 
+const (
+	INIT  = "init"
+	PUB   = "pub"
+	SUB   = "sub"
+	UNSUB = "unsub"
+)
+
 type Client struct {
-	broker     string
-	mqttClient mqtt.Client
-	msgChan    chan []byte
-	mu         sync.Mutex
-	password   string
-	username   string
-	wsConn     *websocket.Conn
+	broker      string
+	mqttClient  mqtt.Client
+	mqttClient1 mqtt.Client
+	msgChan     chan []byte
+	mu          sync.Mutex
+	password    string
+	password1   string
+	username    string
+	username1   string
+	wsConn      *websocket.Conn
 }
 
-func New(conn *websocket.Conn, broker, username, password string) *Client {
+func New(conn *websocket.Conn, broker, username, password, username1, password1 string) *Client {
 	return &Client{
-		broker:   broker,
-		msgChan:  make(chan []byte),
-		password: password,
-		username: username,
-		wsConn:   conn,
+		broker:    broker,
+		msgChan:   make(chan []byte),
+		password:  password,
+		password1: password1,
+		username:  username,
+		username1: username1,
+		wsConn:    conn,
 	}
 }
 
-func Serve(w http.ResponseWriter, r *http.Request, broker, username, password string) {
+func Serve(w http.ResponseWriter, r *http.Request, broker, username, password, username1, password1 string) {
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  4096,
 		WriteBufferSize: 4096,
@@ -49,7 +63,7 @@ func Serve(w http.ResponseWriter, r *http.Request, broker, username, password st
 		return
 	}
 
-	c := New(conn, broker, username, password)
+	c := New(conn, broker, username, password, username1, password1)
 
 	go c.waitToReceive()
 	go c.listenToMsgChan()
@@ -96,7 +110,7 @@ func (c *Client) validateWsMessage(pack map[string]interface{}) (string, string,
 	}
 
 	if p, ok := pack["payload"]; !ok {
-		return "", "", "nil", errors.New("missing payload")
+		return "", "", "", errors.New("missing payload")
 	} else {
 		payload = p.(string)
 	}
@@ -119,20 +133,20 @@ func (c *Client) request(msg []byte) {
 	}
 
 	switch action {
-	case "init":
+	case INIT:
 		clientId := payload
-		if err := c.initMqtt(c.broker, clientId, c.username, c.password); err != nil {
+		if err := c.initMqtt(clientId); err != nil {
 			log.WithFields(log.Fields{"error": err}).Error("MQTT server connection failed")
 		}
-	case "pub":
+	case PUB:
 		if err := c.publishMqttTopic(topic, payload); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error publishing topic")
 		}
-	case "sub":
+	case SUB:
 		if err := c.subscribeMqttTopic(topic); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error subscribing topic")
 		}
-	case "unsub":
+	case UNSUB:
 		if err := c.unsubscribeMqttTopic(topic); err != nil {
 			log.WithFields(log.Fields{"topic": topic, "error": err}).Error("Error unsubscribing topic")
 		}
@@ -161,7 +175,21 @@ func (c *Client) handleDisconnect() {
 
 // MQTT part
 
-func (c *Client) initMqtt(broker, clientId, username, password string) error {
+func (c *Client) initMqtt(clientId string) error {
+	c.mqttClient = c.initMqttClient(c.broker, clientId, c.username, c.password)
+	if token := c.mqttClient.Connect(); token.Wait() && token.Error() != nil {
+		return token.Error()
+	}
+
+	c.mqttClient1 = c.initMqttClient(c.broker, fmt.Sprintf("%s-1", clientId), c.username1, c.password1)
+	if token := c.mqttClient1.Connect(); token.Wait() && token.Error() != nil {
+		return token.Error()
+	}
+
+	return nil
+}
+
+func (c *Client) initMqttClient(broker, clientId, username, password string) mqtt.Client {
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("tcp://%s", broker))
 	opts.SetClientID(clientId)
@@ -174,12 +202,7 @@ func (c *Client) initMqtt(broker, clientId, username, password string) error {
 	opts.SetConnectionLostHandler(c.mqttConnectLostHandler)
 	opts.SetReconnectingHandler(c.mqttReconnectingHandler)
 
-	c.mqttClient = mqtt.NewClient(opts)
-	if token := c.mqttClient.Connect(); token.Wait() && token.Error() != nil {
-		return token.Error()
-	}
-
-	return nil
+	return mqtt.NewClient(opts)
 }
 
 func (c *Client) mqttConnectHandler(client mqtt.Client) {
@@ -190,6 +213,7 @@ func (c *Client) mqttConnectHandler(client mqtt.Client) {
 func (c *Client) mqttConnectLostHandler(client mqtt.Client, err error) {
 	log.WithFields(log.Fields{"error": err}).Error("MQTT broker disconnected")
 	c.respond([]byte("MQTT server disconnected"))
+	c.wsConn.Close()
 }
 
 func (c *Client) mqttReconnectingHandler(client mqtt.Client, opts *mqtt.ClientOptions) {
@@ -203,10 +227,23 @@ func (c *Client) mqttMessageHandler(client mqtt.Client, msg mqtt.Message) {
 }
 
 func (c *Client) subscribeMqttTopic(topic string) error {
-	if c.mqttClient == nil {
+	if utils.FindTopic(topic, utils.Topics) {
+		if err := c.subscribe(c.mqttClient, c.username, topic); err != nil {
+			return err
+		}
+	} else if utils.FindTopic(topic, utils.Topics1) {
+		if err := c.subscribe(c.mqttClient1, c.username1, topic); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *Client) subscribe(client mqtt.Client, username, topic string) error {
+	if client == nil {
 		return errors.New("MQTT client not established yet")
 	}
-	if token := c.mqttClient.Subscribe(topic, 1, nil); token.Wait() && token.Error() != nil {
+	if token := client.Subscribe(fmt.Sprintf("%s/feeds/%s", username, topic), 1, nil); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 	log.WithFields(log.Fields{"topic": topic}).Info("Subscribed")
@@ -214,10 +251,23 @@ func (c *Client) subscribeMqttTopic(topic string) error {
 }
 
 func (c *Client) unsubscribeMqttTopic(topic string) error {
-	if c.mqttClient == nil {
+	if utils.FindTopic(topic, utils.Topics) {
+		if err := c.unsubscribe(c.mqttClient, c.username, topic); err != nil {
+			return err
+		}
+	} else if utils.FindTopic(topic, utils.Topics1) {
+		if err := c.unsubscribe(c.mqttClient1, c.username1, topic); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *Client) unsubscribe(client mqtt.Client, username, topic string) error {
+	if client == nil {
 		return errors.New("MQTT client not established yet")
 	}
-	if token := c.mqttClient.Unsubscribe(topic); token.Wait() && token.Error() != nil {
+	if token := client.Unsubscribe(fmt.Sprintf("%s/feeds/%s", username, topic)); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 	log.WithFields(log.Fields{"topic": topic}).Info("Unsubscribed")
@@ -225,10 +275,23 @@ func (c *Client) unsubscribeMqttTopic(topic string) error {
 }
 
 func (c *Client) publishMqttTopic(topic string, msg string) error {
-	if c.mqttClient == nil {
+	if utils.FindTopic(topic, utils.Topics) {
+		if err := c.publish(c.mqttClient, c.username, topic, msg); err != nil {
+			return err
+		}
+	} else if utils.FindTopic(topic, utils.Topics1) {
+		if err := c.publish(c.mqttClient1, c.username1, topic, msg); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *Client) publish(client mqtt.Client, username, topic string, msg string) error {
+	if client == nil {
 		return errors.New("MQTT client not established yet")
 	}
-	if token := c.mqttClient.Publish(topic, 0, false, msg); token.Wait() && token.Error() != nil {
+	if token := client.Publish(fmt.Sprintf("%s/feeds/%s", username, topic), 0, false, msg); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 	log.WithFields(log.Fields{"topic": topic}).Info("Published")

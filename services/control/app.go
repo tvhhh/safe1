@@ -11,22 +11,26 @@ import (
 )
 
 type App struct {
-	broker    string
-	router    *mux.Router
-	secretKey string
-	username  string
+	broker     string
+	router     *mux.Router
+	secretKey  string
+	secretKey1 string
+	username   string
+	username1  string
 }
 
-func (a *App) SetupAdafruitConfig(broker, username, key string) {
+func (a *App) SetupAdafruitConfig(broker, username, key, username1, key1 string) {
 	a.broker = broker
 	a.username = username
+	a.username1 = username1
 	a.secretKey = key
+	a.secretKey1 = key1
 }
 
 func (a *App) InitializeRoutes() {
 	a.router = mux.NewRouter()
 	a.router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		client.Serve(w, r, a.broker, a.username, a.secretKey)
+		client.Serve(w, r, a.broker, a.username, a.secretKey, a.username1, a.secretKey1)
 	})
 }
 

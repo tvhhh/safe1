@@ -14,8 +14,8 @@ import (
 )
 
 type App struct {
-	Router *mux.Router
 	DB     *gorm.DB
+	Router *mux.Router
 }
 
 func (a *App) ConnectPostgres(user, password, dbname, host string) {
@@ -45,6 +45,8 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/createUser", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
 	a.Router.HandleFunc("/getBuilding", a.getBuilding).Methods("POST")
+	a.Router.HandleFunc("/getInputDevices", a.getInputDevices).Methods("POST")
+	a.Router.HandleFunc("/getOutputDevices", a.getOutputDevices).Methods("POST")
 	a.Router.HandleFunc("/getUserBuildings", a.getUserBuildings).Methods("POST")
 	a.Router.HandleFunc("/updateData", a.updateData).Methods("POST")
 	a.Router.HandleFunc("/ping", a.ping).Methods("GET")
@@ -62,6 +64,14 @@ func (a *App) getBuilding(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.GetBuilding)
 }
 
+func (a *App) getInputDevices(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, nil, models.GetInputDevices)
+}
+
+func (a *App) getOutputDevices(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.GetOutputDevices)
+}
+
 func (a *App) getUserBuildings(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.GetUserBuildings)
 }
@@ -75,13 +85,15 @@ func (a *App) ping(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) handleRequest(w http.ResponseWriter, r *http.Request, body interface{}, handler func(*gorm.DB, interface{}) (interface{}, error)) {
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&body); err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("Error decoding payload")
-		a.respond(w, http.StatusBadRequest, err.Error())
-		return
+	if body != nil {
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&body); err != nil {
+			log.WithFields(log.Fields{"error": err}).Error("Error decoding payload")
+			a.respond(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		defer r.Body.Close()
 	}
-	defer r.Body.Close()
 
 	response, err := handler(a.DB, body)
 	if err != nil {

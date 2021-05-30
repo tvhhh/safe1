@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 
+	"github.com/tvhhh/safe1/services/data/api"
 	"gorm.io/gorm"
 )
 
@@ -21,6 +22,10 @@ func CreateBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
 	json.Unmarshal(byteStream, &b)
 
 	if err := db.Create(&b).Error; err != nil {
+		return nil, err
+	}
+
+	if err := api.UpdateProtection(b.Devices); err != nil {
 		return nil, err
 	}
 
