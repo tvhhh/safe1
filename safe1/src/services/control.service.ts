@@ -22,11 +22,12 @@ class ControlService {
     };
     this.ws.onerror = (event: WebSocketErrorEvent) => {
       store.dispatch(actions.setConnection(false));
+      this.ws?.close();
       console.error(`Error establishing Websocket: ${event.message}`);
     };
     this.ws.onclose = (event: WebSocketCloseEvent) => {
       store.dispatch(actions.setConnection(false));
-      this.close();
+      this.ws?.close();
       console.log(`Closing Websocket: ${event.message}`);
     };
   }
@@ -72,12 +73,12 @@ class ControlService {
   }
 
   dispatchMessage = (request: Request) => {
-    if (this.ws) this.ws.send(JSON.stringify(request));
+    this.ws?.send(JSON.stringify(request));
   }
 
   close = () => {
     store.dispatch(actions.setConnection(false));
-    if (this.ws) this.ws.close();
+    this.ws?.close();
   }
 };
 

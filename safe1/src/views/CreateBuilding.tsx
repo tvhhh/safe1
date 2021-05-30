@@ -1,5 +1,6 @@
 import React from 'react';
 import { 
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -13,6 +14,7 @@ import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackButton, Input } from '@/components';
+import feeds from '@/utils/feeds';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
@@ -41,7 +43,7 @@ interface Props extends ConnectedProps<typeof connector> {
   currentUser: User | null,
   defaultBuilding: Building | undefined,
   addBuilding: (payload: Building) => Action,
-  setDefaultBuilding: (payload: Building) => Action
+  setDefaultBuilding: (payload?: Building) => Action
 };
 
 interface CustomState {
@@ -154,31 +156,53 @@ class CreateBuilding extends React.Component<Props, CustomState> {
             style={{ flex: 1, marginHorizontal: 3, color: 'white' }}
             selectedValue={item.deviceType}
             onValueChange={(itemValue) => this.onChangeDeviceType(index)(itemValue)}>
-            <Picker.Item label="Gas" value="gas" />
-            <Picker.Item label="Temperature" value="temperature" />
-            <Picker.Item label="Humidity" value="humidity" />
-            <Picker.Item label="Buzzer" value="buzzer" />
-            <Picker.Item label="Power" value="power" />
-            <Picker.Item label="Servo" value="servo" />
+            <Picker.Item label="Fire alarm" value="buzzer" />
+            <Picker.Item label="Extractor fan" value="fan" />
+            <Picker.Item label="Gas sensor" value="gas" />
+            <Picker.Item label="Power system" value="power" />
+            <Picker.Item label="Smart door" value="servo" />
             <Picker.Item label="Sprinkler" value="sprinkler" />
-            <Picker.Item label="Fan" value="fan" />
+            <Picker.Item label="Temperature sensor" value="temperature" />
           </Picker>
         </View>
       </View>
     );
   }
 
+  validateTopics = (building: Building): boolean => {
+    building.devices.forEach((device: Device) => {
+      if (feeds.indexOf(device.topic) === -1) {
+        Alert.alert(
+          "Topic not found",
+          `Cannot find any feed named ${device.topic}`,
+          [{ text: "OK" }]
+        );
+        return false;
+      }
+    });
+    return true;
+  }
+
   onSubmit = () => {
     let building = this.state.buildingSettings;
     building.devices = building.devices.filter((device: Device) => device.name.trim().length * device.topic.trim().length * device.region.trim().length > 0);
     this.setState({ buildingSettings: { ...building } });
+    if (!this.validateTopics(building)) return;
     DataService.createBuilding(building)
       .then(response => {
-        if (response === null) return;
-        ControlService.sub(response);
-        this.props.addBuilding(response);
-        if (this.props.defaultBuilding === undefined) this.props.setDefaultBuilding(response);
-        this.props.navigation.goBack();
+        if (response === null) {
+          Alert.alert(
+            "Creating failed",
+            "Unknown error from server. Please try again!",
+            [{ text: "OK" }]
+          );
+          return;
+        } else {
+          ControlService.sub(response);
+          this.props.addBuilding(response);
+          if (this.props.defaultBuilding === undefined) this.props.setDefaultBuilding(response);
+          this.props.navigation.goBack();
+        }
       }).catch(err => console.error(err));
   }
 

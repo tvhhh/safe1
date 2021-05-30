@@ -24,6 +24,38 @@ class DataService {
       .catch(err => { console.error(err); return null });
   }
 
+  inviteUser(payload: any): Promise<any | null> {
+    return HttpService.post(`${dataUrl}/inviteUser`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .catch(err => { console.error(err); return null });
+  }
+
+  kickUser(payload: any): Promise<any | null> {
+    return HttpService.post(`${dataUrl}/kickUser`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .catch(err => { console.error(err); return null });
+  }
+
+  getInvitations(payload: User): Promise<Building[] | null> {
+    return HttpService.post(`${dataUrl}/getInvitations`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Building[] : null)
+      .catch(err => { console.error(err); return null });
+  }
+
+  acceptInvitation(payload: any): Promise<Building | null> {
+    return HttpService.post(`${dataUrl}/acceptInvitation`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Building : null)
+      .catch(err => { console.error(err); return null });
+  }
+
+  declineInvitation(payload: any): Promise<any | null> {
+    return HttpService.post(`${dataUrl}/declineInvitation`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .catch(err => { console.error(err); return null });
+  }
+
   updateDeviceProtection(payload: any): Promise<Device | null> {
     return HttpService.post(`${dataUrl}/updateDeviceProtection`, { deviceName: payload.name, protection: payload.protection })
       .then(response => response.status === 200 ? response.json() : null)
