@@ -16,6 +16,7 @@ const connector = connect(mapStateToProps);
 
 interface Props extends ConnectedProps<typeof connector> {
   size?: number | "small" | "medium" | "large" | "xlarge",
+  uri?: string,
   onPress?: () => void,
   currentUser: User | null
 };
@@ -28,7 +29,7 @@ class UserAvatar extends React.Component<Props> {
           <Avatar
             size={this.props.size || "medium"}
             rounded
-            source={{uri: this.props.currentUser.photoURL}}
+            source={{uri: this.props.uri || this.props.currentUser.photoURL}}
           /> : null}
       </TouchableOpacity>
     );

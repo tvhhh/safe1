@@ -4,12 +4,14 @@ export type State = {
   currentUser: User | null,
   buildings: Building[],
   defaultBuilding?: Building,
+  invitations: string[],
   isConnected: boolean
 };
 
 const initialState: State = {
   currentUser: null,
   buildings: [],
+  invitations: [],
   isConnected: false
 };
 

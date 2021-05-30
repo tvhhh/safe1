@@ -48,9 +48,11 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/declineInvitation", a.declineInvitation).Methods("POST")
 	a.Router.HandleFunc("/getBuilding", a.getBuilding).Methods("POST")
 	a.Router.HandleFunc("/getInputDevices", a.getInputDevices).Methods("POST")
+	a.Router.HandleFunc("/getInvitations", a.getInvitations).Methods("POST")
 	a.Router.HandleFunc("/getOutputDevices", a.getOutputDevices).Methods("POST")
 	a.Router.HandleFunc("/getUserBuildings", a.getUserBuildings).Methods("POST")
 	a.Router.HandleFunc("/inviteUser", a.inviteUser).Methods("POST")
+	a.Router.HandleFunc("/kickUser", a.kickUser).Methods("POST")
 	a.Router.HandleFunc("/updateData", a.updateData).Methods("POST")
 	a.Router.HandleFunc("/updateProtection", a.updateProtection).Methods("POST")
 	a.Router.HandleFunc("/ping", a.ping).Methods("GET")
@@ -80,6 +82,10 @@ func (a *App) getInputDevices(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, nil, models.GetInputDevices)
 }
 
+func (a *App) getInvitations(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.GetInvitations)
+}
+
 func (a *App) getOutputDevices(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.GetOutputDevices)
 }
@@ -90,6 +96,10 @@ func (a *App) getUserBuildings(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) inviteUser(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.InviteUser)
+}
+
+func (a *App) kickUser(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.KickUser)
 }
 
 func (a *App) updateData(w http.ResponseWriter, r *http.Request) {

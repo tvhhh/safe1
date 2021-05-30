@@ -28,7 +28,7 @@ interface Props extends ConnectedProps<typeof connector> {
   defaultBuilding: Building | undefined,
   setBuildings: (payload: Building[]) => Action,
   setCurrentUser: (payload: User) => Action,
-  setDefaultBuilding: (payload: Building) => Action
+  setDefaultBuilding: (payload?: Building) => Action
 };
 
 class Safe1Container extends React.Component<Props> {

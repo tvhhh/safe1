@@ -51,12 +51,30 @@ func GetBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
 
 func InviteUser(db *gorm.DB, params interface{}) (interface{}, error) {
 	payload := params.(map[string]interface{})
+	email := payload["email"].(string)
+	buildingName := payload["buildingName"].(string)
+
+	var u User
+	if err := db.Where("email = ?", email).First(&u).Error; err != nil {
+		return nil, err
+	}
+
+	b := Building{Name: buildingName}
+	if err := db.Model(&u).Association("Invitations").Append(&b); err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{"success": true}, nil
+}
+
+func KickUser(db *gorm.DB, params interface{}) (interface{}, error) {
+	payload := params.(map[string]interface{})
 	uid := payload["uid"].(string)
 	buildingName := payload["buildingName"].(string)
 
 	u := User{Uid: uid}
 	b := Building{Name: buildingName}
-	if err := db.Model(&u).Association("Invitations").Append(&b); err != nil {
+	if err := db.Model(&b).Association("Members").Delete(&u); err != nil {
 		return nil, err
 	}
 

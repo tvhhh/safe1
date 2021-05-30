@@ -181,6 +181,9 @@ func (c *Client) handleDisconnect() {
 		if c.mqttClient != nil {
 			c.mqttClient.Disconnect(250)
 		}
+		if c.mqttClient1 != nil {
+			c.mqttClient1.Disconnect(250)
+		}
 		close(c.msgChan)
 		return nil
 	})
