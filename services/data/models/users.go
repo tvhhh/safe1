@@ -72,11 +72,10 @@ func AcceptInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
 	}
 
 	if err := db.
-		Model(&Building{Name: buildingName}).
 		Preload("Owner").
 		Preload("Members").
 		Preload("Devices.Data", "time > now()-'1 day'::interval").
-		First(&b).Error; err != nil {
+		First(&b, "name = ?", buildingName).Error; err != nil {
 		return nil, err
 	}
 

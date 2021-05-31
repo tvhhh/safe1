@@ -38,11 +38,10 @@ func GetBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
 
 	var b Building
 	if err := db.
-		Model(&Building{Name: buildingName}).
 		Preload("Devices").
 		Preload("Owner").
 		Preload("Members").
-		First(&b).Error; err != nil {
+		First(&b, "name = ?", buildingName).Error; err != nil {
 		return nil, err
 	}
 
