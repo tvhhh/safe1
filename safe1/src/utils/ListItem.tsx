@@ -1,44 +1,80 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {TouchableOpacity, View, Text} from 'react-native';
 import Styles from '../styles/listItem';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type ListItemProps = {
   item: {
+    id: number,
     icon: string,
     name: string,
+    color: string,
+    status: string,
+    subcolor: string,
     open: string
   },
   styles: Object,
-  dark: Boolean,
 };
 
 
-export const ListItem = ({item, styles, dark}: ListItemProps) => {
-  return (
-    <TouchableOpacity
-      activeOpacity={1.0}
-      style={[
-        Styles.item,
-        styles,
-        {
-          backgroundColor: dark ? '#24292E' : '#f4f4f4',
-          borderWidth: 1,
-          borderColor: '#DCDCDC',
-        },
-      ]}
-    >
-      <View style={Styles.info}>
+export default class ListItem extends Component<ListItemProps> {
+  constructor (props: ListItemProps) {
+    super(props);
+  }
+
+  render(){
+    const {item, styles} = this.props;
+
+    var OnProtection;
+    if (item.status === 'On')
+      OnProtection = (
         <Icon
-          name={item.icon}
+          name={'toggle-switch'}
           size={30}
-          color={dark ? '#f4f4f4' : '#24292e'}
-          style={{marginBottom: 10}}
+          color={item.subcolor}
         />
-        <Text style={{fontSize: 22, color: dark ? '#f4f4f4' : '#24292e'}}>
-          {item.name}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
+      );
+    else if (item.status === 'Off')
+      OnProtection =  (
+        <Icon
+          name={'toggle-switch-off'}
+          size={30}
+        />
+      );
+    else
+        OnProtection = false;
+
+    const Status = item.id !== 1 ? (
+      <Text style={{fontSize: 18, color: item.subcolor, fontWeight: 'bold'}}>
+        {item.status}
+      </Text>
+    ) : false;
+    
+    return (
+      <TouchableOpacity
+        activeOpacity={1.0}
+        style={[
+          Styles.item,
+          styles,
+          {
+            backgroundColor: '#FFFFFF',
+          },
+        ]}
+      >
+        <View style={Styles.info}>
+          <Icon
+            name={item.icon}
+            size={40}
+            color={item.color}
+            style={{marginBottom: 10}}
+          />
+          <Text style={{fontSize: 18, color: 'black', fontWeight: 'bold'}}>
+            {item.name}
+          </Text>
+          {Status}
+          {OnProtection}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}

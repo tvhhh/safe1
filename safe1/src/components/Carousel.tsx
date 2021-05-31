@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { View } from 'react-native'
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import SliderEntry from '@/utils/SliderEntry';
+import SliderEntry from '@/utils/sliderEntry';
 import { sliderWidth, itemWidth } from '@/styles/sliderEntry';
 import styles, { colors } from '@/styles/carousel';
 import {ENTRIES1} from '@/assets/entries';
@@ -12,9 +12,20 @@ interface IMyComponentState {
   slider1ActiveSlide: number
 }
 
+type data = {
+  title: string, 
+  num: string,
+  illustration: string
+}
+
+type input = {
+  item: data,
+  index: number
+}
+
 export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentState> {
-  private _slider1Ref: any;
-  constructor (props) {
+  private _slider1Ref: React.RefObject<HTMLInputElement>;
+  constructor (props: any) {
     super(props);
     this.state = {
       slider1ActiveSlide: SLIDER_1_FIRST_ITEM
@@ -22,7 +33,7 @@ export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentS
     this._slider1Ref = React.createRef();
   }
 
-  _renderItemWithParallax ({item, index}, parallaxProps) {
+  _renderItemWithParallax = ({item, index}: input, parallaxProps: Object) => {
     return (
       <SliderEntry
         data={item}
@@ -37,7 +48,7 @@ export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentS
     return (
       <View style={styles.exampleContainer}>
         <Carousel
-          ref={(c) => {this._slider1Ref  = c}}
+          ref={() => {this._slider1Ref}}
           data={ENTRIES1}
           renderItem={this._renderItemWithParallax}
           sliderWidth={sliderWidth}
@@ -48,6 +59,7 @@ export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentS
           inactiveSlideOpacity={0.7}
           containerCustomStyle={styles.slider}
           contentContainerCustomStyle={styles.sliderContentContainer}
+          autoplay={true}
           loop={true}
           onSnapToItem={(index) => this.setState({ slider1ActiveSlide: index }) }
         />

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native'
 import {ENTRIES1} from '@/assets/entries';
-import ScrollingButtonMenu from '@/utils/ScrollButton';
+import ScrollingButtonMenu from '@/utils/scrollButton';
 
 
 let buttons = new Array();
@@ -19,7 +19,7 @@ export default class roombuttons extends Component {
       <View>
       <ScrollingButtonMenu 
         items={buttons}
-        selected={1}
+        selected={buttons[1].id}
       />
       </View>
     );
