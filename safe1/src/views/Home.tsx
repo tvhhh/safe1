@@ -107,7 +107,7 @@ class Home extends React.Component<Props, HomeState> {
             name="Remote Control" 
             description="Control your registered devices" 
             icon={<Feather name ="sliders" color='white' size={40}/>}
-            onPress={() => {}}
+            onPress={this.navigate("RemoteControl")}
           />
           <Label 
             name="My Buildings" 
