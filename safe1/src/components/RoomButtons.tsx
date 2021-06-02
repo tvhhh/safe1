@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native'
 import {ENTRIES1} from '@/assets/entries';
-import ScrollingButtonMenu from '@/utils/scrollButton';
+import ScrollingButtonMenu from '@/components/ScrollButton';
 
 
 let buttons = new Array();

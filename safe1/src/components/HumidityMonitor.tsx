@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet  } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ProgressCircle from '@/utils/circle'
+import ProgressCircle from '@/components/Circle'
 
 
 export default function HumidityMonitor() {

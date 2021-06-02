@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions  } from 'react-native';
+import { View, StyleSheet  } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ProgressCircle from '@/utils/circle'
+import ProgressCircle from '@/components/Circle'
 
 
 export default function ThermoMonitor() {

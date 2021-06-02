@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { View } from 'react-native'
 import Carousel from 'react-native-snap-carousel';
-import SliderEntry from '@/utils/roomSliderEntry';
+import SliderEntry from '@/components/RoomSliderEntry';
 import { sliderHeight, itemHeight, itemWidth } from '@/styles/roomSliderEntry';
 import styles from '@/styles/roomCarousel';
 import {ENTRIES1} from '@/assets/entries';
