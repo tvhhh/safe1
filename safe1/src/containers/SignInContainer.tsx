@@ -9,12 +9,13 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
-import { User } from '@/models';
+import { Building, User } from '@/models';
 import store from '@/redux/store';
 import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
 import ControlService from '@/services/control.service';
 import DataService from '@/services/data.service';
+import StorageService from '@/services/storage.service';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -26,11 +27,15 @@ export default class SignInContainer extends React.Component {
       let respondedUser = await DataService.createUser(user as User);
       if (respondedUser === null) return;
       store.dispatch(actions.setCurrentUser(respondedUser));
+      await StorageService.setUser(respondedUser);
       let respondedBuildings = await DataService.getUserBuildings({ uid: respondedUser.uid });
       if (respondedBuildings === null) return;
+      respondedBuildings.forEach((building: Building) => ControlService.sub(building));
       store.dispatch(actions.setBuildings(respondedBuildings));
+      await StorageService.setBuildings(respondedBuildings);
       if (respondedBuildings.length === 0) return;
       store.dispatch(actions.setDefaultBuilding(respondedBuildings[0]));
+      await StorageService.setDefaultBuilding(respondedBuildings[0]);
     } catch (err) {
       console.error(`Error signing in: ${err}`);
     }

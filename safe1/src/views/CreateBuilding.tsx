@@ -55,7 +55,7 @@ const defaultDevice: Device = {
   topic: "",
   deviceType: "gas",
   region: "",
-  protection: false,
+  protection: true,
   data: []
 };
 
