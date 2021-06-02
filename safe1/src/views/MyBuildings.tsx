@@ -17,7 +17,6 @@ import {
   NotificationButton,
   Overlay
 } from '@/components';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -90,6 +89,7 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
       .then(response => {
         if (response === null) return;
         this.props.setInvitations(response.map((building: Building) => building.name));
+        if (this.props.invitations.length > 0) this.setState({ showInvitationsOverlay: true });
       }).catch(err => console.error(err));
   }
 
@@ -126,12 +126,25 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
           </Text>
         </View>
         {this.props.defaultBuilding?.owner && this.props.currentUser && this.props.currentUser.uid == this.props.defaultBuilding?.owner.uid && this.props.currentUser.uid !== member.uid ?
-          <TouchableOpacity style={styles.kickButtonContainer} onPress={this.kickUser(member.uid)}>
+          <TouchableOpacity style={styles.kickButtonContainer} onPress={this.alertRemoving(member.uid)}>
             <Text style={styles.kickButton}>X</Text>
           </TouchableOpacity> : <View style={styles.kickButtonContainer}></View>
         }
       </View>
     ));
+  }
+
+  alertRemoving = (uid: string) => {
+    return () => {
+      Alert.alert(
+        "Removing user",
+        "Are you sure you want to remove this user from your building?",
+        [
+          { text: "OK", onPress: this.kickUser(uid) },
+          { text: "Cancel" }
+        ]
+      );
+    };
   }
 
   kickUser = (uid: string) => {
@@ -209,16 +222,27 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
     return this.props.invitations.map((buildingName: string, index: number) => (
       <View style={styles.buildingContainer} key={index}>
         <View style={styles.buildingInfoContainer}>
-          <Text style={styles.buildingName}>{buildingName}</Text>
+          <Text style={[styles.buildingName, { fontWeight: 'bold' }]}>{buildingName}</Text>
         </View>
         <TouchableOpacity style={{ padding: 5 }} onPress={this.handleInvitation(buildingName, "accept")}>
-          <AntDesign name="check" size={30} color='skyblue' />
+          <Entypo name="check" size={30} color='skyblue' />
         </TouchableOpacity>
         <TouchableOpacity style={{ padding: 5 }} onPress={this.handleInvitation(buildingName, "reject")}>
           <Entypo name="cross" size={30} color='red' />
         </TouchableOpacity>
       </View>
     ));
+  }
+
+  alertLeaving = () => {
+    Alert.alert(
+      "Leaving building",
+      "Are you sure you want to leave this building? You can't undo this action!",
+      [
+        { text: "OK", onPress: this.leaveBuilding },
+        { text: "Cancel" }
+      ]
+    );
   }
 
   leaveBuilding = () => {
@@ -247,6 +271,14 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
   }
 
   onInvitedEmailSubmit = () => {
+    if (this.props.defaultBuilding?.members?.map((user: User) => user.email).indexOf(this.state.invitedEmail) !== -1) {
+      Alert.alert(
+        "Inviting failed",
+        "User already joined your building",
+        [{ text: "OK" }]
+      );
+      return;
+    }
     DataService.inviteUser({ 
       email: this.state.invitedEmail,
       buildingName: this.props.defaultBuilding?.name
@@ -295,7 +327,7 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
                   <Ionicons name="person-add-sharp" size={40} color='rgba(255, 255, 255, 0.8)' />
                 </TouchableOpacity>
                 :
-                <TouchableOpacity onPress={this.leaveBuilding}>
+                <TouchableOpacity onPress={this.alertLeaving}>
                   <MaterialIcons name="exit-to-app" size={40} color='rgba(255, 255, 255, 0.8)' />
                 </TouchableOpacity>
               }
