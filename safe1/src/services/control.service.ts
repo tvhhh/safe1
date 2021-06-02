@@ -50,6 +50,14 @@ class ControlService {
     });
   }
 
+  subOne = (device: Device) => {
+    this.dispatchMessage({
+      action: "sub",
+      topic: device.topic,
+      payload: ""
+    });
+  }
+
   unsub = (building: Building) => {
     building.devices.forEach((device: Device) => {
       this.dispatchMessage({

@@ -10,6 +10,7 @@ import {
   View
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { Picker } from '@react-native-picker/picker';
 import { 
   Avatar, 
   AddButton, 
@@ -20,9 +21,12 @@ import {
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { Building, User } from '@/models';
+import { Building, Device, User } from '@/models';
+import { DeviceType } from '@/models/devices';
+import deviceTopics from '@/utils/deviceTopics';
 
 import ControlService from '@/services/control.service';
 import DataService from '@/services/data.service';
@@ -42,6 +46,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = {
   addBuilding: actions.addBuilding,
+  addDevice: actions.addDevice,
   removeBuilding: actions.removeBuilding,
   setDefaultBuilding: actions.setDefaultBuilding,
   setInvitations: actions.setInvitations,
@@ -58,6 +63,7 @@ interface Props extends ConnectedProps<typeof connector> {
   defaultBuilding: Building | undefined,
   invitations: string[],
   addBuilding: (payload: Building) => Action,
+  addDevice: (payload: Device) => Action,
   removeBuilding: (payload: string) => Action,
   setDefaultBuilding: (payload?: Building) => Action,
   setInvitations: (payload: string[]) => Action,
@@ -66,20 +72,33 @@ interface Props extends ConnectedProps<typeof connector> {
 };
 
 interface MyBuildingState {
+  showAddingDeviceOverlay: boolean;
   showBuildingsOverlay: boolean;
   showInvitationsOverlay: boolean;
   showInviteBoxOverlay: boolean;
   invitedEmail: string;
+  addingDevice: Device;
+};
+
+const defaultDevice: Device = {
+  name: "",
+  topic: "bk-iot-gas",
+  deviceType: "gas",
+  region: "",
+  protection: true,
+  data: []
 };
 
 class MyBuildings extends React.Component<Props, MyBuildingState> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      showAddingDeviceOverlay: false,
       showBuildingsOverlay: false,
       showInvitationsOverlay: false,
       showInviteBoxOverlay: false,
-      invitedEmail: ""
+      invitedEmail: "",
+      addingDevice: defaultDevice
     };
   }
 
@@ -91,6 +110,10 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
         this.props.setInvitations(response.map((building: Building) => building.name));
         if (this.props.invitations.length > 0) this.setState({ showInvitationsOverlay: true });
       }).catch(err => console.error(err));
+  }
+
+  toggleAddingDeviceOverlay = () => {
+    this.setState({ showAddingDeviceOverlay: !this.state.showAddingDeviceOverlay });
   }
 
   toggleBuildingsOverlay = () => {
@@ -234,6 +257,92 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
     ));
   }
 
+  onChangeDeviceName = (text: string) => {
+    this.setState({ addingDevice: { ...this.state.addingDevice, name: text } });
+  }
+
+  onChangeDeviceRegion = (text: string) => {
+    this.setState({ addingDevice: { ...this.state.addingDevice, region: text } });
+  }
+
+  onChangeDeviceType = (value: any) => {
+    this.setState({ 
+      addingDevice: {
+        ...this.state.addingDevice,
+        deviceType: value,
+        topic: deviceTopics[value as DeviceType]
+      }
+    });
+  }
+
+  onDeviceSubmit = () => {
+    let device = this.state.addingDevice;
+    if (device.name.trim().length * device.topic.trim().length * device.region.trim().length === 0) {
+      Alert.alert(
+        "Invalid format",
+        "Please fill in all information of your device",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+    DataService.addBuildingDevice({
+      buildingName: this.props.defaultBuilding?.name,
+      device: device
+    }).then(response => {
+      if (response === null) {
+        Alert.alert(
+          "Adding device failed",
+          "Unknown error from server. Please try again!",
+          [{ text: "OK" }]
+        );
+        return;
+      } else {
+        Alert.alert(
+          "Successfully added",
+          "Your new device has been successfully added",
+          [{ text: "OK" }]
+        );
+        ControlService.subOne(response);
+        this.props.addDevice(response);
+        this.setState({
+          addingDevice: defaultDevice,
+          showAddingDeviceOverlay: false
+        });
+      }
+    }).catch(err => console.error(err));
+  }
+
+  alertClosing = () => {
+    Alert.alert(
+      "Closing building",
+      "Are you sure you want to close this building? You can't undo this action!",
+      [
+        { text: "OK", onPress: this.closeBuilding },
+        { text: "Cancel" }
+      ]
+    );
+  }
+
+  closeBuilding = () => {
+    DataService.closeBuilding({
+      buildingName: this.props.defaultBuilding?.name
+    }).then(response => {
+      if (response === null) {
+        Alert.alert(
+          "Closing failed",
+          "Unknown error from server. Please try again!",
+          [{ text: "OK" }]
+        );
+      }
+      if (this.props.defaultBuilding) this.props.removeBuilding(this.props.defaultBuilding?.name);
+      if (this.props.buildings.length > 0) {
+        this.props.setDefaultBuilding(this.props.buildings[0]);
+      } else {
+        this.props.setDefaultBuilding();
+      }
+    }).catch(err => console.error(err));
+  }
+
   alertLeaving = () => {
     Alert.alert(
       "Leaving building",
@@ -321,17 +430,31 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
             <View style={styles.membersContainer}>
               {this.renderMemberList()}
             </View>
-            <View style={styles.buttonContainer}>
-              {this.props.defaultBuilding?.owner && this.props.currentUser && this.props.currentUser.uid == this.props.defaultBuilding?.owner.uid ? 
-                <TouchableOpacity onPress={this.toggleInviteBoxOverlay}>
-                  <Ionicons name="person-add-sharp" size={40} color='rgba(255, 255, 255, 0.8)' />
-                </TouchableOpacity>
-                :
+            {this.props.defaultBuilding?.owner && this.props.currentUser && this.props.currentUser.uid == this.props.defaultBuilding?.owner.uid ? 
+              <View style={styles.buttonsContainer}>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={this.toggleInviteBoxOverlay}>
+                    <Ionicons name="person-add-sharp" size={40} color='rgba(255, 255, 255, 0.8)' />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={this.toggleAddingDeviceOverlay}>
+                    <MaterialCommunityIcons name="devices" size={40} color='rgba(255, 255, 255, 0.8)' />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={this.alertClosing}>
+                    <MaterialCommunityIcons name="delete-empty" size={40} color='rgba(255, 255, 255, 0.8)' />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              :
+              <View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={this.alertLeaving}>
                   <MaterialIcons name="exit-to-app" size={40} color='rgba(255, 255, 255, 0.8)' />
                 </TouchableOpacity>
-              }
-            </View>
+              </View>
+            }
           </ScrollView>
           :
           <View style={styles.emptyContainer}>
@@ -340,6 +463,50 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
             <Text style={styles.emptySecondaryText}>Press + to create a new one</Text>
           </View>
         }
+        <Overlay 
+          isVisible={this.state.showAddingDeviceOverlay}
+          toggle={this.toggleAddingDeviceOverlay}
+          height={height/4}
+          children={
+            <View style={styles.inputContainer}>
+              <TextInput 
+                style={styles.input}
+                underlineColorAndroid="rgba(0, 0, 0, 0.5)"
+                placeholder="Enter device's name"
+                placeholderTextColor="rgba(0, 0, 0, 0.3)"
+                onChangeText={this.onChangeDeviceName}
+                value={this.state.addingDevice.name}
+                autoCapitalize="none"
+              />
+              <TextInput 
+                style={styles.input}
+                underlineColorAndroid="rgba(0, 0, 0, 0.5)"
+                placeholder="Enter device's region"
+                placeholderTextColor="rgba(0, 0, 0, 0.3)"
+                onChangeText={this.onChangeDeviceRegion}
+                value={this.state.addingDevice.region}
+                autoCapitalize="none"
+              />
+              <Picker
+                style={{ width: '90%' }}
+                selectedValue={this.state.addingDevice.deviceType}
+                onValueChange={(itemValue) => this.onChangeDeviceType(itemValue)}>
+                <Picker.Item label="Fire alarm" value="buzzer" />
+                <Picker.Item label="Extractor fan" value="fan" />
+                <Picker.Item label="Gas sensor" value="gas" />
+                <Picker.Item label="Power system" value="power" />
+                <Picker.Item label="Smart door" value="servo" />
+                <Picker.Item label="Sprinkler" value="sprinkler" />
+                <Picker.Item label="Temperature sensor" value="temperature" />
+              </Picker>
+              <View style={styles.submitButtonContainer}>
+                <TouchableOpacity style={styles.submitButton} onPress={this.onDeviceSubmit}>
+                  <Text style={styles.submitText}>OK</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          }
+        />
         <Overlay
           isVisible={this.state.showBuildingsOverlay}
           toggle={this.toggleBuildingsOverlay}
@@ -363,9 +530,9 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
           toggle={this.toggleInviteBoxOverlay}
           height={height/5}
           children={
-            <View style={styles.emailInputContainer}>
+            <View style={styles.inputContainer}>
               <TextInput
-                style={styles.emailInput}
+                style={styles.input}
                 underlineColorAndroid="rgba(0, 0, 0, 0.5)"
                 placeholder="Enter user's email"
                 placeholderTextColor="rgba(0, 0, 0, 0.3)"
@@ -373,9 +540,9 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
                 value={this.state.invitedEmail}
                 autoCapitalize="none"
               />
-              <View style={styles.inviteButtonContainer}>
-                <TouchableOpacity style={styles.inviteButton} onPress={this.onInvitedEmailSubmit}>
-                  <Text style={styles.inviteText}>OK</Text>
+              <View style={styles.submitButtonContainer}>
+                <TouchableOpacity style={styles.submitButton} onPress={this.onInvitedEmailSubmit}>
+                  <Text style={styles.submitText}>OK</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -468,36 +635,42 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     fontSize: 16
   },
-  buttonContainer: {
+  buttonsContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20,
+    paddingHorizontal: width/8,
     width: '100%'
   },
-  emailInputContainer: {
+  buttonContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inputContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 10,
     paddingVertical: 20
   },
-  emailInput: {
+  input: {
     fontSize: 16,
     paddingHorizontal: 10,
     color: 'rgba(0, 0, 0, 0.8)',
     width: '90%'
   },
-  inviteButtonContainer: {
+  submitButtonContainer: {
     alignItems: 'center',
     justifyContent: 'center'
   },
-  inviteButton: {
+  submitButton: {
     backgroundColor: '#002150',
     borderRadius: 5,
     paddingVertical: 5,
     paddingHorizontal: 20
   },
-  inviteText: {
+  submitText: {
     color: 'white',
     fontSize: 20
   },

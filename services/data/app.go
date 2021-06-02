@@ -43,6 +43,8 @@ func (a *App) ConnectPostgres(user, password, dbname, host string) {
 func (a *App) InitializeRoutes() {
 	a.Router = mux.NewRouter()
 	a.Router.HandleFunc("/acceptInvitation", a.acceptInvitation).Methods("POST")
+	a.Router.HandleFunc("/addBuildingDevice", a.addBuildingDevice).Methods("POST")
+	a.Router.HandleFunc("/closeBuilding", a.closeBuilding).Methods("POST")
 	a.Router.HandleFunc("/createUser", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
 	a.Router.HandleFunc("/declineInvitation", a.declineInvitation).Methods("POST")
@@ -60,6 +62,14 @@ func (a *App) InitializeRoutes() {
 
 func (a *App) acceptInvitation(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.AcceptInvitation)
+}
+
+func (a *App) addBuildingDevice(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]interface{}{}, models.AddBuildingDevice)
+}
+
+func (a *App) closeBuilding(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.CloseBuilding)
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {

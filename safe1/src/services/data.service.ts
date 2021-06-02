@@ -17,6 +17,13 @@ class DataService {
       .catch(err => { console.error(err); return null });
   }
 
+  closeBuilding(payload: any): Promise<any | null> {
+    return HttpService.post(`${dataUrl}/closeBuilding`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Building : null)
+      .catch(err => { console.error(err); return null });
+  }
+
   getUserBuildings(payload: any): Promise<Building[] | null> {
     return HttpService.post(`${dataUrl}/getUserBuildings`, payload)
       .then(response => response.status === 200 ? response.json() : null)
@@ -53,6 +60,13 @@ class DataService {
   declineInvitation(payload: any): Promise<any | null> {
     return HttpService.post(`${dataUrl}/declineInvitation`, payload)
       .then(response => response.status === 200 ? response.json() : null)
+      .catch(err => { console.error(err); return null });
+  }
+
+  addBuildingDevice(payload: any): Promise<Device | null> {
+    return HttpService.post(`${dataUrl}/addBuildingDevice`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Device : null)
       .catch(err => { console.error(err); return null });
   }
 
