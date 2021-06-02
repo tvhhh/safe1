@@ -9,6 +9,7 @@ import RoomButtons from '@/components/RoomButtons'
 import AvatarPile from '@/components/AvatarPile'
 import Feather from 'react-native-vector-icons/Feather'
 import List from '@/components/SectionGrid'
+import { connect, ConnectedProps } from 'react-redux';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -100,7 +101,7 @@ class Remotecontrol extends React.Component<Props>{
   }
 }
 
-export default Remotecontrol;
+export default connect(Remotecontrol);
 
 const styles = StyleSheet.create({
   container: {

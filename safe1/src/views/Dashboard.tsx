@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Animated
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 import { LineChart } from 'react-native-chart-kit'
@@ -52,18 +53,18 @@ class Dashboard extends React.Component<Props, State> {
           });
 
           return (
-            <TouchableOpacity
+            <Animated.View
               style={{
                 flex: 1,
                 alignItems: 'center',
-                borderBottomWidth: 1,
+                justifyContent: 'center',
                 padding: 16,
-                borderColor: `rgba(255, 255, 255, ${opacity}`,
-                
-              }}
-              onPress={() => this.setState({ index: i })}>
-              <Text style={{ opacity: opacity, color: 'white' }}>{route.title}</Text>
-            </TouchableOpacity>
+                borderBottomWidth: 1,
+                borderColor: 'white',
+                opacity
+              }}>
+                <Animated.Text style={{color: 'white'}}>{route.title}</Animated.Text>   
+            </Animated.View>
           );
         })}
       </View>
@@ -71,52 +72,74 @@ class Dashboard extends React.Component<Props, State> {
   };
 
   render(){
-    let lineChartProps = {
-      data: {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [
-          {
-            data: [
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100
-            ]
+    function lineChartProps() {
+      return{
+        data: {
+          labels: ["January", "February", "March", "April", "May", "June", "July"],
+          datasets: [
+            {
+              data: [
+                35,
+                36,
+                27,
+                37,
+                40,
+                35
+              ],
+              color: () => 'red'
+            },
+            {
+              data: [
+                10,
+                0,
+                10,
+                0,
+                10,
+                0
+              ],
+              color: () => 'green'
+            }              
+          ]
+        },
+        width: width * 1.2, // from react-native
+        height: 220,
+        yAxisLabel: "$",
+        yAxisSuffix: "k",
+        yAxisInterval: 1, // optional, defaults to 1
+        chartConfig: {
+          strokeWidth: 2,
+          backgroundGradientFromOpacity: 0,
+          backgroundGradientToOpacity: 0,
+          backgroundGradientTo: "#ffa726",
+          color: () => `rgba(141, 193, 255, 1)`,
+          labelColor: () => 'white',
+          style: {
+            borderRadius: 16
+          },
+          propsForDots: {
+            r: "0",
+          },
+          propsForBackgroundLines: {
+            strokeDasharray: "", // solid background lines with no dashes
+            opacity: 0.15
           }
-        ]
-      },
-      width: width * 1.2, // from react-native
-      height: 220,
-      yAxisLabel: "$",
-      yAxisSuffix: "k",
-      yAxisInterval: 1, // optional, defaults to 1
-      chartConfig: {
-        strokeWidth: 2,
-        backgroundGradientFromOpacity: 0,
-        backgroundGradientToOpacity: 0,
-        backgroundGradientTo: "#ffa726",
-        color: () => `rgba(141, 193, 255, 1)`,
-        labelColor: () => 'white',
-        style: {
-          borderRadius: 16
         },
-        propsForDots: {
-          r: "0",
-        },
-        propsForBackgroundLines: {
-          strokeDasharray: "", // solid background lines with no dashes
-          opacity: 0.15
-        }
-      },
-      withHorizontalLabels: false,
-      withHorizontalLines: false,
-      bezier: true,
-      style: styles.chart
+        withHorizontalLabels: false,
+        withHorizontalLines: false,
+        style: styles.chart
+      }
     }
-    const Route = () => (
-      <LineChart {...lineChartProps}/>
+    const RouteDay = () => (
+      <LineChart {...lineChartProps()}/>
+    );
+    const RouteHour = () => (
+      <LineChart {...lineChartProps()}/>
+    );
+    const RouteMinute = () => (
+      <LineChart {...lineChartProps()}/>
+    );
+    const RouteSecond = () => (
+      <LineChart {...lineChartProps()}/>
     );
 
     return (
@@ -131,10 +154,10 @@ class Dashboard extends React.Component<Props, State> {
           lazy
           navigationState={this.state}
           renderScene={SceneMap({
-            day: Route,
-            hour: Route,
-            minute: Route,
-            second: Route
+            day: RouteDay,
+            hour: RouteHour,
+            minute: RouteMinute,
+            second: RouteSecond
           })}
           onIndexChange={this._handleIndexChange}
           initialLayout={{ width: Dimensions.get('window').width }}
@@ -197,6 +220,7 @@ const styles = StyleSheet.create({
     flex: 5
   },
   chart: {
+    padding: 30,
     justifyContent: 'center',
     alignItems: 'center'
   },

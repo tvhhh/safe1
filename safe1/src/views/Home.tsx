@@ -125,7 +125,7 @@ class Home extends React.Component<Props, HomeState> {
             name="Settings" 
             description="Customize your app" 
             icon={<Feather name="settings" color='white' size={40}/>}
-            onPress={() => {}}
+            onPress={this.navigate("RemoteControl")}
           />
         </View>
         <View style={styles.footerContainer}>
