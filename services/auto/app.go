@@ -85,6 +85,7 @@ func (a *App) setupMqttConfig(broker, username, key string) mqtt.Client {
 	opts.SetClientID(uuid.NewString())
 	opts.SetUsername(username)
 	opts.SetPassword(key)
+	opts.SetCleanSession(false)
 	opts.SetAutoReconnect(true)
 	opts.SetDefaultPublishHandler(a.messageHandler)
 	opts.SetOnConnectHandler(func(c mqtt.Client) {

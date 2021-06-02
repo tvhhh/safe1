@@ -26,5 +26,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+docker rmi $(docker images -f "dangling=true" -q)
+
 echo "Successfully built safe1 services"
 exit 0

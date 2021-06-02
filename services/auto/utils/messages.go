@@ -3,7 +3,7 @@ package utils
 var TriggerProtection = map[string]interface{}{
 	"buzzer": map[string]string{
 		"id":   "3",
-		"data": "1",
+		"data": "1023",
 		"unit": "",
 	},
 	"fan": map[string]string{
