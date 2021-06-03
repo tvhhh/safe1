@@ -1,14 +1,30 @@
 import React, {useState} from 'react';
 import { View, SectionList, Text, StyleSheet, Image } from 'react-native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { State, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import NotificationDaily from './NotificationDaily'
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
+import { Building, User } from '@/models';
+
+import ControlService from '@/services/control.service';
+import DataService from '@/services/data.service';
+
+import { connect, ConnectedProps } from 'react-redux';
+import { State } from '@/redux/state';
+import actions, { Action } from '@/redux/actions';
+
 interface Props {
   navigation: any
 }
+
+const mapStateToProps = (state: State) => ({
+  currentUser: state.currentUser,
+  buildings: state.buildings,
+  defaultBuilding: state.defaultBuilding,
+  invitations: state.invitations
+});
 
 // const Tab = createBottomTabNavigator();
 const RoomList = [

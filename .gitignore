@@ -6,3 +6,4 @@ services/**/*.env*
 
 # Files with suffix draft, just use to test stuffs
 **/*-draft.*
+package-lock.json
