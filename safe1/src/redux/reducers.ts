@@ -7,6 +7,14 @@ const reducer: Reducer<State, Action> = (state=initialState, action: Action): St
   switch(action.type) {
   case ActionType.ADD_BUILDING:
     return { ...state, buildings: [ ...state.buildings, action.payload ] };
+  case ActionType.ADD_DEVICE:
+    return { 
+      ...state, 
+      defaultBuilding: state.defaultBuilding ? {
+        ...state.defaultBuilding,
+        devices: [...state.defaultBuilding.devices, action.payload]
+      } : undefined
+    };
   case ActionType.REMOVE_BUILDING:
     return { ...state, buildings: state.buildings.filter((building: Building) => building.name !== action.payload) };
   case ActionType.REMOVE_INVITATION:

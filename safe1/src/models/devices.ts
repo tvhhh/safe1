@@ -1,4 +1,4 @@
-type DeviceType = "buzzer" | "power" | "servo" | "sprinkler" | "fan" | "gas" | "temperature" | "humidity";
+export type DeviceType = "buzzer" | "power" | "servo" | "sprinkler" | "fan" | "gas" | "temperature";
 
 export default interface Device {
   name: string,

@@ -1,7 +1,8 @@
-import { Building, Message, User } from '@/models';
+import { Building, Device, Message, User } from '@/models';
 
 export enum ActionType {
   ADD_BUILDING = "ADD_BUILDING",
+  ADD_DEVICE = "ADD_DEVICE",
   REMOVE_BUILDING = "REMOVE_BUILDING",
   REMOVE_INVITATION = "REMOVE_INVITATION",
   REMOVE_USER = "REMOVE_USER",
@@ -23,6 +24,7 @@ export interface Action {
 
 const actions = {
   addBuilding: (payload: Building): Action => ({ type: ActionType.ADD_BUILDING, payload: payload }),
+  addDevice: (payload: Device): Action => ({ type: ActionType.ADD_DEVICE, payload: payload }),
   removeBuilding: (payload: string): Action => ({ type: ActionType.REMOVE_BUILDING, payload: payload }),
   removeInvitation: (payload: string): Action => ({ type: ActionType.REMOVE_INVITATION, payload: payload }),
   removeUser: (payload: string): Action => ({ type: ActionType.REMOVE_USER, payload: payload }),

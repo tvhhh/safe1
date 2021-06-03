@@ -79,3 +79,43 @@ func KickUser(db *gorm.DB, params interface{}) (interface{}, error) {
 
 	return map[string]interface{}{"success": true}, nil
 }
+
+func AddBuildingDevice(db *gorm.DB, params interface{}) (interface{}, error) {
+	payload := params.(map[string]interface{})
+	buildingName := payload["buildingName"].(string)
+
+	var d Device
+	b, _ := json.Marshal(payload["device"])
+	json.Unmarshal(b, &d)
+
+	d.Building = buildingName
+
+	if err := db.Create(&d).Error; err != nil {
+		return nil, err
+	}
+
+	var devices []Device
+	if err := db.
+		Model(&Device{}).
+		Where("building = ? and region = ?", d.Building, d.Region).
+		Find(&devices).Error; err != nil {
+		return nil, err
+	}
+
+	if err := api.UpdateProtection(devices); err != nil {
+		return nil, err
+	}
+
+	return &d, nil
+}
+
+func CloseBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
+	payload := params.(map[string]interface{})
+	buildingName := payload["buildingName"].(string)
+
+	if err := db.Delete(&Building{}, "name = ?", buildingName).Error; err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{"success": true}, nil
+}

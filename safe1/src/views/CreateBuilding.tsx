@@ -14,13 +14,15 @@ import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackButton, Input } from '@/components';
-import feeds from '@/utils/feeds';
+import deviceTopics from '@/utils/deviceTopics';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import actions, { Action } from '@/redux/actions';
 
 import { Building, Device, User } from '@/models';
+import { DeviceType } from '@/models/devices';
+
 import ControlService from '@/services/control.service';
 import DataService from '@/services/data.service';
 
@@ -52,10 +54,10 @@ interface CustomState {
 
 const defaultDevice: Device = {
   name: "",
-  topic: "",
+  topic: "bk-iot-gas",
   deviceType: "gas",
   region: "",
-  protection: false,
+  protection: true,
   data: []
 };
 
@@ -89,14 +91,6 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     }
   }
 
-  onChangeDeviceTopic = (index: number) => {
-    return (text: string) => {
-      let devices = this.state.buildingSettings.devices;
-      devices[index].topic = text;
-      this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
-    }
-  }
-
   onChangeDeviceRegion = (index: number) => {
     return (text: string) => {
       let devices = this.state.buildingSettings.devices;
@@ -109,6 +103,7 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     return (value: any) => {
       let devices = this.state.buildingSettings.devices;
       devices[index].deviceType = value;
+      devices[index].topic = deviceTopics[value as DeviceType];
       this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
     }
   }
@@ -138,22 +133,15 @@ class CreateBuilding extends React.Component<Props, CustomState> {
           />
           <Input 
             style={{ flex: 1, marginHorizontal: 3 }}
-            placeholder="Device's topic"
-            fontSize={14}
-            value={item.topic}
-            onChangeText={this.onChangeDeviceTopic(index)}
-          />
-        </View>
-        <View style={styles.deviceInformationRow}>
-          <Input 
-            style={{ flex: 1, marginHorizontal: 3 }}
             placeholder="Device's region"
             fontSize={14}
             value={item.region}
             onChangeText={this.onChangeDeviceRegion(index)}
           />
+        </View>
+        <View style={styles.deviceInformationRow}>
           <Picker
-            style={{ flex: 1, marginHorizontal: 3, color: 'white' }}
+            style={{ width: '50%', marginHorizontal: 3, color: 'white' }}
             selectedValue={item.deviceType}
             onValueChange={(itemValue) => this.onChangeDeviceType(index)(itemValue)}>
             <Picker.Item label="Fire alarm" value="buzzer" />
@@ -169,25 +157,10 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     );
   }
 
-  validateTopics = (building: Building): boolean => {
-    building.devices.forEach((device: Device) => {
-      if (feeds.indexOf(device.topic) === -1) {
-        Alert.alert(
-          "Topic not found",
-          `Cannot find any feed named ${device.topic}`,
-          [{ text: "OK" }]
-        );
-        return false;
-      }
-    });
-    return true;
-  }
-
   onSubmit = () => {
     let building = this.state.buildingSettings;
     building.devices = building.devices.filter((device: Device) => device.name.trim().length * device.topic.trim().length * device.region.trim().length > 0);
     this.setState({ buildingSettings: { ...building } });
-    if (!this.validateTopics(building)) return;
     DataService.createBuilding(building)
       .then(response => {
         if (response === null) {
@@ -283,7 +256,8 @@ const styles = StyleSheet.create({
     marginVertical: 2
   },
   deviceInformationRow: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'center'
   },
   addButtonContainer: {
     alignItems: 'center',
