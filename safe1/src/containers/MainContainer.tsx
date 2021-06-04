@@ -19,7 +19,7 @@ export default class MainContainer extends React.Component {
       <NavigationContainer>
         <Navigator>
           <Screen name="Home" component={Home} options={{headerShown: false}} />
-          <Screen name="Dashboard" component={Dashboard} options={{headerTransparent: true, headerTintColor: 'white'}} />
+          <Screen name="Dashboard" component={Dashboard} options={{headerTransparent: true,headerTitle:"Dashboard", headerTintColor: 'white'}} />
           <Screen name="My Buildings" component={MyBuildingsContainer} options={{headerShown: false}} />
           <Screen name="RemoteControl" component={RemoteControl} options={{headerShown: false}} />
           <Screen name="OptionScreen" component={OptionScreen} options={{headerShown: false}} />
