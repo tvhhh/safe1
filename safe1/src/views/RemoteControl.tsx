@@ -111,11 +111,7 @@ class RemoteControl extends React.Component<Props>{
   }
 }
 
-<<<<<<< HEAD
-export default connect(Remotecontrol);
-=======
 export default RemoteControl;
->>>>>>> origin
 
 const styles = StyleSheet.create({
   container: {
