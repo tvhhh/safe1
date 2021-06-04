@@ -43,14 +43,18 @@ func (a *App) ConnectPostgres(user, password, dbname, host string) {
 func (a *App) InitializeRoutes() {
 	a.Router = mux.NewRouter()
 	a.Router.HandleFunc("/acceptInvitation", a.acceptInvitation).Methods("POST")
+	a.Router.HandleFunc("/addBuildingDevice", a.addBuildingDevice).Methods("POST")
+	a.Router.HandleFunc("/closeBuilding", a.closeBuilding).Methods("POST")
 	a.Router.HandleFunc("/createUser", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/createBuilding", a.createBuilding).Methods("POST")
 	a.Router.HandleFunc("/declineInvitation", a.declineInvitation).Methods("POST")
 	a.Router.HandleFunc("/getBuilding", a.getBuilding).Methods("POST")
 	a.Router.HandleFunc("/getInputDevices", a.getInputDevices).Methods("POST")
+	a.Router.HandleFunc("/getInvitations", a.getInvitations).Methods("POST")
 	a.Router.HandleFunc("/getOutputDevices", a.getOutputDevices).Methods("POST")
 	a.Router.HandleFunc("/getUserBuildings", a.getUserBuildings).Methods("POST")
 	a.Router.HandleFunc("/inviteUser", a.inviteUser).Methods("POST")
+	a.Router.HandleFunc("/kickUser", a.kickUser).Methods("POST")
 	a.Router.HandleFunc("/updateData", a.updateData).Methods("POST")
 	a.Router.HandleFunc("/updateProtection", a.updateProtection).Methods("POST")
 	a.Router.HandleFunc("/ping", a.ping).Methods("GET")
@@ -58,6 +62,14 @@ func (a *App) InitializeRoutes() {
 
 func (a *App) acceptInvitation(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.AcceptInvitation)
+}
+
+func (a *App) addBuildingDevice(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]interface{}{}, models.AddBuildingDevice)
+}
+
+func (a *App) closeBuilding(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.CloseBuilding)
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
@@ -80,6 +92,10 @@ func (a *App) getInputDevices(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, nil, models.GetInputDevices)
 }
 
+func (a *App) getInvitations(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.GetInvitations)
+}
+
 func (a *App) getOutputDevices(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.GetOutputDevices)
 }
@@ -90,6 +106,10 @@ func (a *App) getUserBuildings(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) inviteUser(w http.ResponseWriter, r *http.Request) {
 	a.handleRequest(w, r, map[string]string{}, models.InviteUser)
+}
+
+func (a *App) kickUser(w http.ResponseWriter, r *http.Request) {
+	a.handleRequest(w, r, map[string]string{}, models.KickUser)
 }
 
 func (a *App) updateData(w http.ResponseWriter, r *http.Request) {

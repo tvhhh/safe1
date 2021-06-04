@@ -25,7 +25,7 @@ func UpdateProtection(db *gorm.DB, params interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	if err := db.Model(&Device{Name: deviceName}).First(&d).Error; err != nil {
+	if err := db.First(&d, "name = ?", deviceName).Error; err != nil {
 		return nil, err
 	}
 

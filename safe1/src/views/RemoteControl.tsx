@@ -17,11 +17,11 @@ interface Props {
   navigation: any
 }
 
-class Remotecontrol extends React.Component<Props>{
+class RemoteControl extends React.Component<Props>{
   state = {
     screenHeight : 0
   };
-  onContentSizeChange = (contentWidth, contentHeight) => {
+  onContentSizeChange = (contentWidth: number, contentHeight: number) => {
     this.setState({screenHeight: contentHeight})
   }
 
@@ -67,7 +67,12 @@ class Remotecontrol extends React.Component<Props>{
           <View style = {styles.roomDevices1}>
             <Text style = {styles.primaryText}>Devices</Text>
             <View style = {styles.allToggle}>
-              <Text style = {styles.secondaryText}>All</Text>
+              <Text 
+                style = {styles.secondaryText} 
+                onPress = {() => navigate('RooomScreen')}
+              >
+                All
+              </Text>
             </View>
             
           </View>
@@ -76,7 +81,12 @@ class Remotecontrol extends React.Component<Props>{
           <View style = {styles.roomDevices2}>
             <Text style = {styles.primaryText}>Rooms</Text>
             <View style = {styles.allToggle}>
-              <Text style = {styles.secondaryText}>All</Text>
+              <Text 
+                style = {styles.secondaryText}
+                onPress = {() => navigate('OptionScreen')}
+              >
+                All
+              </Text>
             </View>
           </View>
           <View style = {styles.roomButtons}>
@@ -101,7 +111,11 @@ class Remotecontrol extends React.Component<Props>{
   }
 }
 
+<<<<<<< HEAD
 export default connect(Remotecontrol);
+=======
+export default RemoteControl;
+>>>>>>> origin
 
 const styles = StyleSheet.create({
   container: {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { 
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -13,12 +14,15 @@ import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackButton, Input } from '@/components';
+import deviceTopics from '@/utils/deviceTopics';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import actions, { Action } from '@/redux/actions';
 
 import { Building, Device, User } from '@/models';
+import { DeviceType } from '@/models/devices';
+
 import ControlService from '@/services/control.service';
 import DataService from '@/services/data.service';
 
@@ -41,7 +45,7 @@ interface Props extends ConnectedProps<typeof connector> {
   currentUser: User | null,
   defaultBuilding: Building | undefined,
   addBuilding: (payload: Building) => Action,
-  setDefaultBuilding: (payload: Building) => Action
+  setDefaultBuilding: (payload?: Building) => Action
 };
 
 interface CustomState {
@@ -50,10 +54,10 @@ interface CustomState {
 
 const defaultDevice: Device = {
   name: "",
-  topic: "",
+  topic: "bk-iot-gas",
   deviceType: "gas",
   region: "",
-  protection: false,
+  protection: true,
   data: []
 };
 
@@ -87,14 +91,6 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     }
   }
 
-  onChangeDeviceTopic = (index: number) => {
-    return (text: string) => {
-      let devices = this.state.buildingSettings.devices;
-      devices[index].topic = text;
-      this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
-    }
-  }
-
   onChangeDeviceRegion = (index: number) => {
     return (text: string) => {
       let devices = this.state.buildingSettings.devices;
@@ -107,6 +103,7 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     return (value: any) => {
       let devices = this.state.buildingSettings.devices;
       devices[index].deviceType = value;
+      devices[index].topic = deviceTopics[value as DeviceType];
       this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
     }
   }
@@ -136,32 +133,24 @@ class CreateBuilding extends React.Component<Props, CustomState> {
           />
           <Input 
             style={{ flex: 1, marginHorizontal: 3 }}
-            placeholder="Device's topic"
-            fontSize={14}
-            value={item.topic}
-            onChangeText={this.onChangeDeviceTopic(index)}
-          />
-        </View>
-        <View style={styles.deviceInformationRow}>
-          <Input 
-            style={{ flex: 1, marginHorizontal: 3 }}
             placeholder="Device's region"
             fontSize={14}
             value={item.region}
             onChangeText={this.onChangeDeviceRegion(index)}
           />
+        </View>
+        <View style={styles.deviceInformationRow}>
           <Picker
-            style={{ flex: 1, marginHorizontal: 3, color: 'white' }}
+            style={{ width: '50%', marginHorizontal: 3, color: 'white' }}
             selectedValue={item.deviceType}
             onValueChange={(itemValue) => this.onChangeDeviceType(index)(itemValue)}>
-            <Picker.Item label="Gas" value="gas" />
-            <Picker.Item label="Temperature" value="temperature" />
-            <Picker.Item label="Humidity" value="humidity" />
-            <Picker.Item label="Buzzer" value="buzzer" />
-            <Picker.Item label="Power" value="power" />
-            <Picker.Item label="Servo" value="servo" />
+            <Picker.Item label="Fire alarm" value="buzzer" />
+            <Picker.Item label="Extractor fan" value="fan" />
+            <Picker.Item label="Gas sensor" value="gas" />
+            <Picker.Item label="Power system" value="power" />
+            <Picker.Item label="Smart door" value="servo" />
             <Picker.Item label="Sprinkler" value="sprinkler" />
-            <Picker.Item label="Fan" value="fan" />
+            <Picker.Item label="Temperature sensor" value="temperature" />
           </Picker>
         </View>
       </View>
@@ -174,11 +163,19 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     this.setState({ buildingSettings: { ...building } });
     DataService.createBuilding(building)
       .then(response => {
-        if (response === null) return;
-        ControlService.sub(response);
-        this.props.addBuilding(response);
-        if (this.props.defaultBuilding === undefined) this.props.setDefaultBuilding(response);
-        this.props.navigation.goBack();
+        if (response === null) {
+          Alert.alert(
+            "Creating failed",
+            "Unknown error from server. Please try again!",
+            [{ text: "OK" }]
+          );
+          return;
+        } else {
+          ControlService.sub(response);
+          this.props.addBuilding(response);
+          if (this.props.defaultBuilding === undefined) this.props.setDefaultBuilding(response);
+          this.props.navigation.goBack();
+        }
       }).catch(err => console.error(err));
   }
 
@@ -259,7 +256,8 @@ const styles = StyleSheet.create({
     marginVertical: 2
   },
   deviceInformationRow: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'center'
   },
   addButtonContainer: {
     alignItems: 'center',

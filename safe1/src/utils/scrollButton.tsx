@@ -1,25 +1,73 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import {ENTRIES1} from '@/assets/entries';
 import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
-export default class ScrollingButtonMenu extends React.Component {
+type data = {
+    id: number, 
+    name: string
+}
 
-    constructor(props) {
+type Props = typeof ScrollingButtonMenu.defaultProps & {
+    items: Array<data>, 
+    selected?: number,
+    upperCase?: boolean, 
+    selectedOpacity?: number, 
+    activeBackgroundColor?: string, 
+    activeColor?: string, 
+    buttonStyle?: Object, 
+    containerStyle?: Object,
+    onPress?: (route: data) => {}
+}
+
+interface State {
+    index: number
+}
+
+export default class ScrollingButtonMenu extends React.Component <Props, State>{
+    private scroll: any;
+    private dataSourceCords: Array<{x: number, width: number}>;
+    constructor(props: Props) {
         super(props);
 
         this.scroll = React.createRef();
         this.dataSourceCords = [];
 
         this.state = {
-            index: false,
+            index: 0,
         };
     }
 
-    componentDidUpdate(prevProps) {
+    static defaultProps = {
+        upperCase: false,
+        textStyle: {
+            fontFamily: 'Roboto', 
+            padding: 10,
+            color: '#FFFFFF',
+            fontSize: 16,
+            fontWeight: 'bold',
+
+        },
+        buttonStyle: {
+            borderRadius: 10,
+            marginRight: 10,
+        },
+        activeColor: '#FFFFFF',
+        activeBackgroundColor: '#434FEA',
+        selected: '',
+        onPress: () => {},
+        selectedOpacity: 0.7,
+        containerStyle: {},
+    }
+
+    componentDidUpdate(prevProps: Props) {
         const {selected} = this.props;
-        if (selected && selected.length > 0 && prevProps.selected != this.state.index) {
+        const isOk = false;
+        if(typeof(selected) === 'number'){
+            const isOk = true;
+        }
+        if (selected && isOk && prevProps.selected != this.state.index) {
             this.setState({index: selected});
         }
     }
@@ -36,12 +84,15 @@ export default class ScrollingButtonMenu extends React.Component {
     }
 
     _scrollTo() {
-
         const {index} = this.state;
         const screen1 = screenWidth / 2;
         const elementOffset = this.dataSourceCords[index];
         if (elementOffset !== undefined) {
-            let x = elementOffset.x - (screen1 - (elementOffset.width / 2));
+            let x = elementOffset.x - (screen1 - (elementOffset.width / 2)) + 12;
+            if (index == ENTRIES1.length - 1){
+                let lastOffset = this.dataSourceCords[index-1];
+                x = lastOffset.x - (screen1 - (lastOffset.width / 2)) + 12;
+            }
             this.scroll.scrollTo({
                 y: 0,
                 x: x,
@@ -68,7 +119,6 @@ export default class ScrollingButtonMenu extends React.Component {
                     style={styles.scroll}
                     contentContainerStyle={styles.scrollContainer}
                     scrollEventThrottle={200}
-                    lazy={false}
                 >
                     {
                         items.map((route, i) => (
@@ -107,45 +157,6 @@ export default class ScrollingButtonMenu extends React.Component {
     }
 }
 
-ScrollingButtonMenu.propTypes = {
-    items: PropTypes.array.isRequired,
-    onPress: PropTypes.func.isRequired,
-    upperCase: PropTypes.bool,
-    textStyle: PropTypes.object,
-    buttonStyle: PropTypes.object,
-    activeColor: PropTypes.string,
-    activeBackgroundColor: PropTypes.string,
-    selected: PropTypes.number,
-    selectedOpacity: PropTypes.number,
-    containerStyle: PropTypes.object,
-};
-
-ScrollingButtonMenu.defaultProps = {
-    upperCase: false,
-    textStyle: {
-        // position: 'absolute',
-        fontFamily: 'Roboto', 
-        padding: 10,
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '500',
-        fontStyle: 'normal',
-
-    },
-    buttonStyle: {
-        borderRadius: 10,
-        marginRight: 10,
-    },
-    activeColor: '#FFFFFF',
-    activeBackgroundColor: '#434FEA',
-    selected: '',
-    onPress: () => {
-
-    },
-    selectedOpacity: 0.7,
-    containerStyle: {},
-};
-
 const styles = StyleSheet.create({
     scrollArea: {
         paddingTop: 5,
@@ -156,16 +167,14 @@ const styles = StyleSheet.create({
     tabItem: {
         borderRadius: 5,
         backgroundColor: '#FFFFFF',
-        // padding: 10,
-        paddingLeft: 15,
-        paddingRight: 15,
+        padding: 8,
         width: (screenWidth - 44)/3,
     },
     tabItemText: {
         color: '#000000',
         fontFamily: 'Roboto',
         fontSize: 18,
-        fontWeight: '500',
+        fontWeight: 'bold',
         fontStyle: 'normal',
         textAlign: 'center',
         paddingTop: 5,

@@ -23,7 +23,7 @@ class MyBuildingsContainer extends React.Component<Props> {
     return (
       <Navigator 
         headerMode="none"
-        initialRouteName={this.props.defaultBuilding ? "My Buildings" : "Create Building"}
+        initialRouteName="My Buildings"
       >
         <Screen name="Create Building" component={CreateBuilding} />
         <Screen name="My Buildings" component={MyBuildings} />

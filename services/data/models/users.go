@@ -12,7 +12,7 @@ type User struct {
 	Email       string     `json:"email"`
 	PhoneNumber string     `json:"phoneNumber"`
 	PhotoURL    string     `json:"photoURL"`
-	Invitations []Building `json:"invitations" gorm:"many2many:user_invitations;foreignKey:Uid;joinForeignKey:UserId"`
+	Invitations []Building `json:"invitations" gorm:"many2many:user_invitations;foreignKey:Uid;joinForeignKey:UserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func CreateUser(db *gorm.DB, params interface{}) (interface{}, error) {
@@ -72,11 +72,10 @@ func AcceptInvitation(db *gorm.DB, params interface{}) (interface{}, error) {
 	}
 
 	if err := db.
-		Model(&Building{Name: buildingName}).
 		Preload("Owner").
 		Preload("Members").
 		Preload("Devices.Data", "time > now()-'1 day'::interval").
-		First(&b).Error; err != nil {
+		First(&b, "name = ?", buildingName).Error; err != nil {
 		return nil, err
 	}
 

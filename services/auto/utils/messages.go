@@ -3,12 +3,12 @@ package utils
 var TriggerProtection = map[string]interface{}{
 	"buzzer": map[string]string{
 		"id":   "3",
-		"data": "1",
+		"data": "1023",
 		"unit": "",
 	},
 	"fan": map[string]string{
-		"id":   "11",
-		"data": "1",
+		"id":   "10",
+		"data": "255",
 		"unit": "",
 	},
 	"power": map[string]string{

@@ -5,6 +5,7 @@ import { State } from '@/redux/state';
 import actions, { Action } from '@/redux/actions';
 import MainContainer from '@/containers/MainContainer';
 import SignInContainer from '@/containers/SignInContainer';
+import ControlService from '@/services/control.service';
 import DataService from '@/services/data.service';
 import StorageService from '@/services/storage.service';
 
@@ -28,7 +29,7 @@ interface Props extends ConnectedProps<typeof connector> {
   defaultBuilding: Building | undefined,
   setBuildings: (payload: Building[]) => Action,
   setCurrentUser: (payload: User) => Action,
-  setDefaultBuilding: (payload: Building) => Action
+  setDefaultBuilding: (payload?: Building) => Action
 };
 
 class Safe1Container extends React.Component<Props> {
@@ -40,9 +41,10 @@ class Safe1Container extends React.Component<Props> {
     if (buildings === null) {
       buildings = await StorageService.getBuildings();
       if (buildings === null) return;
-      this.props.setBuildings(buildings as Building[]);
     }
+    this.props.setBuildings(buildings as Building[]);
     if (buildings.length === 0) return;
+    buildings.forEach((building: Building) => ControlService.sub(building));
     let defaultBuilding = await StorageService.getDefaultBuilding();
     if (defaultBuilding === null) return;
     this.props.setDefaultBuilding(defaultBuilding as Building);

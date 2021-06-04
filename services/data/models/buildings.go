@@ -38,11 +38,10 @@ func GetBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
 
 	var b Building
 	if err := db.
-		Model(&Building{Name: buildingName}).
 		Preload("Devices").
 		Preload("Owner").
 		Preload("Members").
-		First(&b).Error; err != nil {
+		First(&b, "name = ?", buildingName).Error; err != nil {
 		return nil, err
 	}
 
@@ -51,12 +50,70 @@ func GetBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
 
 func InviteUser(db *gorm.DB, params interface{}) (interface{}, error) {
 	payload := params.(map[string]interface{})
+	email := payload["email"].(string)
+	buildingName := payload["buildingName"].(string)
+
+	var u User
+	if err := db.Where("email = ?", email).First(&u).Error; err != nil {
+		return nil, err
+	}
+
+	b := Building{Name: buildingName}
+	if err := db.Model(&u).Association("Invitations").Append(&b); err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{"success": true}, nil
+}
+
+func KickUser(db *gorm.DB, params interface{}) (interface{}, error) {
+	payload := params.(map[string]interface{})
 	uid := payload["uid"].(string)
 	buildingName := payload["buildingName"].(string)
 
 	u := User{Uid: uid}
 	b := Building{Name: buildingName}
-	if err := db.Model(&u).Association("Invitations").Append(&b); err != nil {
+	if err := db.Model(&b).Association("Members").Delete(&u); err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{"success": true}, nil
+}
+
+func AddBuildingDevice(db *gorm.DB, params interface{}) (interface{}, error) {
+	payload := params.(map[string]interface{})
+	buildingName := payload["buildingName"].(string)
+
+	var d Device
+	b, _ := json.Marshal(payload["device"])
+	json.Unmarshal(b, &d)
+
+	d.Building = buildingName
+
+	if err := db.Create(&d).Error; err != nil {
+		return nil, err
+	}
+
+	var devices []Device
+	if err := db.
+		Model(&Device{}).
+		Where("building = ? and region = ?", d.Building, d.Region).
+		Find(&devices).Error; err != nil {
+		return nil, err
+	}
+
+	if err := api.UpdateProtection(devices); err != nil {
+		return nil, err
+	}
+
+	return &d, nil
+}
+
+func CloseBuilding(db *gorm.DB, params interface{}) (interface{}, error) {
+	payload := params.(map[string]interface{})
+	buildingName := payload["buildingName"].(string)
+
+	if err := db.Delete(&Building{}, "name = ?", buildingName).Error; err != nil {
 		return nil, err
 	}
 
