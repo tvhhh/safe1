@@ -175,7 +175,7 @@ Remember that the topic of a device must be one of follows, please choose approp
 * Motor (used for fan): `bk-iot-drv`
 * Buzzer: `bk-iot-speaker`
 * Servo: `bk-iot-servo`
-* Just testing: `bk-iot-led`
+* LED (just for testing): `bk-iot-led`
   
 Another thing to remember is that names of devices MUST BE UNIQUE, since devices of the same type would subscribe same topic.
 
