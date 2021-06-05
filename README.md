@@ -171,7 +171,8 @@ Once app is successfully built and run, login then choose My Buildings option an
 Remember that the topic of a device must be one of follows, please choose appropriate topic to avoid data misuse
 * Gas sensor: `bk-iot-gas`
 * Temperature sensor: `bk-iot-temp-humid`
-* Relay (used for power system, sprinkler, and fan): `bk-iot-relay`
+* Relay (used for power system, sprinkler): `bk-iot-relay`
+* Motor (used for fan): `bk-iot-drv`
 * Buzzer: `bk-iot-speaker`
 * Servo: `bk-iot-servo`
 * Just testing: `bk-iot-led`
