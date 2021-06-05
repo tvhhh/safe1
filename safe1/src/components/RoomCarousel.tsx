@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { View } from 'react-native'
 import Carousel from 'react-native-snap-carousel';
-import SliderEntry from '@/components/RoomSliderEntry';
+import RoomSliderEntry from '@/components/RoomSliderEntry';
 import { sliderHeight, itemHeight, itemWidth } from '@/styles/roomSliderEntry';
 import styles from '@/styles/roomCarousel';
 import {ENTRIES1} from '@/assets/entries';
@@ -15,7 +15,7 @@ interface IMyComponentState {
 type data = {
   title: string, 
   num: string,
-  illustration: string
+  illustration: Object
 }
 
 type input = {
@@ -35,7 +35,7 @@ export default class RoomCarousel extends PureComponent<{}, IMyComponentState> {
 
   _renderItemWithParallax = ({item, index}: input, parallaxProps: Object) => {
     return (
-      <SliderEntry
+      <RoomSliderEntry
         data={item}
         even={(index + 1) % 2 === 0}
         parallax={true}

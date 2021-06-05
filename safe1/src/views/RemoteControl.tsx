@@ -1,6 +1,6 @@
 import React from 'react'
 import {View, Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native'
-import { Avatar } from 'react-native-elements'
+import { AvatarControl } from '@/components'
 import { ScrollView } from 'react-native-gesture-handler'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -15,11 +15,17 @@ const {height, width} = Dimensions.get('screen')
 interface Props {
   navigation: any
 }
+interface State {
+  screenHeight: number
+};
+class RemoteControl extends React.Component<Props, State>{
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      screenHeight: 0
+    };
+  }
 
-class RemoteControl extends React.Component<Props>{
-  state = {
-    screenHeight : 0
-  };
   onContentSizeChange = (contentWidth: number, contentHeight: number) => {
     this.setState({screenHeight: contentHeight})
   }
@@ -48,27 +54,14 @@ class RemoteControl extends React.Component<Props>{
           >
             <Feather name = "x" color = 'white' size = {40}/>
           </TouchableOpacity>
-
-          <View>
-            <Avatar
-              size="large"
-              rounded
-              source={require('../assets/img/Hung.jpg')}
-              containerStyle={styles.avatar}
-            />
-            <View style = {styles.avatarText}>
-              <Text style = {styles.primaryText}>Hi Minh Hung,</Text> 
-              <Text style = {styles.secondaryText}>welcome back</Text>
-            </View>
-          </View>
-
+          <AvatarControl size="xlarge"/>
           
           <View style = {styles.roomDevices1}>
             <Text style = {styles.primaryText}>Devices</Text>
             <View style = {styles.allToggle}>
               <Text 
                 style = {styles.secondaryText} 
-                onPress = {() => navigate('RooomScreen')}
+                onPress = {() => navigate('RoomScreen')}
               >
                 All
               </Text>
@@ -79,14 +72,6 @@ class RemoteControl extends React.Component<Props>{
 
           <View style = {styles.roomDevices2}>
             <Text style = {styles.primaryText}>Rooms</Text>
-            <View style = {styles.allToggle}>
-              <Text 
-                style = {styles.secondaryText}
-                onPress = {() => navigate('OptionScreen')}
-              >
-                All
-              </Text>
-            </View>
           </View>
           <View style = {styles.roomButtons}>
             <RoomButtons/>
@@ -120,14 +105,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: width/1.2,
     top: height/25,
+    zIndex: 999
   },
-  avatar: {
-    width: 67,
-    height: 66,
-    left: width/12,
-    top: height/20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)'
-  }, 
 
   avatarText: {
     position: 'absolute',

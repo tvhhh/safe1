@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Button } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import RoomButtons from '@/components/RoomButtons';
+import OptionButtons from '@/components/OptionButtons';
 import ProtectionGrid from '@/components/ProctectionGrid';
 import ThermoMonitor from '@/components/ThermoMonitor';
 import HumidityMonitor from '@/components/HumidityMonitor';
@@ -12,7 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 const {height, width} = Dimensions.get('screen')
 
 interface Props {
-  navigation: any
+  navigation: any,
+  route: any
 }
 
 const active = 'activated';
@@ -60,28 +61,45 @@ const AppButton = () => {
   )
 }
 
-
-const temp = '27\u00b0\C';
-const humid = '55 %'
 const Thermo = () => { 
+  const temp = 20;
+  const humid = 65;
+  const celcius = '\u00b0\C'; 
   return (
     <View style={styles.body}>
       <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
         Now, Temperature is
-        <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {temp} </Text> 
+        <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {temp}{celcius}</Text> 
       </Text>
-      <ThermoMonitor/>
+      <ThermoMonitor temp={temp}/>
       <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
         And Humidity is
-        <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {humid} </Text> 
+        <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {humid}%</Text> 
       </Text>
-      <HumidityMonitor/>
+      <HumidityMonitor humid={humid}/>
       <AppButton/>
     </View>
   );
 }
 
-class OptionScreen extends React.Component<Props> {
+interface State {
+  selectedId: number,
+}
+
+class OptionScreen extends React.Component<Props, State> {
+  constructor(p: Props) {
+    super(p);
+    this.state = {
+      selectedId: 0
+    };
+  }
+
+  changeSelectedID = (newValue: number) => {
+    this.setState({
+      selectedId: newValue,
+    });
+  }
+
   render() {
     const { navigate } = this.props.navigation;
     return (
@@ -95,20 +113,20 @@ class OptionScreen extends React.Component<Props> {
         <TouchableOpacity
           style = {styles.outButton}
           onPress = {() => {
-          navigate('RemoteControl');
+          navigate('RoomScreen');
           }}
         >
           <Icon name = {'keyboard-backspace'} color = {'#fff'} size = {40}/>
         </TouchableOpacity>
 
         <View style = {styles.roomDevices}>
-          <Text style = {styles.primaryText}>Kitchen</Text>
+          <Text style = {styles.primaryText}>{this.props.route.params.title}</Text>
         </View>
-        <View style = {styles.roomButtons}>
-          <RoomButtons/>
+        <View style = {styles.optionButtons}>
+          <OptionButtons changeSelectedID={this.changeSelectedID.bind(this)}/>
         </View>
         
-        <Thermo/>   
+        {this.state.selectedId < 1? <Body/> : <Thermo/>}
       </LinearGradient>  
     )
   }
@@ -155,7 +173,7 @@ const styles = StyleSheet.create({
     right: width/10,
     textAlign: 'center'
   },
-  roomButtons:{
+  optionButtons:{
     top: height/22.5,
   },
 })

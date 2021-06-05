@@ -15,7 +15,7 @@ interface IMyComponentState {
 type data = {
   title: string, 
   num: string,
-  illustration: string
+  illustration: Object
 }
 
 type input = {

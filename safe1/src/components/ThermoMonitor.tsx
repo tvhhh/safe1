@@ -3,12 +3,15 @@ import { View, StyleSheet  } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ProgressCircle from '@/components/Circle'
 
+interface Props {
+  temp: number
+}
 
-export default function ThermoMonitor() {
+export default function ThermoMonitor({temp}: Props) {
   return (
     <View style={styles.thermoMonitor}>
       <ProgressCircle
-        percent={27}
+        percent={temp}
         radius={90}
         borderWidth={30}
         color="#FA582F"

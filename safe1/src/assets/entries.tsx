@@ -1,32 +1,27 @@
 export const ENTRIES1 = [
   {
-    title: 'Canyon',
-    num: '3',
-    illustration: 'https://i.imgur.com/UYiroysl.jpg'
+    title: 'Kitchen',
+    num: '0',
+    illustration: require('@/assets/rooms/kitchen.jpg')
   },
   {
-    title: 'NYC',
-    num: '3',
-    illustration: 'https://i.imgur.com/UPrs1EWl.jpg'
+    title: 'Living room',
+    num: '0',
+    illustration: require('@/assets/rooms/livingroom.jpg')
   },
   {
-    title: 'Sunset',
-    num: '3',
-    illustration: 'https://i.imgur.com/MABUbpDl.jpg'
+    title: 'Bedroom',
+    num: '0',
+    illustration: require('@/assets/rooms/bedroom.jpeg')
   },
   {
-    title: 'Greece',
-    num: '3',
-    illustration: 'https://i.imgur.com/KZsmUi2l.jpg'
+    title: 'Bathroom',
+    num: '0',
+    illustration: require('@/assets/rooms/bathroom.jpg')
   },
   {
-    title: 'New Zealand',
-    num: '3',
-    illustration: 'https://i.imgur.com/2nCt3Sbl.jpg'
-  },
-  {
-    title: 'Germany',
-    num: '3',
-    illustration: 'https://i.imgur.com/lceHsT6l.jpg'
+    title: 'Basement',
+    num: '0',
+    illustration: require('@/assets/rooms/basement.jpg')
   }
 ];
