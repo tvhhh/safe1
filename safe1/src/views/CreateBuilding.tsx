@@ -14,7 +14,6 @@ import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackButton, Input } from '@/components';
-import feeds from '@/utils/feeds';
 import deviceTopics from '@/utils/deviceTopics';
 
 import { connect, ConnectedProps } from 'react-redux';
@@ -92,14 +91,6 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     }
   }
 
-  onChangeDeviceTopic = (index: number) => {
-    return (text: string) => {
-      let devices = this.state.buildingSettings.devices;
-      devices[index].topic = text;
-      this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
-    }
-  }
-
   onChangeDeviceRegion = (index: number) => {
     return (text: string) => {
       let devices = this.state.buildingSettings.devices;
@@ -166,25 +157,10 @@ class CreateBuilding extends React.Component<Props, CustomState> {
     );
   }
 
-  validateTopics = (building: Building): boolean => {
-    building.devices.forEach((device: Device) => {
-      if (feeds.indexOf(device.topic) === -1) {
-        Alert.alert(
-          "Topic not found",
-          `Cannot find any feed named ${device.topic}`,
-          [{ text: "OK" }]
-        );
-        return false;
-      }
-    });
-    return true;
-  }
-
   onSubmit = () => {
     let building = this.state.buildingSettings;
     building.devices = building.devices.filter((device: Device) => device.name.trim().length * device.topic.trim().length * device.region.trim().length > 0);
     this.setState({ buildingSettings: { ...building } });
-    if (!this.validateTopics(building)) return;
     DataService.createBuilding(building)
       .then(response => {
         if (response === null) {
