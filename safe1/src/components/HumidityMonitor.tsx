@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, StyleSheet  } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ProgressCircle from '@/utils/circle'
+import ProgressCircle from '@/components/Circle'
 
+interface Props {
+  humid: number
+}
 
-export default function HumidityMonitor() {
+export default function HumidityMonitor({humid}: Props) {
   return (
     <View style={styles.humidityMonitor}>
       <ProgressCircle
-        percent={55}
+        percent={humid}
         radius={90}
         borderWidth={30}
         color="#4A5CFF"

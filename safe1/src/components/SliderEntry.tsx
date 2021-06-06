@@ -1,29 +1,54 @@
 import React, { Component } from 'react'
-import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { ParallaxImage } from 'react-native-snap-carousel'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from '../styles/sliderEntry'
+import { useNavigation } from '@react-navigation/native';
 
 const DEVICE = 'sensors'
 
+type roomData = {
+    title: string, 
+    num: string,
+    illustration: Object
+}
 interface Props {
-    data: {
-        title: string, 
-        num: string,
-        illustration: string
-    },
+    data: roomData,
     even: boolean,
     parallax: boolean,
-    parallaxProps: Object
+    parallaxProps: Object,
 }
 
+interface TouchProps {
+    Title: JSX.Element | boolean, 
+    img: JSX.Element, 
+    even: boolean,
+    data: roomData
+}
+
+const Touch: React.FC<TouchProps> = ({Title, img, even, data}) => {
+    const navigation = useNavigation();
+    return(
+        <TouchableOpacity
+            activeOpacity={1}
+            style={styles.slideInnerContainer}
+            onPress={() => {navigation.navigate('OptionScreen', data);}}
+            >
+            <View style={styles.shadow} />
+            <View style={[styles.imageContainer, even ? styles.imageContainerEven : {}]}>
+                { img }
+            </View>
+            { Title }
+        </TouchableOpacity>
+    )
+}
 export default class SliderEntry extends Component<Props> {
+    
     get image () {
         const { data: { illustration }, parallax, parallaxProps, even } = this.props;
-
         return parallax ? (
             <ParallaxImage
-              source={{ uri: illustration }}
+              source={illustration}
               containerStyle={[styles.imageContainer, even ? styles.imageContainerEven : {}]}
               style={styles.image}
               parallaxFactor={0.35}
@@ -33,15 +58,14 @@ export default class SliderEntry extends Component<Props> {
             />
         ) : (
             <Image
-              source={{ uri: illustration }}
+              source={illustration}
               style={styles.image}
             />
         );
     }
 
     render () {
-        const { data: { title, num }, even } = this.props;
-
+        const { data: { title, num, illustration }, even } = this.props;
         const Title = num ? (
             <View style={styles.textContainer}>
                 <Text
@@ -65,17 +89,7 @@ export default class SliderEntry extends Component<Props> {
         ) : false;
 
         return (
-            <TouchableOpacity
-              activeOpacity={1}
-              style={styles.slideInnerContainer}
-              onPress={() => { Alert.alert(`You've clicked '${title}'`); }}
-              >
-                <View style={styles.shadow} />
-                <View style={[styles.imageContainer, even ? styles.imageContainerEven : {}]}>
-                    { this.image }
-                </View>
-                { Title }
-            </TouchableOpacity>
+            <Touch Title={Title} img={this.image} even={even} data={{title, num, illustration}}/>
         );
     }
 }

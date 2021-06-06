@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
-import { View, Text, Image, StyleSheet, Animated, ImageStyle, TextStyle, ViewStyle } from 'react-native'
+import { View, Text, Image, StyleSheet, Animated, ImageStyle, ViewStyle } from 'react-native'
 
 type face = {
   id: number,
@@ -80,22 +79,6 @@ interface FacePileProps {
 
 
 export default class FacePile extends PureComponent<FacePileProps> {
-  // static propTypes = {
-  //   faces: PropTypes.arrayOf(
-  //     PropTypes.shape({
-  //       imageUrl: PropTypes.number
-  //     })
-  //   ).isRequired,
-  //   circleSize: PropTypes.number,
-  //   hideOverflow: PropTypes.bool,
-  //   containerStyle: PropTypes.instanceOf(StyleSheet),
-  //   circleStyle: PropTypes.instanceOf(StyleSheet),
-  //   imageStyle: PropTypes.instanceOf(StyleSheet),
-  //   overflowStyle: PropTypes.instanceOf(StyleSheet),
-  //   overflowLabelStyle: PropTypes.instanceOf(StyleSheet),
-  //   render: PropTypes.func,
-  //   numFaces: PropTypes.number
-  // }
 
   static defaultProps = {
     circleSize: 32,
