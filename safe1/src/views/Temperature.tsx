@@ -5,30 +5,25 @@ import {
   Text,
   ScrollView,
   View,
-  Animated
+  Button,
+  Alert
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 import { LineChart } from 'react-native-chart-kit'
 import Feather from 'react-native-vector-icons/Feather'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { connect, ConnectedProps } from 'react-redux';
+import { State } from '@/redux/state';
 
 const { width } = Dimensions.get('screen');
-const highestTempOfDay = [35, 36, 27, 37, 40, 35, 37]
-const lowestTempOfDay = [20, 23, 15, 24, 19, 30, 22]
 
-const data = {
-  labels: ["MON", "TUE", 'WED', "THU", "FRI", "SAT", "SUN"],
-  datasets: [
-    {
-      data: highestTempOfDay,
-      color: () => 'rgba(250, 218, 94, 0.8)'
-    },
-    {
-      data: lowestTempOfDay,
-      color: () => '#87CEFA'
-    }                  
-  ]
-}
+const mapStateToProps = (state: State) => ({
+  currentUser: state.currentUser,
+  defaultBuilding: state.defaultBuilding,
+  buildings: state.buildings
+});
+
+const connector = connect(mapStateToProps);
 
 interface Props {
   navigation: any,
@@ -37,9 +32,53 @@ interface Props {
 class Temperature extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      defaultBuilding: this.props.defaultBuilding,
+    };
   };
-
+  
+  getTempData = () => {
+    const temp_data = {
+      highestTempOfDay: [],
+      lowestTempOfDay: [],
+      label: []
+    }
+    this.state.defaultBuilding.devices.forEach(device => {
+      var dict: any = {}
+      device.data.forEach(data => {
+        const day = new Date(data.time).toDateString().substring(0,3).toLocaleUpperCase()
+        if (!(day in dict)){
+          dict[day] = []
+        }
+        dict[day].push(Number(data.data.substring(0, 2)))
+      });
+      for(const key in dict) {
+        var temp = []
+        temp.push(Math.max(...dict[key]))
+        temp.push(Math.min(...dict[key]))
+        temp_data.highestTempOfDay.push(temp[0])
+        temp_data.lowestTempOfDay.push(temp[1])
+        temp_data.label.push(key)
+      }
+    });
+    return temp_data
+  }
+  
   render(){
+    const temp_data = this.getTempData()
+    const data = {
+      labels: temp_data.label,
+      datasets: [
+        {
+          data: temp_data.highestTempOfDay,
+          color: () => 'rgba(250, 218, 94, 0.8)'
+        },
+        {
+          data: temp_data.lowestTempOfDay,
+          color: () => '#87CEFA'
+        }                  
+      ]
+    }
     let lineChartProps = {
         data: data,
         width: width, // from react-native
@@ -64,6 +103,7 @@ class Temperature extends React.Component<Props> {
             opacity: 0.15
           }
         },
+        formatYLabel: (y: string) => (Number(y).toString()),
         fromZero: true,
         withVerticalLines: false,
         bezier: true,
@@ -78,8 +118,8 @@ class Temperature extends React.Component<Props> {
         end={{x: 0, y: 0.5}}
       >
         <View style={styles.container}>
+          <View style={styles.header}></View>
           <ScrollView style={{flex: 1}} contentContainerStyle={{alignItems:'center'}}>
-            <View style={styles.header}></View>
             <LineChart {...lineChartProps}/>
             <View style={styles.tempContainer}>
               <Feather name = "sun" size = {30} color = "white"/>
@@ -88,18 +128,17 @@ class Temperature extends React.Component<Props> {
                 <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>lowest temperature</Text>
               </View>
               <View style={styles.tempSecondBox}>
-                <Text style={{color:"white"}}>{Math.max(...highestTempOfDay)}°C</Text>
-                <Text style={{color:"white"}}>{Math.min(...highestTempOfDay)}°C</Text>
+                <Text style={{color:"white"}}>{Math.max(...temp_data.highestTempOfDay)}°C</Text>
+                <Text style={{color:"white"}}>{Math.min(...temp_data.highestTempOfDay)}°C</Text>
               </View>          
             </View>
-            <View style={{padding: 10}}></View>
             <View style={styles.tempContainer}>
               <FontAwesome name = "snowflake-o" size = {30} color = "white"/>
               <View style={styles.tempFirstBox}>
                 <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>lowest temperature</Text>
               </View>
               <View style={styles.tempSecondBox}>
-                <Text style={{color:"white"}}>{Math.min(...lowestTempOfDay)}°C</Text>
+                <Text style={{color:"white"}}>{Math.min(...temp_data.lowestTempOfDay)}°C</Text>
               </View>          
             </View>
           </ScrollView>
@@ -109,19 +148,21 @@ class Temperature extends React.Component<Props> {
   }
 }
 
-export default Temperature;
+export default connector(Temperature);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1
   },
   header: {
-    padding: 50
+    padding: 40,
+    backgroundColor: 'transparent'
   },
   chart: {
     alignItems: 'center'
   },
   tempContainer: {
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent:'space-evenly',
