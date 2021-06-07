@@ -11,14 +11,15 @@ type data = {
 
 type Props = typeof ScrollingButtonMenu.defaultProps & {
     items: Array<data>, 
-    selected?: number,
+    selected: number,
     upperCase?: boolean, 
     selectedOpacity?: number, 
     activeBackgroundColor?: string, 
     activeColor?: string, 
     buttonStyle?: Object, 
     containerStyle?: Object,
-    onPress?: (route: data) => {}
+    onPress?: (route: data) => {},
+    changeSelectedID?: (newValue: number) => void
 }
 
 interface State {
@@ -55,7 +56,7 @@ export default class ScrollingButtonMenu extends React.Component <Props, State>{
         },
         activeColor: '#FFFFFF',
         activeBackgroundColor: '#434FEA',
-        selected: '',
+        selected: NaN,
         onPress: () => {},
         selectedOpacity: 0.7,
         containerStyle: {},
@@ -84,6 +85,9 @@ export default class ScrollingButtonMenu extends React.Component <Props, State>{
     }
 
     _scrollTo() {
+        if(this.props.items.length === 3){
+            return;
+        }
         const {index} = this.state;
         const screen1 = screenWidth / 2;
         const elementOffset = this.dataSourceCords[index];
@@ -132,8 +136,11 @@ export default class ScrollingButtonMenu extends React.Component <Props, State>{
                                 key={(route.id ? route.id : i).toString()}
                                 onPress={() => this.setState({index: route.id}, () => setTimeout(() => {
                                         this._scrollTo();
+                                        if (this.props.changeSelectedID){
+                                            this.props.changeSelectedID(this.state.index);
+                                        }
                                         return this.props.onPress(route);
-                                    }, 50)
+                                    }, 50), 
                                 )}
                                 onLayout={(event) => {
                                     const layout = event.nativeEvent.layout;

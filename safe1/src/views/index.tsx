@@ -6,7 +6,7 @@ import NotificationHistory from '@/views/NotificationHistory'
 import NotificationDaily from '@/views/NotificationDaily'
 import RemoteControl from '../views/RemoteControl'
 import OptionScreen from '@/views/OptionScreen'
-import RooomScreen from '@/views/RoomScreen'
+import RoomScreen from '@/views/RoomScreen'
 
 export {
   CreateBuilding,
@@ -17,5 +17,5 @@ export {
   NotificationDaily,
   RemoteControl,
   OptionScreen,
-  RooomScreen
+  RoomScreen
 };

@@ -9,7 +9,7 @@ import {
   NotificationDaily, 
   RemoteControl, 
   OptionScreen,
-  RooomScreen 
+  RoomScreen 
 } from '@/views';
 const { Navigator, Screen } = createStackNavigator();
 
@@ -19,11 +19,11 @@ export default class MainContainer extends React.Component {
       <NavigationContainer>
         <Navigator>
           <Screen name="Home" component={Home} options={{headerShown: false}} />
-          <Screen name="Dashboard" component={Dashboard} options={{headerTransparent: true, headerTintColor: 'white'}} />
+          <Screen name="Dashboard" component={Dashboard} options={{headerTransparent: true,headerTitle:"Dashboard", headerTintColor: 'white'}} />
           <Screen name="My Buildings" component={MyBuildingsContainer} options={{headerShown: false}} />
           <Screen name="RemoteControl" component={RemoteControl} options={{headerShown: false}} />
           <Screen name="OptionScreen" component={OptionScreen} options={{headerShown: false}} />
-          <Screen name="RooomScreen" component={RooomScreen} options={{headerShown: false}} />
+          <Screen name="RoomScreen" component={RoomScreen} options={{headerShown: false}} />
           <Screen name="NotificationHistory" component={NotificationHistory} options={{ title: "NOTIFICATION", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
           <Screen name="NotificationDaily" component={NotificationDaily}options={{ title: "NOTIFICATION DAILY", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
         </Navigator>
