@@ -7,24 +7,20 @@ import ProtectionGrid from '@/components/ProctectionGrid';
 import ThermoMonitor from '@/components/ThermoMonitor';
 import HumidityMonitor from '@/components/HumidityMonitor';
 import { useNavigation } from '@react-navigation/native';
-
+import { connect, ConnectedProps } from 'react-redux';
+import { State } from '@/redux/state';
+import { Building, Device, User } from '@/models';
 
 const {height, width} = Dimensions.get('screen')
 
-interface Props {
-  navigation: any,
-  route: any
-}
-
-const active = 'activated';
-const num = 4;
+const num = 0;
 
 const Body = () => {
   return (
     <View style={styles.body}>
       <Text style={bodyStyles.intro} numberOfLines={2}>
         {num} protection options in the kitchen are 
-        <Text style={{fontWeight: 'bold', color: '#1EC639'}}> {active} </Text> 
+        <Text style={{fontWeight: 'bold', color: '#1EC639'}}> activated </Text> 
       </Text>
       <ProtectionGrid/>
     </View>
@@ -61,37 +57,89 @@ const AppButton = () => {
   )
 }
 
-const Thermo = () => { 
-  const temp = 20;
-  const humid = 65;
+const Thermo = (props: any) => { 
   const celcius = '\u00b0\C'; 
   return (
     <View style={styles.body}>
       <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
         Now, Temperature is
-        <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {temp}{celcius}</Text> 
+        <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {props.temp}{celcius}</Text> 
       </Text>
-      <ThermoMonitor temp={temp}/>
+      <ThermoMonitor temp={props.temp}/>
       <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
         And Humidity is
-        <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {humid}%</Text> 
+        <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {props.humid}%</Text> 
       </Text>
-      <HumidityMonitor humid={humid}/>
+      <HumidityMonitor humid={props.humid}/>
       <AppButton/>
     </View>
   );
 }
 
-interface State {
-  selectedId: number,
-}
+const mapStateToProps = (state: State) => ({
+  currentUser: state.currentUser,
+  defaultBuilding: state.defaultBuilding,
+});
 
-class OptionScreen extends React.Component<Props, State> {
-  constructor(p: Props) {
-    super(p);
+const connector = connect(mapStateToProps);
+interface Props extends ConnectedProps<typeof connector> {
+  currentUser: User | null,
+  defaultBuilding: Building | undefined,
+  navigation: any,
+  route: any  
+};
+
+interface OptionState {
+  selectedId: number,
+  tempData: {temp:number, humid: number}
+}  
+
+const tempData = {
+  temp: 0,
+  humid: 0
+}
+class OptionScreen extends React.Component<Props, OptionState> {
+  constructor(props: Props) {
+    super(props);
     this.state = {
-      selectedId: 0
+      selectedId: 0,
+      tempData: tempData
     };
+  }
+
+  componentDidUpdate( prevProps: Props, prevState: OptionState){
+    if(!this.props.defaultBuilding) return;
+    var devices = this.props.defaultBuilding.devices;
+    var roomName:string = this.props.route.params.title;
+    var hasDevice: boolean = devices.some(function(value: Device){
+      return value.region.toLowerCase() === roomName.toLowerCase()
+    });
+    console.log(roomName);  
+    console.log(devices);
+    if(hasDevice){
+      var tempData = new Array();
+      tempData = devices.filter((device: Device) =>  
+        device.region.toLowerCase() === roomName.toLowerCase() && device.deviceType === 'temperature'
+      )
+      if(tempData.length >= 1){
+        var lastedData = tempData[0].data[tempData[0].data.length-1];
+        if(lastedData && lastedData.value){
+          var temp: number = parseInt(lastedData.value.split('-')[0]);
+          var humid: number = parseInt(lastedData.value.split('-')[1]);
+          if(temp !== prevState.tempData.temp || humid !== prevState.tempData.humid){
+            this.setState({tempData: {temp, humid}});
+          }        
+        }
+        // maybe unnecessary
+        if(lastedData && lastedData.data){
+          var temp: number = parseInt(lastedData.data.split('-')[0]);
+          var humid: number = parseInt(lastedData.data.split('-')[1]);
+          if(temp !== prevState.tempData.temp || humid !== prevState.tempData.humid){
+            this.setState({tempData: {temp, humid}});
+          } 
+        }
+      }
+    }
   }
 
   changeSelectedID = (newValue: number) => {
@@ -101,7 +149,6 @@ class OptionScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <LinearGradient 
         colors = {['#4F9FFF', '#002150']} 
@@ -113,7 +160,7 @@ class OptionScreen extends React.Component<Props, State> {
         <TouchableOpacity
           style = {styles.outButton}
           onPress = {() => {
-          navigate('RoomScreen');
+          this.props.navigation.goBack();
           }}
         >
           <Icon name = {'keyboard-backspace'} color = {'#fff'} size = {40}/>
@@ -126,13 +173,13 @@ class OptionScreen extends React.Component<Props, State> {
           <OptionButtons changeSelectedID={this.changeSelectedID.bind(this)}/>
         </View>
         
-        {this.state.selectedId < 1? <Body/> : <Thermo/>}
+        {this.state.selectedId < 1? <Body/> : <Thermo temp={this.state.tempData.temp} humid={this.state.tempData.humid}/>}
       </LinearGradient>  
     )
   }
 }
 
-export default OptionScreen;
+export default connector(OptionScreen);
 
 const styles = StyleSheet.create({
   container:{

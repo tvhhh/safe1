@@ -4,12 +4,28 @@ import Carousel from 'react-native-snap-carousel';
 import RoomSliderEntry from '@/components/RoomSliderEntry';
 import { sliderHeight, itemHeight, itemWidth } from '@/styles/roomSliderEntry';
 import styles from '@/styles/roomCarousel';
-import {ENTRIES1} from '@/assets/entries';
+import {DEFAULT, REGION} from '@/assets/default.data';
+import { connect, ConnectedProps } from 'react-redux';
+import { State } from '@/redux/state';
+import { Building, Device, User } from '@/models';
 
-const SLIDER_1_FIRST_ITEM = 0;
+const SLIDER_FIRST_ITEM = 0;
+
+const mapStateToProps = (state: State) => ({
+  currentUser: state.currentUser,
+  defaultBuilding: state.defaultBuilding,
+});
+
+const connector = connect(mapStateToProps);
+
+interface Props extends ConnectedProps<typeof connector> {
+  currentUser: User | null,
+  defaultBuilding: Building | undefined,
+};
 
 interface IMyComponentState {
-  slider1ActiveSlide: number
+  slider1ActiveSlide: number,
+  roomData: data[]
 }
 
 type data = {
@@ -23,14 +39,30 @@ type input = {
   index: number
 }
 
-export default class RoomCarousel extends PureComponent<{}, IMyComponentState> {
+class RoomCarousel extends PureComponent<Props, IMyComponentState> {
   private _slider1Ref: React.RefObject<HTMLInputElement>;
-  constructor (props: any) {
+  constructor (props: Props) {
     super(props);
     this.state = {
-      slider1ActiveSlide: SLIDER_1_FIRST_ITEM
+      slider1ActiveSlide: SLIDER_FIRST_ITEM,
+      roomData: DEFAULT
     };
     this._slider1Ref = React.createRef();
+  }
+
+  componentDidMount(){
+    if(!this.props.defaultBuilding) return;
+    let ROOM_DATA = new Array();
+    ROOM_DATA = DEFAULT.map((elem) => ({...elem}));
+    var devices = this.props.defaultBuilding.devices;
+    devices.forEach((device: Device) => {
+      if(Object.values(REGION).includes(device.region.toLowerCase()))
+        var idx: number, value: number;
+        idx = REGION.indexOf(device.region.toLowerCase());
+        value = parseInt(ROOM_DATA[idx].num) + 1;
+        ROOM_DATA[idx].num = value.toString();
+    })
+    this.setState({roomData: ROOM_DATA})
   }
 
   _renderItemWithParallax = ({item, index}: input, parallaxProps: Object) => {
@@ -49,13 +81,13 @@ export default class RoomCarousel extends PureComponent<{}, IMyComponentState> {
       <View style={styles.exampleContainer}>
         <Carousel
             ref={() => {this._slider1Ref}}
-            data={ENTRIES1}
+            data={this.state.roomData}
             renderItem={this._renderItemWithParallax}
             sliderHeight={sliderHeight}
             itemHeight={itemHeight}
             itemWidth={itemWidth}
             hasParallaxImages={true}
-            firstItem={SLIDER_1_FIRST_ITEM}
+            firstItem={SLIDER_FIRST_ITEM}
             inactiveSlideScale={0.90}
             inactiveSlideOpacity={0.8}
             containerCustomStyle={styles.slider}
@@ -70,3 +102,4 @@ export default class RoomCarousel extends PureComponent<{}, IMyComponentState> {
   }
 }
 
+export default connector(RoomCarousel);
