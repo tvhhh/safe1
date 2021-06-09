@@ -39,13 +39,13 @@ class UserAvatarControlScreen extends React.Component<Props> {
             />
         }
 
-        <View style = {styles.avatarText}>
-          <Text style = {styles.primaryText}>
+        <View style={styles.avatarText}>
+          <Text style={styles.primaryText}>
             Hi {this.props.currentUser !== null ? this.props.currentUser.displayName : 'User'},
           </Text> 
           <Text style = {styles.secondaryText}>Welcome 
             {(this.props.defaultBuilding && this.props.defaultBuilding.name.length < 12)? 
-              'to ' + this.props.defaultBuilding.name : 'back'} !
+              ' to ' + this.props.defaultBuilding.name : ' back'} !
           </Text>
         </View>
       </View>
