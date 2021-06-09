@@ -2,26 +2,104 @@ import React from 'react';
 import { StyleSheet, View, Text, Dimensions , Switch} from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { connect, ConnectedProps } from 'react-redux';
+import { State } from '@/redux/state';
+import { Building, Device, User } from '@/models';
+import { OUTPUT_DEVICES } from '@/assets/output.devices';
 const {height, width} = Dimensions.get('screen')
 
 type typeItem = {
-    name: string, 
-    subtitle: string,
-    icon: string,
-    status: boolean,
+  name: string, 
+  subtitle: string,
+  icon: string,
+  deviceType: string
 }
 
 interface Options {
-    item: typeItem
+  item: typeItem
 }
 
-const items = [
-  { name: 'Extractor fans', subtitle: 'Propeller devices', icon: 'fan', status: true },
-  { name: 'Sprinkler', subtitle: 'Mini pump devices', icon: 'sprinkler-variant', status: true },
-  { name: 'Fire alarm', subtitle: 'buzzer devices', icon: 'fire', status: true },
-  { name: 'Smart door', subtitle: 'RC servo devices', icon: 'door-open', status: true },
-  { name: 'Power system', subtitle: 'relay circut', icon: 'flash', status: false },
-];
+const mapStateToProps = (state: State) => ({
+  currentUser: state.currentUser,
+  defaultBuilding: state.defaultBuilding,
+});
+
+const connector = connect(mapStateToProps);
+interface Props extends ConnectedProps<typeof connector> {
+  currentUser: User | null,
+  defaultBuilding: Building | undefined,
+  selectedRoom: string,
+};
+
+interface ProtectionGridState {
+  currentRoom: string,
+  availableDevice: typeItem[]
+}
+class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      currentRoom: '',
+      availableDevice: OUTPUT_DEVICES
+    };
+  }
+
+  // componentDidUpdate(prevProps: Props, prevState: ProtectionGridState){
+    
+  // } 
+  
+  componentDidMount(){
+    if(!this.props.defaultBuilding) return;
+    var devices = this.props.defaultBuilding.devices;
+    var roomName: string = this.props.selectedRoom;
+    var hasDevice: boolean = devices.some(function(value: Device){
+      return value.region.toLowerCase() === roomName.toLowerCase()
+    });
+    if(hasDevice){
+      var outputData = new Array();
+      outputData = devices.filter((device: Device) =>  
+        device.region.toLowerCase() === roomName.toLowerCase() && 
+        device.deviceType !== 'temperature' && 
+        device.deviceType !== 'gas'
+      )
+      console.log(outputData);
+      var AVAILABLE_DEVICES = OUTPUT_DEVICES.filter((item: typeItem) => 
+        outputData.find((data: Device) => (data.deviceType === item.deviceType)));
+      this.setState({availableDevice: AVAILABLE_DEVICES})
+    }
+  }
+
+  checkAvailabilty(item: typeItem){
+    // console.log(this.state.availableDevice);
+    return this.state.availableDevice.includes(item);
+  }
+
+  render(){
+    return (
+      <FlatGrid
+        itemDimension={width/3}
+        data={OUTPUT_DEVICES}
+        style={styles.gridView}
+        spacing={20}
+        renderItem={({ item }: Options) => (
+          <View style={this.checkAvailabilty(item)? 
+            [styles.itemContainer, { backgroundColor: '#fff', borderColor: '#1EC639', borderWidth: 4}] 
+            : [styles.itemContainer, { backgroundColor: '#fff' }]}
+          >
+            <Icon name={item.icon} size={50}/>
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
+            <OnProtection 
+              isAvailable={this.checkAvailabilty(item)}
+            />
+          </View>
+        )}
+      />
+    );
+  }
+}
+
+export default connector(ProtectionGrid);
 
 const OnProtection = (props: any) => {
   const [toggle, setToggle] = React.useState(false);
@@ -34,25 +112,6 @@ const OnProtection = (props: any) => {
       style={styles.onOff}
     />
 };
-
-export default function ProtectionGrid() {
-  return (
-    <FlatGrid
-      itemDimension={width/3}
-      data={items}
-      style={styles.gridView}
-      spacing={20}
-      renderItem={({ item }: Options) => (
-        <View style={[styles.itemContainer, { backgroundColor: '#fff' }]}>
-            <Icon name={item.icon} size={50}/>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
-            <OnProtection status={item.status}/>
-        </View>
-      )}
-    />
-  );
-}
 
 const styles = StyleSheet.create({
   gridView: {

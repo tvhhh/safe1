@@ -13,49 +13,19 @@ import { Building, Device, User } from '@/models';
 
 const {height, width} = Dimensions.get('screen')
 
-const num = 0;
-
-const Body = () => {
+const Body = (props: any) => {
+  const num = 4;
   return (
     <View style={styles.body}>
       <Text style={bodyStyles.intro} numberOfLines={2}>
         {num} protection options in the kitchen are 
-        <Text style={{fontWeight: 'bold', color: '#1EC639'}}> activated </Text> 
+        <Text style={{fontWeight: 'bold', color: '#1EC639'}}> available </Text> 
       </Text>
-      <ProtectionGrid/>
+      <ProtectionGrid selectedRoom={props.room}/>
     </View>
   );
 }
 
-const AppButton = () => {
-  const navigation = useNavigation();
-  return (
-  <View style={{alignItems: 'center'}}>
-    <TouchableOpacity
-      onPress={() => {navigation.navigate('RemoteControl');}}
-      style={[
-        {
-          paddingHorizontal: 8,
-          paddingVertical: 6,
-          marginTop: 30,
-          height: 50,
-          elevation: 6,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          borderBottomLeftRadius: 30,
-          borderBottomRightRadius: 30,
-          width: 150,
-        } ,
-        { backgroundColor: '#434FEA' }
-      ]}
-    >
-      <Text style={{ fontSize: 24, fontFamily: 'Roboto', textAlign: 'center', color: '#fff' }}>
-        More
-      </Text>
-    </TouchableOpacity>
-  </View>
-  )
-}
 
 const Thermo = (props: any) => { 
   const celcius = '\u00b0\C'; 
@@ -110,12 +80,10 @@ class OptionScreen extends React.Component<Props, OptionState> {
   componentDidUpdate( prevProps: Props, prevState: OptionState){
     if(!this.props.defaultBuilding) return;
     var devices = this.props.defaultBuilding.devices;
-    var roomName:string = this.props.route.params.title;
+    var roomName: string = this.props.route.params.title;
     var hasDevice: boolean = devices.some(function(value: Device){
       return value.region.toLowerCase() === roomName.toLowerCase()
     });
-    console.log(roomName);  
-    console.log(devices);
     if(hasDevice){
       var tempData = new Array();
       tempData = devices.filter((device: Device) =>  
@@ -173,10 +141,40 @@ class OptionScreen extends React.Component<Props, OptionState> {
           <OptionButtons changeSelectedID={this.changeSelectedID.bind(this)}/>
         </View>
         
-        {this.state.selectedId < 1? <Body/> : <Thermo temp={this.state.tempData.temp} humid={this.state.tempData.humid}/>}
+        {this.state.selectedId < 1? <Body room={this.props.route.params.title}/> : <Thermo temp={this.state.tempData.temp} humid={this.state.tempData.humid}/>}
       </LinearGradient>  
     )
   }
+}
+
+const AppButton = () => {
+  const navigation = useNavigation();
+  return (
+  <View style={{alignItems: 'center'}}>
+    <TouchableOpacity
+      onPress={() => {navigation.navigate('RemoteControl');}}
+      style={[
+        {
+          paddingHorizontal: 8,
+          paddingVertical: 6,
+          marginTop: 30,
+          height: 50,
+          elevation: 6,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
+          width: 150,
+        } ,
+        { backgroundColor: '#434FEA' }
+      ]}
+    >
+      <Text style={{ fontSize: 24, fontFamily: 'Roboto', textAlign: 'center', color: '#fff' }}>
+        More
+      </Text>
+    </TouchableOpacity>
+  </View>
+  )
 }
 
 export default connector(OptionScreen);
