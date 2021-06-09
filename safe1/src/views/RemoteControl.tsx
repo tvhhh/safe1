@@ -8,8 +8,6 @@ import RoomDevicesCarousel from '@/components/Carousel'
 import RoomButtons from '@/components/RoomButtons'
 import AvatarPile from '@/components/AvatarPile'
 import Feather from 'react-native-vector-icons/Feather'
-import List from '@/components/SectionGrid'
-import { connect, ConnectedProps } from 'react-redux';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -58,7 +56,7 @@ class RemoteControl extends React.Component<Props, State>{
           <AvatarControl size="xlarge"/>
           
           <View style = {styles.roomDevices1}>
-            <Text style = {styles.primaryText}>Devices</Text>
+            <Text style = {styles.primaryText}>Rooms</Text>
             <View style = {styles.allToggle}>
               <Text 
                 style = {styles.secondaryText} 
@@ -72,23 +70,18 @@ class RemoteControl extends React.Component<Props, State>{
           <RoomDevicesCarousel/>
 
           <View style = {styles.roomDevices2}>
-            <Text style = {styles.primaryText}>Rooms</Text>
+            <Text style = {styles.primaryText}>Devices</Text>
           </View>
           <View style = {styles.roomButtons}>
             <RoomButtons/>
           </View>
-
+         
           <View style = {styles.residents}>
             <Text style = {styles.primaryText}>Residents</Text>
           </View>
           <View style = {styles.avatarPile}>
             <AvatarPile/>
           </View>
-
-          <View>
-            <List/>
-          </View>
-
         </ScrollView>
       </SafeAreaView>
       </LinearGradient>  
@@ -105,7 +98,7 @@ const styles = StyleSheet.create({
   outButton: {
     position: 'absolute',
     left: width/1.2,
-    top: height/25,
+    top: 30,
     zIndex: 999
   },
 
@@ -123,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 28,
     letterSpacing: -0.24,
-
+    width: width/2,
     color: '#FFFFFF',
   },
   secondaryText: {

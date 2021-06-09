@@ -13,7 +13,7 @@ export const Styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     paddingTop: 16,
-    top: FULL_HEIGHT/9
+    marginTop: FULL_HEIGHT/20
   },
   flatList: {
     width: FULL_WIDTH,

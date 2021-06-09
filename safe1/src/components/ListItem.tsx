@@ -11,7 +11,6 @@ type ListItemProps = {
     color: string,
     status: string,
     subcolor: string,
-    open: string
   },
   styles: Object,
 };
