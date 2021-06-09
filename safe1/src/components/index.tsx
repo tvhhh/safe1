@@ -7,7 +7,6 @@ import NotificationButton from '@/components/NotificationButton';
 import Overlay from '@/components/Overlay';
 import UserAvatarControlScreen from '@/components/AvatarControlScreen';
 
-
 export {
   AddButton,
   UserAvatar as Avatar,

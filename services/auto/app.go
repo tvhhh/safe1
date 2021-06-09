@@ -140,7 +140,8 @@ func (a *App) triggerProtection(inputName string) {
 			topic := device["topic"].(string)
 			deviceName := device["name"].(string)
 			deviceType := device["type"].(string)
-			msg := utils.GetProtectionMessage(deviceName, deviceType)
+			value := device["triggeredValue"].(string)
+			msg := utils.GetProtectionMessage(deviceName, deviceType, value)
 			if utils.FindTopic(topic, utils.Topics) {
 				if err := a.pub(a.auto, a.username, topic, msg); err != nil {
 					log.WithFields(log.Fields{"error": err}).Error("Error publishing message")
@@ -198,10 +199,11 @@ func (a *App) updateProtectionPolicy(w http.ResponseWriter, r *http.Request) {
 			inputDevices = append(inputDevices, device["name"].(string))
 		} else {
 			deviceInfo := map[string]interface{}{
-				"name":       device["name"].(string),
-				"topic":      device["topic"].(string),
-				"type":       device["deviceType"].(string),
-				"protection": device["protection"].(bool),
+				"name":           device["name"].(string),
+				"topic":          device["topic"].(string),
+				"type":           device["deviceType"].(string),
+				"protection":     device["protection"].(bool),
+				"triggeredValue": device["triggeredValue"].(string),
 			}
 			outputDevices = append(outputDevices, deviceInfo)
 		}

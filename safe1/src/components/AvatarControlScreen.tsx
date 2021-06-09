@@ -39,8 +39,8 @@ class UserAvatarControlScreen extends React.Component<Props> {
             />
         }
 
-        <View style = {styles.avatarText}>
-          <Text style = {styles.primaryText}>
+        <View style={styles.avatarText}>
+          <Text style={styles.primaryText}>
             Hi {this.props.currentUser !== null ? this.props.currentUser.displayName : 'User'},
           </Text> 
           <Text style = {styles.secondaryText}>Welcome 

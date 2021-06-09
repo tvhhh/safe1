@@ -6,5 +6,6 @@ export default interface Device {
   deviceType: DeviceType,
   region: string,
   protection: boolean,
+  triggeredValue: string,
   data: { time: Date, value: string }[]
 };
