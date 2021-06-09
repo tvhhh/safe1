@@ -1,7 +1,7 @@
 **Please read this document and relevant documentations carefully to reduce time wasted for debugging and struggling.**
 
 **Author:** [tvhhh](https://github.com/tvhhh)  
-**Last updated:** 2021, May 29
+**Last updated:** 2021, June 9
 
 # Setup server on Adafruit IO
 
@@ -325,3 +325,5 @@ Payload:
   triggeredValue: string
 ```
 *(Payloads are almost JSON type and the type defined in `safe1/models`)*
+
+**Remember to clear all current buildings in PSQL (this just be done once when you read this line, don't need to clear again in the next time), shut down Docker compose, build services, then start Docker compose again**
