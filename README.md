@@ -232,7 +232,7 @@ docker exec -it $POSTGRES-CONTAINER-ID sh
 ```
 
 # Backend services
-It is necessary to understand the function of our Docker containers to easily debug without asking me (tvhhh), I'll briefly say that
+It is necessary to understand the function of our Docker containers to easily debug without asking me, I'll briefly say that
 * `safe1/data` is to handle the data and store/query from the PSQL. To understand more about this service, you can read the Golang source code `services/data` and the `safe1/services/data.service.ts` in React Native project.
 * `safe1/control` is the service between our application and Adafruit server, we connect to this service via **WebSocket** and it connects to the Adafruit via **MQTT**, through this service we receive messages from Adafruit as well as publishing messages back to server. To understand more about this service, you can read the Golang source code `services/control` and the `safe1/services/control.service.ts` in React Native project. You should also learn more about mechanism of WebSocket and MQTT by yourself.
 * `safe1/pipe` is not too relavent to our Frontend, it subscribes Adafruit server all the time to receive messages and update the data in our PSQL, our application does not communicate with this. To understand more about this service, you can read the Golang source code `services/pipe`.
@@ -243,3 +243,85 @@ To read the logs of a Docker container, use this command
 ```
 docker logs $CONTAINER_ID
 ```
+
+# Backend APIs
+
+## Control service
+The `safe1/control` keeps connection between client and devices server, hence we can directly send message to the Adafruit via this services. The format of WS message is
+```
+Request {
+  action: "init" | "pub" | "sub" | "unsub",
+  topic: string,
+  payload: string
+};
+```
+Here we have total 4 actions
+* `init` used immediately when WS connection is established, it sends the user id to `safe1/control` to setup the MQTT connection with Adafruit server. `topic` and `payload` can be omitted here (just send empty string). You can use `init` function in `safe1/services/control.service.ts`
+* `pub` used to publish the message to the Adafruit server with given `topic` and `payload`. Here `payload` must be same format as the messages defined in device interaction guidelines. You can use `pub` function in `safe1/services/control.service.ts`
+* `sub` used to subscribe a specified feed in the Adafruit server. Here `payload` can be omitted (just send empty string). You can use `sub` function in `safe1/services/control.service.ts`
+* `unsub` used to unsubscribe a specified feed in the Adafruit server. Here `payload` can be omitted (just send empty string). You can use `unsub` function in `safe1/services/control.service.ts` but it is not recommended because many devices with same type may subscribe the same topic.
+
+## Data service
+The Client communicates with this service via HTTP request, to do the stuffs related to database. You should read more in `safe1/services/data.service.ts` Specifically we have these following APIs:
+
+```
+POST /createUser
+Payload: User
+```
+```
+POST /createBuilding
+Payload: Building
+```
+```
+POST /closeBuilding
+Payload:
+  buildingName: string
+```
+```
+POST /getUserBuildings
+Payload:
+  uid: string
+```
+```
+POST /inviteUser
+Payload:
+  buildingName: string,
+  email: string
+```
+```
+POST /kickUser
+Payload:
+  buildingName: string,
+  uid: string
+```
+```
+POST /getInvitations
+Payload:
+  uid: string
+```
+```
+POST /acceptInvitation
+Payload:
+  buildingName: string
+  uid: string
+```
+```
+POST /declineInvitation
+Payload:
+  buildingName: string
+  uid: string
+```
+```
+POST /addBuildingDevice
+Payload:
+  buildingName: string
+  device: Device
+```
+```
+POST /updateDeviceProtection
+Payload:
+  buildingName: string
+  protection: boolean
+  triggeredValue: string
+```
+*(Payloads are almost JSON type and the type defined in `safe1/models`)*

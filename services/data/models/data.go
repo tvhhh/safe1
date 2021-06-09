@@ -10,7 +10,7 @@ import (
 type Data struct {
 	Device string    `json:"device" gorm:"primaryKey"`
 	Time   time.Time `json:"time" gorm:"primaryKey"`
-	Value  string    `json:"data"`
+	Value  string    `json:"value"`
 }
 
 func UpdateData(db *gorm.DB, params interface{}) (interface{}, error) {
