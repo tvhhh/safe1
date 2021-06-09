@@ -45,6 +45,8 @@ export default StyleSheet.create({
         backgroundColor: 'white',
         borderTopLeftRadius: entryBorderRadius,
         borderTopRightRadius: entryBorderRadius,
+        borderBottomLeftRadius: entryBorderRadius,
+        borderBottomRightRadius: entryBorderRadius
     },
     imageContainerEven: {
         backgroundColor: colors.black
@@ -55,6 +57,7 @@ export default StyleSheet.create({
         borderRadius: IS_IOS ? entryBorderRadius : 0,
         borderTopLeftRadius: entryBorderRadius,
         borderTopRightRadius: entryBorderRadius,
+        
     },
     textContainer: {
         position: 'absolute',

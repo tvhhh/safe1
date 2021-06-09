@@ -3,13 +3,13 @@ import { View, Text, Image, StyleSheet, Animated, ImageStyle, ViewStyle } from '
 
 type face = {
   id: number,
-  imageUrl: Object
+  imageUrl: string,
 }
 
 interface Props {
   imageStyle: ImageStyle | undefined,
   circleSize: number,
-  face: face,
+  face: face | undefined,
   offset: number,
 }
 
@@ -33,14 +33,20 @@ class Circle extends PureComponent<Props> {
             },
             imageStyle
           ]}
-          source={face.imageUrl}
+          source={{uri: face?.imageUrl}}
         />
       </Animated.View>
     )
   }
 }
 
-export function renderFacePile (faces: Array<face>, numFaces: number) {
+export function renderFacePile (faces: Array<face> | undefined, numFaces: number) {
+  if(typeof(faces) === 'undefined'){
+    return {
+      facesToRender: [],
+      overflow: 0
+    }
+  }
   const entities = [...faces.reverse()]
   if (!entities.length) return {
     facesToRender: [],
@@ -63,7 +69,7 @@ export function renderFacePile (faces: Array<face>, numFaces: number) {
 }
 
 interface FacePileProps {
-  faces: Array<face>,
+  faces: Array<face> | undefined,
   circleSize: number,
   hideOverflow?: boolean,
   containerStyle?: any,

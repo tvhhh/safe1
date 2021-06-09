@@ -4,12 +4,34 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 import SliderEntry from '@/components/SliderEntry';
 import { sliderWidth, itemWidth } from '@/styles/sliderEntry';
 import styles, { colors } from '@/styles/carousel';
-import {ENTRIES1} from '@/assets/entries';
+import {DEFAULT, REGION} from '@/assets/default.data';
+import { connect, ConnectedProps } from 'react-redux';
+import { State } from '@/redux/state';
+import { Building, Device, User } from '@/models';
+import actions, { Action } from '@/redux/actions';
 
-const SLIDER_1_FIRST_ITEM = 0;
+const SLIDER_FIRST_ITEM = 0;
+
+const mapStateToProps = (state: State) => ({
+  currentUser: state.currentUser,
+  defaultBuilding: state.defaultBuilding,
+});
+
+const mapDispatchToProps = {
+  setDefaultBuilding: actions.setDefaultBuilding,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+interface Props extends ConnectedProps<typeof connector> {
+  currentUser: User | null,
+  defaultBuilding: Building | undefined,
+  setDefaultBuilding: (payload?: Building) => Action,
+};
 
 interface IMyComponentState {
-  slider1ActiveSlide: number
+  slider1ActiveSlide: number,
+  roomData: data[]
 }
 
 type data = {
@@ -23,14 +45,33 @@ type input = {
   index: number
 }
 
-export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentState> {
+class RoomDevicesCarousel extends PureComponent<Props, IMyComponentState> {
   private _slider1Ref: React.RefObject<HTMLInputElement>;
   constructor (props: any) {
     super(props);
     this.state = {
-      slider1ActiveSlide: SLIDER_1_FIRST_ITEM
+      slider1ActiveSlide: SLIDER_FIRST_ITEM,
+      roomData: DEFAULT
     };
     this._slider1Ref = React.createRef();
+  }
+
+  componentDidMount(){
+    console.log(this.props.defaultBuilding?.name);
+
+    if(!this.props.defaultBuilding) return;
+    let ROOM_DATA = new Array();
+    ROOM_DATA = DEFAULT.map((elem) => ({...elem}));
+    var devices = this.props.defaultBuilding.devices;
+    devices.forEach((device: Device) => {
+      if(Object.values(REGION).includes(device.region.toLowerCase()))
+        var idx: number, value: number;
+        idx = REGION.indexOf(device.region.toLowerCase());
+        value = parseInt(ROOM_DATA[idx].num) + 1;
+        ROOM_DATA[idx].num = value.toString();
+    })
+
+    this.setState({roomData: ROOM_DATA})
   }
 
   _renderItemWithParallax = ({item, index}: input, parallaxProps: Object) => {
@@ -49,12 +90,12 @@ export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentS
       <View style={styles.exampleContainer}>
         <Carousel
           ref={() => {this._slider1Ref}}
-          data={ENTRIES1}
+          data={this.state.roomData}
           renderItem={this._renderItemWithParallax}
           sliderWidth={sliderWidth}
           itemWidth={itemWidth}
           hasParallaxImages={true}
-          firstItem={SLIDER_1_FIRST_ITEM}
+          firstItem={SLIDER_FIRST_ITEM}
           inactiveSlideScale={0.94}
           inactiveSlideOpacity={0.7}
           containerCustomStyle={styles.slider}
@@ -64,7 +105,7 @@ export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentS
           onSnapToItem={(index) => this.setState({ slider1ActiveSlide: index }) }
         />
         <Pagination
-          dotsLength={ENTRIES1.length}
+          dotsLength={this.state.roomData.length}
           activeDotIndex={this.state.slider1ActiveSlide}
           containerStyle={styles.paginationContainer}
           dotColor={'#434FEA'}
@@ -89,3 +130,4 @@ export default class RoomDevicesCarousel extends PureComponent<{}, IMyComponentS
   }
 }
 
+export default connector(RoomDevicesCarousel)

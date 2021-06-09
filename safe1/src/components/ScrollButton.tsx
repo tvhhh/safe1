@@ -1,5 +1,5 @@
 import React from 'react';
-import {ENTRIES1} from '@/assets/entries';
+import {DEFAULT} from '@/assets/default.data';
 import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
@@ -19,7 +19,8 @@ type Props = typeof ScrollingButtonMenu.defaultProps & {
     buttonStyle?: Object, 
     containerStyle?: Object,
     onPress?: (route: data) => {},
-    changeSelectedID?: (newValue: number) => void
+    changeSelectedID?: (newValue: number) => void,
+    callbackId: (id: number) => void,
 }
 
 interface State {
@@ -93,7 +94,7 @@ export default class ScrollingButtonMenu extends React.Component <Props, State>{
         const elementOffset = this.dataSourceCords[index];
         if (elementOffset !== undefined) {
             let x = elementOffset.x - (screen1 - (elementOffset.width / 2)) + 12;
-            if (index == ENTRIES1.length - 1){
+            if (index == DEFAULT.length - 1){
                 let lastOffset = this.dataSourceCords[index-1];
                 x = lastOffset.x - (screen1 - (lastOffset.width / 2)) + 12;
             }
@@ -104,6 +105,10 @@ export default class ScrollingButtonMenu extends React.Component <Props, State>{
             });
         }
 
+    }
+
+    changeId(){
+        this.props.callbackId(this.state.index)
     }
 
     render() {
@@ -136,6 +141,7 @@ export default class ScrollingButtonMenu extends React.Component <Props, State>{
                                 key={(route.id ? route.id : i).toString()}
                                 onPress={() => this.setState({index: route.id}, () => setTimeout(() => {
                                         this._scrollTo();
+                                        this.changeId();
                                         if (this.props.changeSelectedID){
                                             this.props.changeSelectedID(this.state.index);
                                         }

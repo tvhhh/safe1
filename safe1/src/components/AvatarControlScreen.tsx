@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  Text,
-  View
-} from 'react-native';
+import { StyleSheet, Dimensions, Text, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { connect, ConnectedProps } from 'react-redux';
 import { User } from '@/models';
@@ -13,7 +7,8 @@ import { State } from '@/redux/state';
 const {height, width} = Dimensions.get('screen')
 
 const mapStateToProps = (state: State) => ({
-  currentUser: state.currentUser
+  currentUser: state.currentUser,
+  defaultBuilding: state.defaultBuilding,
 });
 
 const connector = connect(mapStateToProps);
@@ -48,7 +43,10 @@ class UserAvatarControlScreen extends React.Component<Props> {
           <Text style={styles.primaryText}>
             Hi {this.props.currentUser !== null ? this.props.currentUser.displayName : 'User'},
           </Text> 
-          <Text style={styles.secondaryText}>welcome back</Text>
+          <Text style = {styles.secondaryText}>Welcome 
+            {(this.props.defaultBuilding && this.props.defaultBuilding.name.length < 12)? 
+              ' to ' + this.props.defaultBuilding.name : ' back'} !
+          </Text>
         </View>
       </View>
     );
@@ -59,14 +57,14 @@ const styles = StyleSheet.create({
   avatar: {
     width: 67,
     height: 66,
-    left: width/12,
+    left: 24,
     top: height/20,
     backgroundColor: 'rgba(255, 255, 255, 0.2)'
   },
   avatarText: {
     position: 'absolute',
     height: 50,
-    left: width/3.5,
+    left: width/4,
     top: height/18,
   },
 

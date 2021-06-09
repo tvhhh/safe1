@@ -1,4 +1,4 @@
-export const ENTRIES1 = [
+export const DEFAULT = [
   {
     title: 'Kitchen',
     num: '0',
@@ -25,3 +25,11 @@ export const ENTRIES1 = [
     illustration: require('@/assets/rooms/basement.jpg')
   }
 ];
+
+export const REGION = [
+  "kitchen",
+  "living room",
+  "bedroom",
+  "bathroom",
+  "basement",
+]

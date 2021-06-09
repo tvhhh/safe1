@@ -30,6 +30,7 @@ export default class OptionButtons extends Component<Props> {
         items={buttons}
         selected={buttons[0].id}
         changeSelectedID={this.props.changeSelectedID}
+        callbackId={(id:number) => {}}
       />
       </View>
     );
