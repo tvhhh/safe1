@@ -15,6 +15,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BackButton, Input } from '@/components';
 import deviceTopics from '@/utils/deviceTopics';
+import deviceDefaultValues from '@/utils/deviceDefaultValues';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
@@ -58,6 +59,7 @@ const defaultDevice: Device = {
   deviceType: "gas",
   region: "",
   protection: true,
+  triggeredValue: "1",
   data: []
 };
 
@@ -104,6 +106,7 @@ class CreateBuilding extends React.Component<Props, CustomState> {
       let devices = this.state.buildingSettings.devices;
       devices[index].deviceType = value;
       devices[index].topic = deviceTopics[value as DeviceType];
+      devices[index].triggeredValue = deviceDefaultValues[value as DeviceType];
       this.setState({ buildingSettings: { ...this.state.buildingSettings, devices: [...devices] } });
     }
   }

@@ -6,22 +6,28 @@ import (
 )
 
 type Device struct {
-	Building   string `json:"building"`
-	Name       string `json:"name" gorm:"primaryKey"`
-	Protection bool   `json:"protection"`
-	Region     string `json:"region"`
-	Topic      string `json:"topic"`
-	Type       string `json:"deviceType"`
-	Data       []Data `json:"data" gorm:"foreignKey:Device;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Building       string `json:"building"`
+	Name           string `json:"name" gorm:"primaryKey"`
+	Protection     bool   `json:"protection"`
+	Region         string `json:"region"`
+	Topic          string `json:"topic"`
+	TriggeredValue string `json:"triggeredValue"`
+	Type           string `json:"deviceType"`
+	Data           []Data `json:"data" gorm:"foreignKey:Device;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func UpdateProtection(db *gorm.DB, params interface{}) (interface{}, error) {
 	payload := params.(map[string]interface{})
 	deviceName := payload["deviceName"].(string)
 	protection := payload["protection"].(bool)
+	triggeredValue := payload["triggeredValue"].(string)
 
 	d := Device{Name: deviceName}
-	if err := db.Model(&d).Update("protection", protection).Error; err != nil {
+	if err := db.Model(&d).
+		Updates(Device{
+			Name:           deviceName,
+			Protection:     protection,
+			TriggeredValue: triggeredValue}).Error; err != nil {
 		return nil, err
 	}
 
