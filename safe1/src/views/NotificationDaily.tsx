@@ -3,10 +3,12 @@ import { View, FlatList, Text, StyleSheet, Image, Button } from 'react-native';
 import { Icon } from 'react-native-elements'
 import { connect, ConnectedProps } from 'react-redux';
 import { Building, Device } from '@/models';
+import { DeviceType } from '@/models/devices';
 import { State } from '@/redux/state';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Route } from '@react-navigation/routers';
-import { useRoute } from '@react-navigation/core';
+import { shouldUseActivityState } from 'react-native-screens';
+import { DatePipe } from '@angular/common'
+import dataService from '@/services/data.service';
 // import { StackNavigator } from 'react-navigation';
 
 const mapStateToProps = (state: State) => ({
@@ -17,12 +19,12 @@ const connector = connect(mapStateToProps);
 interface Props extends ConnectedProps<typeof connector> {
   navigation: any,
   buildings: Building[],
-  defaultBuilding: Building | undefined,
-  route:any
+  // defaultBuilding: Building | undefined,
+  route: any
 };
 
 const DeviceCard = (props: any) => {
-  if(props.deviceType =="gas"){
+  if (props.deviceType == "gas") {
     return (<View style={{ marginLeft: 20, marginBottom: 15, flexDirection: 'row' }}>
       <View style={deviceCardStyle.iconLayout}>
         <Image
@@ -34,7 +36,7 @@ const DeviceCard = (props: any) => {
         <Text
           style={deviceCardStyle.nameDevice}>Name: {props.nameDevice}
         </Text>
-        <Text style={deviceCardStyle.deviceType}>{props.deviceType}</Text>
+        <Text style={deviceCardStyle.time}>{props.time}</Text>
         <Text
           style={deviceCardStyle.region}>Region: {props.region}
         </Text>
@@ -42,9 +44,12 @@ const DeviceCard = (props: any) => {
       <Text
         style={deviceCardStyle.data}>{props.data}
       </Text>
+      {/* <Text
+        style={deviceCardStyle.time}>{props.time}
+      </Text> */}
     </View >)
   }
-  else{
+  else {
     return (<View style={{ marginLeft: 20, marginBottom: 15, flexDirection: 'row' }}>
       <View style={deviceCardStyle.iconLayout}>
         <Image
@@ -54,11 +59,11 @@ const DeviceCard = (props: any) => {
       </View>
       <View style={{ flexDirection: 'column', marginLeft: 20 }}>
         <Text
-          style={deviceCardStyle.nameDevice}>{props.nameDevice}
+          style={deviceCardStyle.nameDevice}>Name: {props.nameDevice}
         </Text>
-        <Text style={deviceCardStyle.deviceType}>{props.deviceType}</Text>
+        <Text style={deviceCardStyle.time}>{props.time}</Text>
         <Text
-          style={deviceCardStyle.region}>{props.region}
+          style={deviceCardStyle.region}>Region: {props.region}
         </Text>
       </View>
       <Text
@@ -66,56 +71,189 @@ const DeviceCard = (props: any) => {
       </Text>
     </View >)
   }
-  
+
+}
+// function listGasDevice(listDecive: any) {
+//   let listGas: Device[] = [];
+//   var idx = 0;
+
+//   for (var i in listDecive){
+//     if(listDecive[i].deviceType == "gas"){
+//       listGas[idx] = listDecive[i];
+//     }
+//   }
+//   return listGas;
+// }
+
+// function listTempDevice(listDecive: any) {
+//   let listTempDevice: Device[] = [];
+//   var idx = 0;
+
+//   for (var i in listDecive){
+//     if(listDecive[i].deviceType == "temperature"){
+//       listTempDevice[idx] = listDecive[i];
+//     }
+//   }
+//   return listTempDevice;
+// }
+
+function findingGasTempDeviceList(list: any) {
+  let listDecive: Device[] = [];
+  var idx = 0;
+
+  for (var i in list) {
+    if (list[i].deviceType == "gas") {
+      listDecive[idx] = list[i];
+      idx++;
+    }
+  }
+
+  for (var i in list) {
+    if (list[i].deviceType == "temperature") {
+      listDecive[idx] = list[i];
+      idx++;
+    }
+  }
+  return listDecive;
+}
+function splitDataValue(data:any){
+  for(let i = 1 ; i < data.length;i++){
+    if(data[i] == "-"){
+      data = data.substring(0,i);
+    }
+  }
+  return data;
 }
 
-const Body = (props: any) => {
-  
-  return (
-    <View style={styles.body}>
-      <View style={{ flexDirection: "row" }}>
-        {/* <Button title="name" onPress= {()=>{console.log(props.listDevice[0].data[0].data)}}></Button> */}
-        <TouchableOpacity>
-          <Text
-            style={bodyStyle.detail}>More details
-          </Text>
-        </TouchableOpacity>
-        <View style={bodyStyle.iconLayout}>
-          <TouchableOpacity>
-            <Icon
-              name='search-outline'
-              type='ionicon'
-              color='#aac4ec'
-              size={23}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <FlatList data={props.listDevice} renderItem={({item}) => <DeviceCard nameDevice = {item.name} deviceType = {item.deviceType} region = {item.region} data = {item.data[item.data.length-1].data ? item.data[item.data.length-1].data : "AB" }></DeviceCard>} />
-    </View>
-  );
-}
+// const Body = (props: any) => {
 
+//   return (
+//     <View style={styles.body}>
+//       <View style={{ flexDirection: "row" }}>
+//         {/* <Button title="name" onPress={() => { console.log(props.listDevice) }}></Button> */}
+//         <TouchableOpacity>
+//           <Text
+//             style={bodyStyle.detail}>More details
+//           </Text>
+//         </TouchableOpacity>
+//         <View style={bodyStyle.iconLayout}>
+//           <TouchableOpacity>
+//             <Icon
+//               name='search-outline'
+//               type='ionicon'
+//               color='#aac4ec'
+//               size={23}
+//             />
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+//       <FlatList data={props.listDevice} renderItem={({ item }) => <DeviceCard nameDevice={item.name} deviceType={item.deviceType} time={item.data[item.data.length - 1]?.time ? item.data[item.data.length - 1].time : "None"} region={item.region} data={item.data[item.data.length - 1]?.value ? item.data[item.data.length - 1].value : "None"}></DeviceCard>} />
+//     </View>
+//   );
+// }
+
+interface DeviceForm {
+  name: string,
+  topic: string,
+  deviceType: DeviceType,
+  region: string,
+  protection: boolean,
+  data: { time: string, value: string }
+};
+
+var listDeviceForm: DeviceForm[] = [];
 class NotificationDaily extends React.Component<Props> {
-  render() {
-    // const {params} = this.props.navigation.index;
-    return (
+  constructor(props: Props) {
+    super(props);
+    
+    
+  }
 
+
+  findListWarningDevice = () => {
+    return findingGasTempDeviceList(this.props.buildings[this.props.route.params.index].devices)
+      // .map((device) => {return device.data;})
+      .forEach((device) => {
+        if (device.deviceType == "gas") {
+          device.data.filter((data) => { return Number(data.value) == 1 })
+            .map((data) => {
+              var newDevice: DeviceForm = {
+                name: device.name,
+                topic: device.topic,
+                deviceType: device.deviceType,
+                region: device.region,
+                protection: device.protection,
+                data: { time:data.time.toLocaleString(),value:data.value }
+              }
+              listDeviceForm.push(newDevice);
+            })
+        } else {
+          device.data.filter((data) => { return Number(splitDataValue(data.value)) > 40 })
+            .map((data) => {
+              var newDevice: DeviceForm = {
+                name: device.name,
+                topic: device.topic,
+                deviceType: device.deviceType,
+                region: device.region,
+                protection: device.protection,
+                data: { time:data.time.toLocaleString(),value: splitDataValue(data.value)}
+              }
+              listDeviceForm.push(newDevice);
+            })
+        }
+      },
+      // listDeviceForm.reverse()
+      )
+  }
+
+  renderWarningDevice = () => {
+    let listDeviceFormReverse = listDeviceForm.reverse();
+    return listDeviceFormReverse.map((device) => (<View>
+      {/* <Button title="name." onPress={() => { console.log(device) }}></Button> */}
+      <DeviceCard nameDevice={device.name} deviceType={device.deviceType} time={device.data.time ? device.data.time : "None"} region={device.region} data={device.data.value ? device.data.value : "None"}></DeviceCard>
+    </View>))
+  }
+  render() {
+    return (
       <View style={styles.option}>
         <Text style={bodyStyle.nameBuilding}>{this.props.route.params.nameBuilding}</Text>
-        {/* <Button title="name" onPress= {()=>{console.log(this.props.route.params.nameBuilding)}}></Button> */}
-        <Body listDevice={this.props.buildings[this.props.route.params.index].devices} />
+        {/* <Button title="name" onPress= {()=>{{console.log(this.props.buildings[this.props.route.params.index].devices)}}}></Button> */}
+        {/* <Button title="name" onPress= {()=>{{console.log(splitDataValue("60-20"))}}}></Button> */}
+        {/* <Body listDevice={this.props.buildings[this.props.route.params.index].devices} /> */}
+        <View style={styles.body}>
+          <View style={{ flexDirection: "row" }}>
+            {/* <Button title="name" onPress={() => { console.log(props.listDevice) }}></Button> */}
+            <TouchableOpacity>
+              <Text
+                style={bodyStyle.detail}>More details
+          </Text>
+            </TouchableOpacity>
+            <View style={bodyStyle.iconLayout}>
+              <TouchableOpacity>
+                <Icon
+                  name='search-outline'
+                  type='ionicon'
+                  color='#aac4ec'
+                  size={23}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          {this.findListWarningDevice()}
+          {this.renderWarningDevice()}
+          {/* <Button title="name" onPress= {()=>{console.log(listDeviceForm)}}></Button> */}
+          {listDeviceForm = []}
+        </View>
       </View>
     )
   }
 }
-
 const bodyStyle = StyleSheet.create({
-  nameBuilding:{
+  nameBuilding: {
     marginLeft: 160,
     marginBottom: 15,
     fontSize: 23,
-    
+
     color: "#21130d"
   },
   detail: {
@@ -123,7 +261,7 @@ const bodyStyle = StyleSheet.create({
     marginTop: 20,
     marginBottom: 15,
     fontSize: 23,
-    
+
     color: "#41628a"
   },
   iconLayout: {
@@ -170,15 +308,22 @@ const deviceCardStyle = StyleSheet.create({
   },
   data: {
     marginTop: 20,
-    fontSize: 25,
+    fontSize: 23,
+    // borderColor: 'black',
+    // borderWidth: 1,
+    // justifyContent: 'center',
     marginLeft: "auto",
     marginRight: 20,
-    color: "#08cd99"
+    color: "#ff0000"
   },
   tinyLogo: {
     width: 50,
     height: 50,
   },
+  time: {
+    marginTop: 10,
+    fontSize: 16
+  }
 })
 
 const styles = StyleSheet.create({
