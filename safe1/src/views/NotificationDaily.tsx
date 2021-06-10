@@ -11,7 +11,6 @@ import dataService from '@/services/data.service';
 
 const mapStateToProps = (state: State) => ({
   buildings: state.buildings,
-  defaultBuilding: state.defaultBuilding,
 });
 const connector = connect(mapStateToProps);
 interface Props extends ConnectedProps<typeof connector> {
@@ -90,7 +89,7 @@ function findingGasTempDeviceList(list: any) {
   }
   return listDecive;
 }
-function splitDataValue(data:any){
+export function splitDataValue(data:any){
   for(let i = 1 ; i < data.length;i++){
     if(data[i] == "-"){
       data = data.substring(0,i);

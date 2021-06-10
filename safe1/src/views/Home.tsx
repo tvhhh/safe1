@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ViewPropTypes
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -18,16 +19,20 @@ import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
 import ControlService from '@/services/control.service';
 import StorageService from '@/services/storage.service';
+import { Building, Device } from '@/models';
+import {splitDataValue} from '@/views/NotificationDaily'
 
 const mapStateToProps = (state: State) => ({
   isConnected: state.isConnected,
+  buildings: state.buildings,
 });
 
 const connector = connect(mapStateToProps);
 
 interface Props extends ConnectedProps<typeof connector> {
   navigation: any,
-  isConnected: boolean
+  isConnected: boolean,
+  buildings: Building[]
 };
 
 interface HomeState {
@@ -72,6 +77,70 @@ class Home extends React.Component<Props, HomeState> {
       console.error(`Error signing out: ${err}`);
     }
   }
+  DisplayTemp(list:any){
+    if(list){
+      let max = 0;
+      let nameDevice;
+      let nameBuilding;
+      for(let i = list.length-1;i >= 0;i--){
+        for(let k = 0; k < list[i].devices.length;k++){
+          if(list[i].devices[k].data.length){   
+            let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
+            if(list[i].devices[k].deviceType == "temperature"){
+              if(Number(value)>= max){
+                max = Number(value);
+                nameDevice = list[i].devices[k].name;
+                nameBuilding = list[i].name;
+              }
+            }
+          }
+        }  
+      }
+      return(
+        <View style={{flexDirection:'column',alignContent:'center'}}>
+          <Text style={{fontSize:15,color:'#ccccff' }}>Temp :</Text>
+          <Text style={{fontSize:50,color:'#ffffff' }}>{max}</Text>
+          <Text style={{fontSize:15,color:'#ffffff' }}>{nameDevice}</Text>
+          <Text style={{fontSize:15,color:'#ffffff' }}>{nameBuilding}</Text>
+        </View>
+      );
+    }
+    return "None";
+  }
+  DisplayGas(list:any){
+    if(list){
+      let max = 0;
+      let nameDevice;
+      let nameBuilding;
+      for(let i = 0;i < list.length;i++){
+        for(let k = 0; k < list[i].devices.length;k++){
+          if(list[i].devices[k].data.length){   
+            let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
+            if(list[i].devices[k].deviceType == "gas"){
+              if(Number(value)> 0){
+                max = Number(value);
+                nameDevice = list[i].devices[k].name;
+                nameBuilding = list[i].name;
+              }
+            }
+          }
+        }  
+      }
+      return(
+        <View style={{flexDirection:'column',alignContent:'center'}}>
+          <Text style={{fontSize:15,color:'#ccccff' }}>GAS :</Text>
+          <Text style={{fontSize:50,color:'#ffffff' }}>{max}</Text>
+          <Text style={{fontSize:15,color:'#ffffff' }}>{nameDevice}</Text>
+          <Text style={{fontSize:15,color:'#ffffff' }}>{nameBuilding}</Text>
+        </View>
+      );
+    }
+    return(
+      <View style={{flexDirection:'column',alignContent:'center'}}>
+        <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
+      </View>
+    );
+  }
 
   render() {
     return (
@@ -94,7 +163,19 @@ class Home extends React.Component<Props, HomeState> {
             </TouchableOpacity> : null}
         </View>
         <View style={styles.statusContainer}>
-          <View style={styles.statusZone}></View>
+          <View style={styles.statusZone}>
+              <View style= {{flexDirection: 'row' }}>
+                <Text style={{paddingLeft:10}}>
+                  {this.DisplayTemp(this.props.buildings)}
+                </Text>
+                <Text style={{paddingLeft:80}}>
+                  {this.DisplayGas(this.props.buildings)}
+                </Text>
+                
+                {/* <Text style={{paddingLeft:80,fontSize:70,color:'#ffffff'}}>bc</Text> */}
+              </View>
+              
+          </View>
         </View>
         <View style={styles.buttonContainer}>
           <Label 
@@ -198,5 +279,10 @@ const styles = StyleSheet.create({
   hotline: {
     color: 'white',
     fontSize: 16,
-  }
+  },
+  labelData: {
+    textAlign: "center",
+    marginBottom: 10,
+    fontSize: 24,
+  },
 });

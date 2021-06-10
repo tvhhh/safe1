@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Building } from '@/models'
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
+import {splitDataValue} from '@/views/NotificationDaily';
 
 const mapStateToProps = (state: State) => ({
   buildings: state.buildings,
@@ -76,18 +77,22 @@ class NotificationHistory extends React.Component<Props> {
       ]
     );
   }
+  // this.createAlert(list[i].devices[k], list[i].name, i);
   CheckPushNoti (list:any){
     if(list){
       for(let i = list.length-1;i >= 0;i--){
         for(let k = 0; k < list[i].devices.length;k++){
-          if(list[i].devices[k].deviceType == "gas"){
-            if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value=="1"){
-              this.createAlert(list[i].devices[k], list[i].name, i);
+          if(list[i].devices[k].data.length){
+            let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
+            if(list[i].devices[k].deviceType == "gas"){       
+              if(Number(value)==1){
+                this.createAlert(list[i].devices[k], list[i].name, i);
+              }
             }
-          }
-          else if(list[i].devices[k].deviceType == "temperature"){
-            if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value>"40"){
-              this.createAlert(list[i].devices[k], list[i].name, i);
+            else if(list[i].devices[k].deviceType == "temperature"){
+              if(Number(value)>40){
+                this.createAlert(list[i].devices[k], list[i].name, i);
+              }
             }
           }
         }  
