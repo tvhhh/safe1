@@ -79,29 +79,39 @@ class Home extends React.Component<Props, HomeState> {
   }
   DisplayTemp(list:any){
     if(list){
-      let max = 0;
+      let max=0;
       let nameDevice;
       let nameBuilding;
-      for(let i = list.length-1;i >= 0;i--){
-        for(let k = 0; k < list[i].devices.length;k++){
+      for(let i=list.length-1;i >= 0;i--){
+        for(let k=0; k < list[i].devices.length;k++){
           if(list[i].devices[k].data.length){   
-            let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
-            if(list[i].devices[k].deviceType == "temperature"){
+            let value=splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
+            if(list[i].devices[k].deviceType=="temperature"){
               if(Number(value)>= max){
-                max = Number(value);
-                nameDevice = list[i].devices[k].name;
-                nameBuilding = list[i].name;
+                max=Number(value);
+                nameDevice=list[i].devices[k].name;
+                nameBuilding=list[i].name;
               }
             }
           }
         }  
       }
+      if(max > 40){
+        return(
+          <View style={{flexDirection:'column',alignContent:'center',width: '50%'}}>
+            <Text style={styles.statusGasType}>Temperature :</Text>
+            <Text style={{paddingLeft:20,fontSize:70,color:'#ff3300' }}>{max}</Text>
+            <Text style={styles.statusGasInf}>{nameDevice}</Text>
+            <Text style={styles.statusGasInf}>{nameBuilding}</Text>
+          </View>
+        );
+      }
       return(
-        <View style={{flexDirection:'column',alignContent:'center'}}>
-          <Text style={{fontSize:15,color:'#ccccff' }}>Temp :</Text>
-          <Text style={{fontSize:50,color:'#ffffff' }}>{max}</Text>
-          <Text style={{fontSize:15,color:'#ffffff' }}>{nameDevice}</Text>
-          <Text style={{fontSize:15,color:'#ffffff' }}>{nameBuilding}</Text>
+        <View style={{flexDirection:'column',alignContent:'center',width: '50%'}}>
+          <Text style={styles.statusGasType}>Temperature :</Text>
+          <Text style={{paddingLeft:20,fontSize:70,color:'#66ff66' }}>{max}</Text>
+          <Text style={styles.statusGasInf}>{nameDevice}</Text>
+          <Text style={styles.statusGasInf}>{nameBuilding}</Text>
         </View>
       );
     }
@@ -117,7 +127,7 @@ class Home extends React.Component<Props, HomeState> {
           if(list[i].devices[k].data.length){   
             let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
             if(list[i].devices[k].deviceType == "gas"){
-              if(Number(value)> 0){
+              if(Number(value)>= 0){
                 max = Number(value);
                 nameDevice = list[i].devices[k].name;
                 nameBuilding = list[i].name;
@@ -126,17 +136,27 @@ class Home extends React.Component<Props, HomeState> {
           }
         }  
       }
+      if(max == 1){
+        return(
+          <View style={{flexDirection:'column',alignContent:'center',width:'50'}}>
+            <Text style={styles.statusGasType}>GAS :</Text>
+            <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
+            <Text style={styles.statusGasInf}>{nameDevice}</Text>
+            <Text style={styles.statusGasInf}>{nameBuilding}</Text>
+          </View>
+        );
+      }
       return(
-        <View style={{flexDirection:'column',alignContent:'center'}}>
-          <Text style={{fontSize:15,color:'#ccccff' }}>GAS :</Text>
-          <Text style={{fontSize:50,color:'#ffffff' }}>{max}</Text>
-          <Text style={{fontSize:15,color:'#ffffff' }}>{nameDevice}</Text>
-          <Text style={{fontSize:15,color:'#ffffff' }}>{nameBuilding}</Text>
+        <View style={{flexDirection:'column',width: '50%'}}>
+          <Text style={styles.statusGasType}>GAS :</Text>
+          <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
+          <Text style={styles.statusGasInf}>{nameDevice}</Text>
+          <Text style={styles.statusGasInf}>{nameBuilding}</Text>
         </View>
       );
     }
     return(
-      <View style={{flexDirection:'column',alignContent:'center'}}>
+      <View style={{flexDirection:'column',alignContent:'center',width:50}}>
         <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
       </View>
     );
@@ -165,10 +185,10 @@ class Home extends React.Component<Props, HomeState> {
         <View style={styles.statusContainer}>
           <View style={styles.statusZone}>
               <View style= {{flexDirection: 'row' }}>
-                <Text style={{paddingLeft:10}}>
+                <Text style={{paddingRight:20}}>
                   {this.DisplayTemp(this.props.buildings)}
                 </Text>
-                <Text style={{paddingLeft:80}}>
+                <Text style={{paddingLeft:60,paddingRight:10}}>
                   {this.DisplayGas(this.props.buildings)}
                 </Text>
                 
@@ -280,9 +300,26 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-  labelData: {
-    textAlign: "center",
-    marginBottom: 10,
-    fontSize: 24,
+  statusGasInf:{
+    alignItems: 'center',
+    fontSize:15,
+    color:'#ffffff'
   },
+  statusGasType:{
+    alignItems: 'center',
+    fontSize:15,
+    color:'#ccccff' 
+  },
+  statusTempType:{
+    fontSize:15,
+    color:'#ccccff',
+    paddingLeft:20 
+  },
+  statusTempInf:{
+    alignItems: 'center',
+    fontSize:15,
+    color:'#ffffff',
+    paddingLeft:40
+  },
+
 });

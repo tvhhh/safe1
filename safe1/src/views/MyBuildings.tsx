@@ -488,7 +488,7 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
                 autoCapitalize="none"
               />
               <Picker
-                style={{ width: '90%' }}
+                style={{ width : '90%' }}
                 selectedValue={this.state.addingDevice.deviceType}
                 onValueChange={(itemValue) => this.onChangeDeviceType(itemValue)}>
                 <Picker.Item label="Fire alarm" value="buzzer" />

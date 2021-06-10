@@ -18,18 +18,20 @@ interface Props extends ConnectedProps<typeof connector> {
 };
  
 const BuildingCard = (props: any) => {
-  return <View style={{ marginLeft: 15, marginBottom: 15, flexDirection: 'row' }}>
+  return <View style={{marginLeft:15,marginBottom:15,flexDirection:'row'}}>
     <View style={buildingCard.iconLayout}>
       <Image
         style={buildingCard.tinyLogo}
         source={require('../assets/img/buildingIcon_Noti.png')}
       />
     </View>
-    <View style={{ flexDirection: 'column', marginLeft: 15 }}>
+    <View style={{flexDirection:'column',marginLeft:15}}>
       <Text
         style={buildingCard.nameBuilding}>Name: {props.nameBuilding}
       </Text>
-      <Text style={buildingCard.address}>Address: {props.address}</Text>
+      <Text 
+        style={buildingCard.address}>Address: {props.address}
+      </Text>
       <Text
         style={buildingCard.ownerName}>{props.ownerName}
       </Text>
@@ -47,15 +49,17 @@ const Body = (props: any) => {
         </Text>
         </TouchableOpacity>
       </View>
-      <FlatList data={props.listBuilding} renderItem={({ item }) => 
-      <TouchableOpacity onPress = {()=>props.navigation.navigate('NotificationDaily',{
+      <FlatList data={props.listBuilding} renderItem={({item}) => 
+      <TouchableOpacity onPress = {()=> props.navigation.navigate('NotificationDaily',{
                                   index:props.listBuilding.indexOf(item),
                                   nameBuilding:item.name
                                   })}>
-        <BuildingCard nameBuilding = {item.name} address = {item.address} ownerName = {item.owner.displayName}></BuildingCard>
+        <BuildingCard 
+          nameBuilding={item.name} address={item.address} ownerName={item.owner.displayName}>
+        </BuildingCard>
       </TouchableOpacity>
     }></FlatList>
-      </View>
+  </View>
   );
 }
 
@@ -63,10 +67,10 @@ class NotificationHistory extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
-  createAlert (device: any, nameBuilding: any, index : number){
+  createAlert(device:any,nameBuilding:any,index:number){
     Alert.alert(
       "Something went wrong !!!",
-       device.name+" in building '" + nameBuilding +"' have problems." ,
+       device.name+" in building '"+nameBuilding+"' have problems." ,
       [
         {
           text: "Cancel",
@@ -78,20 +82,20 @@ class NotificationHistory extends React.Component<Props> {
     );
   }
   // this.createAlert(list[i].devices[k], list[i].name, i);
-  CheckPushNoti (list:any){
+  CheckPushNoti(list:any){
     if(list){
-      for(let i = list.length-1;i >= 0;i--){
-        for(let k = 0; k < list[i].devices.length;k++){
+      for(let i=list.length-1;i>=0;i--){
+        for(let k=0;k<list[i].devices.length;k++){
           if(list[i].devices[k].data.length){
-            let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
-            if(list[i].devices[k].deviceType == "gas"){       
+            let value=splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
+            if(list[i].devices[k].deviceType=="gas"){       
               if(Number(value)==1){
-                this.createAlert(list[i].devices[k], list[i].name, i);
+                this.createAlert(list[i].devices[k],list[i].name, i);
               }
             }
-            else if(list[i].devices[k].deviceType == "temperature"){
+            else if(list[i].devices[k].deviceType=="temperature"){
               if(Number(value)>40){
-                this.createAlert(list[i].devices[k], list[i].name, i);
+                this.createAlert(list[i].devices[k], list[i].name,i);
               }
             }
           }
@@ -101,13 +105,14 @@ class NotificationHistory extends React.Component<Props> {
     return;
   }
   render() {
-    console.disableYellowBox = true;
+    console.disableYellowBox=true;
     return (
-      
       <View style={styles.option}>
         {this.CheckPushNoti(this.props.buildings)}
         {/* <Button title="name" onPress= {()=>{CheckPushNoti(this.props.buildings)}}></Button> */}
-        <Body listBuilding = {this.props.buildings} navigation ={this.props.navigation} ></Body>
+        <Body 
+          listBuilding={this.props.buildings} navigation={this.props.navigation}>
+        </Body>
       </View>
     )
   }
@@ -115,11 +120,11 @@ class NotificationHistory extends React.Component<Props> {
 
 const styles = StyleSheet.create({
   option: {
-    // flex: 1,
+    flex: 1,
     backgroundColor: '#6495ed',
   },
   body: {
-    // flex: 1,
+    flex: 1,
     backgroundColor: "white",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
@@ -129,7 +134,6 @@ const styles = StyleSheet.create({
     height: 50,
   },
 })
-
 const bodyStyle = StyleSheet.create({
   title: {
     marginLeft: 20,
@@ -139,7 +143,6 @@ const bodyStyle = StyleSheet.create({
     color: "#aac4ec"
   },
 })
-
 const buildingCard = StyleSheet.create({
   iconLayout: {
     // justifyContent: 'center',

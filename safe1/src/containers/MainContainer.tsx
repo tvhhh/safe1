@@ -11,18 +11,19 @@ import {
   OptionScreen,
   RoomScreen 
 } from '@/views';
-const { Navigator, Screen } = createStackNavigator();
-
 import { Alert } from 'react-native';
 import { Building } from '@/models'
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import {splitDataValue} from '@/views/NotificationDaily';
 
+const { Navigator, Screen } = createStackNavigator();
+
 const mapStateToProps = (state: State) => ({
   buildings: state.buildings,
   defaultBuilding: state.defaultBuilding,
 });
+
 const connector = connect(mapStateToProps);
 interface Props extends ConnectedProps<typeof connector> {
   buildings: Building[],
@@ -30,7 +31,7 @@ interface Props extends ConnectedProps<typeof connector> {
 };
 
 class MainContainer extends React.Component<Props> {
-  createAlert (device: any, nameBuilding: any, index : number){
+  createAlert(device: any, nameBuilding: any, index: number){
     Alert.alert(
       "Something went wrong !!!",
        device.name+" in building '" + nameBuilding +"' have problems." ,
@@ -46,10 +47,10 @@ class MainContainer extends React.Component<Props> {
   }
   CheckPushNoti (list:any){
     if(list){
-      for(let i = list.length-1;i >= 0;i--){
-        for(let k = 0; k < list[i].devices.length;k++){
+      for(let i=list.length-1; i>=0; i--){
+        for(let k=0; k<list[i].devices.length; k++){
           if(list[i].devices[k].data.length){
-            let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
+            let value=splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
             if(list[i].devices[k].deviceType == "gas"){       
               if(Number(value)==1){
                 this.createAlert(list[i].devices[k], list[i].name, i);
