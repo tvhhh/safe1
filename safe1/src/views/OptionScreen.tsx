@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,13 +15,14 @@ const {height, width} = Dimensions.get('screen')
 
 const Body = (props: any) => {
   const num = 4;
+  const [numRooms, setNumRooms] = useState(0);
   return (
     <View style={styles.body}>
       <Text style={bodyStyles.intro} numberOfLines={2}>
-        {num} protection options in the kitchen are 
+        {numRooms} protection options in the kitchen are 
         <Text style={{fontWeight: 'bold', color: '#1EC639'}}> available </Text> 
       </Text>
-      <ProtectionGrid selectedRoom={props.room}/>
+      <ProtectionGrid selectedRoom={props.room} setNum={setNumRooms}/>
     </View>
   );
 }

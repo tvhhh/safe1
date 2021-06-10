@@ -71,7 +71,7 @@ class DataService {
   }
 
   updateDeviceProtection(payload: any): Promise<Device | null> {
-    return HttpService.post(`${dataUrl}/updateDeviceProtection`, { deviceName: payload.name, protection: payload.protection })
+    return HttpService.post(`${dataUrl}/updateProtection`, payload)
       .then(response => response.status === 200 ? response.json() : null)
       .then(json => json !== null ? json as Device : null)
       .catch(err => { console.error(err); return null });
