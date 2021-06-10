@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { View, FlatList, Text, StyleSheet, Image,Button,Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Building, Device } from '@/models'
+import { Building } from '@/models'
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
-import NotificationDaily from './NotificationDaily';
-import PushNotification from "react-native-push-notification";
 
 const mapStateToProps = (state: State) => ({
   buildings: state.buildings,
@@ -17,60 +15,7 @@ interface Props extends ConnectedProps<typeof connector> {
   buildings: Building[],
   defaultBuilding: Building | undefined,
 };
-
-PushNotification.configure({
-  onRegister: function(token) {
-    console.log('TOKEN:', token);
-  },
-  onNotification: function(notification) {
-    console.log('NOTIFICATION:', notification);
-  },
-  onAction: function(notification) {
-    console.log('ACTION:', notification.action);
-    console.log('NOTIFICATION:', notification);
-  },
-  onRegistrationError: function(err) {
-    console.error(err.message, err);
-  },
-  permissions: {
-    alert: true,
-    badge: true,
-    sound: true,
-  },
-  popInitialNotification: true,
-  requestPermissions: false,
-});
-
-const testPush = ()=>{
-  PushNotification.localNotification({
-    id: 0,
-    channelId: "123",
-    title: "Some things went wrong", // (optional)
-    message: "Please Check device", // (required)
-  });
-}
-const testSchedule = ()=>{
-  PushNotification.localNotificationSchedule({
-    //... You can use all the options from localNotifications
-    message: "My Notification Message", // (required)
-    date: new Date(Date.now() + 5 * 1000), // in 60 secs
-    allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
-  });
-}
-function createAlert (device: any, nameBuilding: any){
-  Alert.alert(
-    "Something went wrong !!!",
-     device.name+" in building '" + nameBuilding +"' have problems." ,
-    [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Alert"),
-        style: "cancel"
-      },
-      { text: "", onPress: () =>  console.log("Understood alert")}
-    ]
-  );
-}
+ 
 const BuildingCard = (props: any) => {
   return <View style={{ marginLeft: 15, marginBottom: 15, flexDirection: 'row' }}>
     <View style={buildingCard.iconLayout}>
@@ -112,31 +57,50 @@ const Body = (props: any) => {
       </View>
   );
 }
-export function CheckPushNoti (list:any){
-  for(let i = 0;i<list.length;i++){
-    for(let k = 0; k < list[i].devices.length;k++){
-      if(list[i].devices[k].deviceType == "gas"){
-        if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value=="1"){
-          createAlert(list[i].devices[k], list[i].name);
-        }
-      }
-      else if(list[i].devices[k].deviceType == "temperature"){
-        if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value>"40"){
-          createAlert(list[i].devices[k], list[i].name);
-        }
-      }
-    }  
-  }
-  return;
-}
+
 class NotificationHistory extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    CheckPushNoti(this.props.buildings);
+  }
+  createAlert (device: any, nameBuilding: any, index : number){
+    Alert.alert(
+      "Something went wrong !!!",
+       device.name+" in building '" + nameBuilding +"' have problems." ,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Alert"),
+          style: "cancel"
+        },
+        { text: "", onPress:() => this.props.navigation.navigate('NotificationDaily',{nameBuilding: nameBuilding, index:index})}
+      ]
+    );
+  }
+  CheckPushNoti (list:any){
+    if(list){
+      for(let i = list.length-1;i >= 0;i--){
+        for(let k = 0; k < list[i].devices.length;k++){
+          if(list[i].devices[k].deviceType == "gas"){
+            if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value=="1"){
+              this.createAlert(list[i].devices[k], list[i].name, i);
+            }
+          }
+          else if(list[i].devices[k].deviceType == "temperature"){
+            if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value>"40"){
+              this.createAlert(list[i].devices[k], list[i].name, i);
+            }
+          }
+        }  
+      }
+    }
+    return;
   }
   render() {
+    console.disableYellowBox = true;
     return (
+      
       <View style={styles.option}>
+        {this.CheckPushNoti(this.props.buildings)}
         {/* <Button title="name" onPress= {()=>{CheckPushNoti(this.props.buildings)}}></Button> */}
         <Body listBuilding = {this.props.buildings} navigation ={this.props.navigation} ></Body>
       </View>
@@ -146,11 +110,11 @@ class NotificationHistory extends React.Component<Props> {
 
 const styles = StyleSheet.create({
   option: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: '#6495ed',
   },
   body: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: "white",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
@@ -173,7 +137,7 @@ const bodyStyle = StyleSheet.create({
 
 const buildingCard = StyleSheet.create({
   iconLayout: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
     marginTop: 5,
     width: 70,
     height: 65,

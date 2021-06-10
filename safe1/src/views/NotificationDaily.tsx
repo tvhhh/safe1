@@ -5,11 +5,9 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Building, Device } from '@/models';
 import { DeviceType } from '@/models/devices';
 import { State } from '@/redux/state';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { shouldUseActivityState } from 'react-native-screens';
-import { DatePipe } from '@angular/common'
 import dataService from '@/services/data.service';
-// import { StackNavigator } from 'react-navigation';
 
 const mapStateToProps = (state: State) => ({
   buildings: state.buildings,
@@ -73,30 +71,6 @@ const DeviceCard = (props: any) => {
   }
 
 }
-// function listGasDevice(listDecive: any) {
-//   let listGas: Device[] = [];
-//   var idx = 0;
-
-//   for (var i in listDecive){
-//     if(listDecive[i].deviceType == "gas"){
-//       listGas[idx] = listDecive[i];
-//     }
-//   }
-//   return listGas;
-// }
-
-// function listTempDevice(listDecive: any) {
-//   let listTempDevice: Device[] = [];
-//   var idx = 0;
-
-//   for (var i in listDecive){
-//     if(listDecive[i].deviceType == "temperature"){
-//       listTempDevice[idx] = listDecive[i];
-//     }
-//   }
-//   return listTempDevice;
-// }
-
 function findingGasTempDeviceList(list: any) {
   let listDecive: Device[] = [];
   var idx = 0;
@@ -124,33 +98,6 @@ function splitDataValue(data:any){
   }
   return data;
 }
-
-// const Body = (props: any) => {
-
-//   return (
-//     <View style={styles.body}>
-//       <View style={{ flexDirection: "row" }}>
-//         {/* <Button title="name" onPress={() => { console.log(props.listDevice) }}></Button> */}
-//         <TouchableOpacity>
-//           <Text
-//             style={bodyStyle.detail}>More details
-//           </Text>
-//         </TouchableOpacity>
-//         <View style={bodyStyle.iconLayout}>
-//           <TouchableOpacity>
-//             <Icon
-//               name='search-outline'
-//               type='ionicon'
-//               color='#aac4ec'
-//               size={23}
-//             />
-//           </TouchableOpacity>
-//         </View>
-//       </View>
-//       <FlatList data={props.listDevice} renderItem={({ item }) => <DeviceCard nameDevice={item.name} deviceType={item.deviceType} time={item.data[item.data.length - 1]?.time ? item.data[item.data.length - 1].time : "None"} region={item.region} data={item.data[item.data.length - 1]?.value ? item.data[item.data.length - 1].value : "None"}></DeviceCard>} />
-//     </View>
-//   );
-// }
 
 interface DeviceForm {
   name: string,
@@ -239,10 +186,12 @@ class NotificationDaily extends React.Component<Props> {
               </TouchableOpacity>
             </View>
           </View>
+          <ScrollView>
           {this.findListWarningDevice()}
           {this.renderWarningDevice()}
           {/* <Button title="name" onPress= {()=>{console.log(listDeviceForm)}}></Button> */}
           {listDeviceForm = []}
+          </ScrollView>
         </View>
       </View>
     )
@@ -265,7 +214,7 @@ const bodyStyle = StyleSheet.create({
     color: "#41628a"
   },
   iconLayout: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
     marginTop: 15,
     marginLeft: "auto",
     marginRight: 25,
@@ -286,7 +235,7 @@ const bodyStyle = StyleSheet.create({
 
 const deviceCardStyle = StyleSheet.create({
   iconLayout: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
     marginTop: 5,
     width: 55,
     height: 65,

@@ -13,8 +13,59 @@ import {
 } from '@/views';
 const { Navigator, Screen } = createStackNavigator();
 
-export default class MainContainer extends React.Component {
+import { Alert } from 'react-native';
+import { Building } from '@/models'
+import { connect, ConnectedProps } from 'react-redux';
+import { State } from '@/redux/state';
+
+const mapStateToProps = (state: State) => ({
+  buildings: state.buildings,
+  defaultBuilding: state.defaultBuilding,
+});
+const connector = connect(mapStateToProps);
+interface Props extends ConnectedProps<typeof connector> {
+  buildings: Building[],
+  defaultBuilding: Building | undefined,
+};
+
+class MainContainer extends React.Component<Props> {
+  createAlert (device: any, nameBuilding: any, index : number){
+    Alert.alert(
+      "Something went wrong !!!",
+       device.name+" in building '" + nameBuilding +"' have problems." ,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Alert"),
+          style: "cancel"
+        },
+        { text: "", onPress:() => console.log("OK")}
+      ]
+    );
+  }
+  CheckPushNoti (list:any){
+    if(list){
+      for(let i = list.length-1;i >= 0;i--){
+        for(let k = 0; k < list[i].devices.length;k++){
+          if(list[i].devices[k].deviceType == "gas"){
+            if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value=="1"){
+              this.createAlert(list[i].devices[k], list[i].name, i);
+            }
+          }
+          else if(list[i].devices[k].deviceType == "temperature"){
+            if(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value>"40"){
+              this.createAlert(list[i].devices[k], list[i].name, i);
+            }
+          }
+        }  
+      }
+    }
+    return;
+  }
   render() {
+    if(this.props.buildings){
+      this.CheckPushNoti(this.props.buildings);
+    }
     return (
       <NavigationContainer>
         <Navigator>
@@ -31,3 +82,4 @@ export default class MainContainer extends React.Component {
     )
   }
 };
+export default connector(MainContainer);
