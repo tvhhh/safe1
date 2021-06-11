@@ -27,6 +27,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Building, Device, User } from '@/models';
 import { DeviceType } from '@/models/devices';
 import deviceTopics from '@/utils/deviceTopics';
+import deviceDefaultValues from '@/utils/deviceDefaultValues';
 
 import ControlService from '@/services/control.service';
 import DataService from '@/services/data.service';
@@ -86,6 +87,7 @@ const defaultDevice: Device = {
   deviceType: "gas",
   region: "",
   protection: true,
+  triggeredValue: "1",
   data: []
 };
 
@@ -270,7 +272,8 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
       addingDevice: {
         ...this.state.addingDevice,
         deviceType: value,
-        topic: deviceTopics[value as DeviceType]
+        topic: deviceTopics[value as DeviceType],
+        triggeredValue: deviceDefaultValues[value as DeviceType]
       }
     });
   }
