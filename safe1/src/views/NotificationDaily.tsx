@@ -1,193 +1,203 @@
 import React from 'react';
-import { View, SectionList, Text, StyleSheet, Image } from 'react-native';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Icon } from 'react-native-elements'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { connect, ConnectedProps } from 'react-redux';
+import { Building, Device } from '@/models';
+import { DeviceType } from '@/models/devices';
+import { State } from '@/redux/state';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
-interface Props {
-  navigation: any
-  }
+const mapStateToProps = (state: State) => ({
+  buildings: state.buildings,
+});
+const connector = connect(mapStateToProps);
+interface Props extends ConnectedProps<typeof connector> {
+  navigation: any,
+  buildings: Building[],
+  route: any
+};
 
-// const Tab = createBottomTabNavigator();
-const RoomList = [
-  {
-    title: "Kitchen",
-    data:[
-      {
-        nameDevice:["Temperature", "Gas Concentration"],
-        data:["32°C","1"],
-        time:"14:00:03"
-      }
-    ]
-  },
-  {
-    title: "Living Room",
-    data:[
-      {
-        nameDevice:["Temperature", "Gas Concentration"],
-        data:["38°C","0"],
-        time:"15:00:03"
-      }
-    ]
-  },
-  {
-    title: "BedRoom",
-    data:[
-      {
-        nameDevice:["Temperature", ""],
-        data:["38°C","1"],
-        time:"16:00:03"
-      }
-    ]
-  },
-  {
-    title: "BathRoom",
-    data:[
-      {
-        nameDevice:["Temperature", ""],
-        data:["32°C","0"],
-        time:"10:00:03"
-      }
-    ]
-  }
-];
 const DeviceCard = (props: any) => {
-  if (props.nameDevice == "Temperature") {
-    return <View style={{ marginLeft: 15, marginBottom: 15, flexDirection: 'row' }}>
+  if (props.deviceType == "gas") {
+    return (<View style={{marginLeft:20,marginBottom:15,flexDirection:'row'}}>
       <View style={deviceCardStyle.iconLayout}>
         <Image
-          style={roomCardStyle.tinyLogo}
-          source={require('../assets/tempIcon_Noti.png')}
+          style={deviceCardStyle.tinyLogo}
+          source={require('../assets/img/gasIcon_Noti.png')}
         />
       </View>
-      <View style={{ flexDirection: 'column', marginLeft: 15 }}>
+      <View style={{flexDirection:'column',marginLeft:20}}>
         <Text
-          style={deviceCardStyle.nameDevice}>{props.nameDevice}
+          style={deviceCardStyle.nameDevice}>Name: {props.nameDevice}
+        </Text>
+        <Text 
+          style={deviceCardStyle.time}>{props.time}
         </Text>
         <Text
-          style={deviceCardStyle.time}>Time: {props.time}
-        </Text>
-      </View>
-      <Text
-        style={deviceCardStyle.data}>{props.data}
-      </Text>
-    </View >
-  }
-  else if(props.nameDevice == "Gas Concentration")  {
-    return <View style={{ marginLeft: 15, marginBottom: 15, flexDirection: 'row' }}>
-      <View style={deviceCardStyle.iconLayout}>
-        <Image
-          style={roomCardStyle.tinyLogo}
-          source={require('../assets/GasIcon_Noti.png')} />
-      </View>
-      <View style={{ flexDirection: 'column', marginLeft: 15 }}>
-        <Text
-          style={deviceCardStyle.nameDevice}>{props.nameDevice}
-        </Text>
-        <Text
-          style={deviceCardStyle.time}>Time: {props.time}
+          style={deviceCardStyle.region}>Region: {props.region}
         </Text>
       </View>
       <Text
         style={deviceCardStyle.data}>{props.data}
       </Text>
-    </View >
+    </View >)
   }
   else{
-    return <Text></Text>
-  }
-
-}
-
-const RoomCard = (props: any) => {
-  return <View>
-    <DeviceCard
-      nameDevice={props.nameDevice[0]} time={props.time} data={props.data[0]}
-    />
-    <DeviceCard
-      nameDevice={props.nameDevice[1]} time={props.time} data={props.data[1]}
-    />
-  </View>
-}
-
-const Body = (props: any) => {
-  return (
-    <View style={styles.body}>
-      <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity>
-          <Text
-            style={bodyStyle.detail}>More details
+    return(<View style={{marginLeft:20,marginBottom:15,flexDirection:'row'}}>
+      <View style={deviceCardStyle.iconLayout}>
+        <Image
+          style={deviceCardStyle.tinyLogo}
+          source={require('../assets/img/tempIcon_Noti.png')}
+        />
+      </View>
+      <View style={{flexDirection:'column',marginLeft:20}}>
+        <Text
+          style={deviceCardStyle.nameDevice}>Name: {props.nameDevice}
         </Text>
-        </TouchableOpacity>
-        <View style={bodyStyle.iconLayout}>
-          <TouchableOpacity>
-            <Icon
-              name='search-outline'
-              type='ionicon'
-              color='#aac4ec'
-              size={23}
-            />
-          </TouchableOpacity>
-        </View>
+        <Text 
+          style={deviceCardStyle.time}>{props.time}
+        </Text>
+        <Text
+          style={deviceCardStyle.region}>Region: {props.region}
+        </Text>
       </View>
       <Text
-        style={bodyStyle.dayTime}>Today, {props.day}
+        style={deviceCardStyle.data}>{props.data}
       </Text>
-      <SectionList
-        sections={RoomList}
-        keyExtractor={(item,index) => item.time}
-        renderItem={({ item }) => <RoomCard nameDevice={item.nameDevice} time ={item.time} data={item.data} />}
-        renderSectionHeader={({ section: { title } }) => (
-          <View>
-            <View style={roomCardStyle.line}></View>
-            <TouchableOpacity>
-              <Text
-                style={roomCardStyle.nameRoom}>{title}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-    </View>
-  );
+    </View >)
+  }
+}
+function findingGasTempDeviceList(list: any) {
+  let listDecive: Device[]=[];
+  var idx=0;
+  for(var i in list){
+    if(list[i].deviceType=="gas"){
+      listDecive[idx] = list[i];
+      idx++;
+    }
+  }
+  for(var i in list){
+    if(list[i].deviceType == "temperature"){
+      listDecive[idx] = list[i];
+      idx++;
+    }
+  }
+  return listDecive;
+}
+export function splitDataValue(data:any){
+  for(let i=1 ; i < data.length;i++){
+    if(data[i] == "-"){
+      data=data.substring(0,i);
+    }
+  }
+  return data;
 }
 
+interface DeviceForm {
+  name:string,
+  topic:string,
+  deviceType:DeviceType,
+  region:string,
+  protection:boolean,
+  data:{time:string,value:string}
+};
+
+var listDeviceForm:DeviceForm[]=[];
 class NotificationDaily extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
+  }
+  findListWarningDevice = () => {
+    return findingGasTempDeviceList(this.props.buildings[this.props.route.params.index].devices)
+      // .map((device) => {return device.data;})
+      .forEach((device) => {
+        if (device.deviceType == "gas") {
+          device.data.filter((data) => { return Number(data.value) == 1 })
+            .map((data) => {
+              var newDevice: DeviceForm={
+                name: device.name,
+                topic: device.topic,
+                deviceType: device.deviceType,
+                region: device.region,
+                protection: device.protection,
+                data: {time: data.time.toLocaleString(),value: data.value }
+              }
+              listDeviceForm.push(newDevice);
+            })
+        } else {
+          device.data.filter((data) => { return Number(splitDataValue(data.value)) > 40 })
+            .map((data) => {
+              var newDevice: DeviceForm = {
+                name: device.name,
+                topic: device.topic,
+                deviceType: device.deviceType,
+                region: device.region,
+                protection: device.protection,
+                data: {time: data.time.toLocaleString(),value: splitDataValue(data.value)}
+              }
+              listDeviceForm.push(newDevice);
+            })
+        }
+      },
+      )
+  }
+
+  renderWarningDevice = () => {
+    let listDeviceFormReverse = listDeviceForm.reverse();
+    return listDeviceFormReverse.map((device) => (<View>
+      <DeviceCard nameDevice={device.name} deviceType={device.deviceType} time={device.data.time ? device.data.time : "None"} region={device.region} data={device.data.value ? device.data.value : "None"}></DeviceCard>
+    </View>))
+  }
   render() {
     return (
       <View style={styles.option}>
-        <Body/>
+        <Text style={bodyStyle.nameBuilding}>{this.props.route.params.nameBuilding}</Text>
+        <View style={styles.body}>
+          <View style={{flexDirection:"row"}}>
+            <TouchableOpacity>
+              <Text
+                style={bodyStyle.detail}>More details
+          </Text>
+            </TouchableOpacity>
+            <View style={bodyStyle.iconLayout}>
+              <TouchableOpacity>
+                <Icon
+                  name='search-outline'
+                  type='ionicon'
+                  color='#aac4ec'
+                  size={23}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <ScrollView>
+            {this.findListWarningDevice()}
+            {this.renderWarningDevice()}
+            {listDeviceForm = []}
+          </ScrollView>
+        </View>
       </View>
     )
   }
 }
-
-const styles = StyleSheet.create({
-  option: {
-    flex: 1,
-    backgroundColor: '#6495ed',
-  },
-  body: {
-    flex: 1,
-    backgroundColor: "white",
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-  },
-})
-
 const bodyStyle = StyleSheet.create({
+  nameBuilding: {
+    marginLeft: 160,
+    marginBottom: 15,
+    fontSize: 23,
+
+    color: "#21130d"
+  },
   detail: {
     marginLeft: 30,
     marginTop: 20,
+    marginBottom: 15,
     fontSize: 23,
+
     color: "#41628a"
   },
   iconLayout: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
     marginTop: 15,
     marginLeft: "auto",
     marginRight: 25,
@@ -205,53 +215,61 @@ const bodyStyle = StyleSheet.create({
     color: "#aac4ec"
   }
 })
-const roomCardStyle = StyleSheet.create({
-  line: {
-    marginTop: 13,
-    borderWidth: 0.6,
-    borderColor: "#aac4ec"
-  },
-  nameRoom: {
-    marginTop: 10,
-    textAlign: 'center',
-    fontSize: 18,
-    color: "#aac4ec"
-  },
-  tinyLogo: {
-    width: 50,
-    height: 50,
-  },
-})
 
 const deviceCardStyle = StyleSheet.create({
   iconLayout: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
     marginTop: 5,
     width: 55,
-    height: 55,
+    height: 65,
     borderRadius: 12,
     backgroundColor: "#6495ed"
   },
+  deviceType: {
+    marginTop: 1,
+    fontSize: 18
+  },
   nameDevice: {
     marginTop: 5,
-    fontSize: 16
+    fontSize: 18
   },
-  time: {
-    fontSize: 16,
+  region: {
+    fontSize: 20,
     marginTop: 10,
     color: "#aac4ec"
   },
   data: {
     marginTop: 20,
-    fontSize: 16,
+    fontSize: 23,
+    // borderColor: 'black',
+    // borderWidth: 1,
+    // justifyContent: 'center',
     marginLeft: "auto",
     marginRight: 20,
-    color: "#08cd99"
+    color: "#ff0000"
   },
   tinyLogo: {
     width: 50,
     height: 50,
   },
+  time: {
+    marginTop: 10,
+    fontSize: 16
+  }
 })
 
-export default NotificationDaily;
+const styles = StyleSheet.create({
+  option: {
+    flex: 1,
+    backgroundColor: '#6495ed',
+  },
+  body: {
+    flex: 1,
+    backgroundColor: "white",
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+  },
+})
+
+export default connector(NotificationDaily);
+
