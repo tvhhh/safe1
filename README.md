@@ -320,7 +320,7 @@ Payload:
 ```
 POST /updateDeviceProtection
 Payload:
-  buildingName: string
+  deviceName: string
   protection: boolean
   triggeredValue: string
 ```
