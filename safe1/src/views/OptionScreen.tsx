@@ -13,8 +13,7 @@ import { Building, Device, User } from '@/models';
 
 const {height, width} = Dimensions.get('screen')
 
-const Body = (props: any) => {
-  const num = 4;
+const Protection = (props: any) => {
   const [numRooms, setNumRooms] = useState(0);
   return (
     <View style={styles.body}>
@@ -27,8 +26,19 @@ const Body = (props: any) => {
   );
 }
 
+const Setting = (props: any) => {
+  return (
+    <View style={styles.body}>
+      <Text style={[bodyStyles.intro, {textAlign: 'center'}]} numberOfLines={2}>
+        Manual setting for each device
+      </Text>
+      <ProtectionGrid selectedRoom={props.room} isSetting={true}/>
+    </View>
+  );
+}
 
-const Thermo = (props: any) => { 
+
+const Monitor = (props: any) => { 
   const celcius = '\u00b0\C'; 
   return (
     <View style={styles.body}>
@@ -142,7 +152,9 @@ class OptionScreen extends React.Component<Props, OptionState> {
           <OptionButtons changeSelectedID={this.changeSelectedID.bind(this)}/>
         </View>
         
-        {this.state.selectedId < 1? <Body room={this.props.route.params.title}/> : <Thermo temp={this.state.tempData.temp} humid={this.state.tempData.humid}/>}
+        {this.state.selectedId === 0? <Protection room={this.props.route.params.title}/> : null}
+        {this.state.selectedId === 1? <Monitor temp={this.state.tempData.temp} humid={this.state.tempData.humid}/> : null}
+        {this.state.selectedId === 2? <Setting room={this.props.route.params.title}/> : null}
       </LinearGradient>  
     )
   }

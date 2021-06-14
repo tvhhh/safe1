@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Button, TouchableOpacity, Switch } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect, ConnectedProps } from 'react-redux';
@@ -7,6 +7,8 @@ import { State } from '@/redux/state';
 import { Building, Device, User } from '@/models';
 import { OUTPUT_DEVICES, typeItem } from '@/assets/output.devices';
 import OnProtection  from '@/components/OnProtectionButton';
+import ModalItem from '@/components/Modal'
+
 const {height, width} = Dimensions.get('screen')
 
 interface Options {
@@ -23,15 +25,20 @@ interface Props extends ConnectedProps<typeof connector> {
   currentUser: User | null,
   defaultBuilding: Building | undefined,
   selectedRoom: string,
-  setNum: any,
+  setNum?: any,
+  isSetting?: boolean,
 };
 
 interface ProtectionGridState {
   currentRoom: string,
   availableDevice: typeItem[],
   availableData: Device[],
-  hasDevice: boolean
+  hasDevice: boolean,
+  isModalVisible: boolean,
+  relaySetting: number,
+  valueSetting: number
 }
+
 class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
   constructor(props: Props) {
     super(props);
@@ -40,6 +47,9 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
       availableDevice: OUTPUT_DEVICES,
       hasDevice: false,
       availableData: [],
+      isModalVisible: false,
+      relaySetting: 1,
+      valueSetting: 0
     };
   }
   
@@ -58,37 +68,61 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
         device.deviceType !== 'temperature' && 
         device.deviceType !== 'gas'
       )
-      // console.log(outputData);
       this.setState({availableData: outputData});
       var AVAILABLE_DEVICES = OUTPUT_DEVICES.filter((item: typeItem) => 
         outputData.find((data: Device) => (data.deviceType === item.deviceType)));
-      this.props.setNum(AVAILABLE_DEVICES.length)    
+      if(this.props.setNum !== undefined) this.props.setNum(AVAILABLE_DEVICES.length)    
       this.setState({availableDevice: AVAILABLE_DEVICES});
     }
   }
 
+  toggleModal(){
+    this.setState({isModalVisible: !this.state.isModalVisible})
+  }
+
+  handleSetting = (value: number) => {
+    console.log(value)
+    if(typeof(value) === 'number') 
+      this.setState({relaySetting: value})
+  }
+
+  handleValue = (value: number) => {
+    console.log(value)
+    this.setState({valueSetting: value})
+  }
 
   render(){
     return (
-      <FlatGrid
-        itemDimension={width/3}
-        data={this.state.availableDevice.length > 0? this.state.availableDevice : OUTPUT_DEVICES}
-        style={styles.gridView}
-        spacing={20}
-        renderItem={({ item }: Options) => (
-          <View style={[styles.itemContainer, { backgroundColor: '#fff' }]}>
-            <Icon name={item.icon} size={50}/>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
-            <OnProtection 
-              isAvailable={this.state.availableDevice}
-              currentSensor={item.deviceType}
-              data={this.state.availableData}
-              hasDevice={this.state.hasDevice}
-            />
-          </View>
-        )}
-      />
+      this.props.isSetting? 
+        <FlatGrid
+          itemDimension={width/3}
+          data={this.state.availableDevice.length > 0? this.state.availableDevice : OUTPUT_DEVICES}
+          style={styles.gridView}
+          spacing={20}
+          renderItem={({ item }: Options) => (
+            <ModalItem item={item} hasDevice={this.state.hasDevice}/>
+          )}
+        />
+        :
+        <FlatGrid
+          itemDimension={width/3}
+          data={this.state.availableDevice.length > 0? this.state.availableDevice : OUTPUT_DEVICES}
+          style={styles.gridView}
+          spacing={20}
+          renderItem={({ item }: Options) => (
+            <View style={[styles.itemContainer, { backgroundColor: '#fff' }]}>
+              <Icon name={item.icon} size={50}/>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
+              <OnProtection 
+                isAvailable={this.state.availableDevice}
+                currentSensor={item.deviceType}
+                data={this.state.availableData}
+                hasDevice={this.state.hasDevice}
+              />
+            </View>
+          )}
+        />
     );
   }
 }
@@ -130,5 +164,19 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
     width: 50,
     marginTop: 3,
-  }
+  },
+  content: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  contentTitle: {
+    fontFamily:'Roboto',
+    fontSize: 20,
+    marginBottom: 12,
+    textAlign: 'center'
+  },
 });

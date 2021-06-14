@@ -41,14 +41,15 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
         }
     }
 
-    setToggle(value: boolean){
+    setToggle = (value: boolean) => {
         this.setState({toggle: value});
+        console.log(this.props.defaultBuilding?.devices)
         var dataFormat = this.props.data.find((data: Device) => data.deviceType === this.props.currentSensor);
-        
+        if(typeof(dataFormat) === 'undefined') return;  
         DataService.updateDeviceProtection({
-            deviceName: dataFormat?.name,
-            protection: false,
-            triggeredValue: dataFormat?.triggeredValue 
+            deviceName: dataFormat.name,
+            protection: value,
+            triggeredValue: dataFormat.triggeredValue 
         }).then(response => {
         if (response === null) {
             Alert.alert(
@@ -63,12 +64,12 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
                 "Your protection has been updated!",
                 [{ text: "OK" }]
             );
-            console.log(response)            
         }
         }).catch(err => console.error(err));
     }
 
     render(){
+        
         return (
             <Switch
                 trackColor={{false: '#000', true: '#1EC639'}}

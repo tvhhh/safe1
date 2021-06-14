@@ -13,7 +13,7 @@ const buttons = [
   },
   {
     id: 2,
-    name: 'Humidity'
+    name: 'Settings'
   }
 ]
 
