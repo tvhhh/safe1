@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Dimensions, Button, TouchableOpacity, Switch } from 'react-native';
+import { StyleSheet, View, Text, Dimensions } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect, ConnectedProps } from 'react-redux';
@@ -31,7 +31,8 @@ interface Props extends ConnectedProps<typeof connector> {
 
 interface ProtectionGridState {
   currentRoom: string,
-  availableDevice: typeItem[],
+  settingAvailableDevice: typeItem[],
+  protectionAvailableDevice: typeItem[],
   availableData: Device[],
   hasDevice: boolean,
   isModalVisible: boolean,
@@ -44,7 +45,8 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
     super(props);
     this.state = {
       currentRoom: '',
-      availableDevice: OUTPUT_DEVICES,
+      settingAvailableDevice: OUTPUT_DEVICES,
+      protectionAvailableDevice: OUTPUT_DEVICES,
       hasDevice: false,
       availableData: [],
       isModalVisible: false,
@@ -69,10 +71,22 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
         device.deviceType !== 'gas'
       )
       this.setState({availableData: outputData});
+
       var AVAILABLE_DEVICES = OUTPUT_DEVICES.filter((item: typeItem) => 
         outputData.find((data: Device) => (data.deviceType === item.deviceType)));
-      if(this.props.setNum !== undefined) this.props.setNum(AVAILABLE_DEVICES.length)    
-      this.setState({availableDevice: AVAILABLE_DEVICES});
+      var DATA = [];
+      for(let i = 0; i < outputData.length; i++){
+        let item = AVAILABLE_DEVICES.find((item) => item.deviceType === outputData[i].deviceType);
+        if(item !== undefined){
+          let ele = {...item, ID: outputData[i].name};
+          DATA.push(ele);
+        }
+      }
+      console.log(DATA.length);
+      this.setState({protectionAvailableDevice: AVAILABLE_DEVICES});    
+      if(this.props.setNum !== undefined) this.props.setNum(AVAILABLE_DEVICES.length)
+
+      this.setState({settingAvailableDevice: DATA});
     }
   }
 
@@ -96,7 +110,7 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
       this.props.isSetting? 
         <FlatGrid
           itemDimension={width/3}
-          data={this.state.availableDevice.length > 0? this.state.availableDevice : OUTPUT_DEVICES}
+          data={this.state.settingAvailableDevice.length > 0? this.state.settingAvailableDevice : OUTPUT_DEVICES}
           style={styles.gridView}
           spacing={20}
           renderItem={({ item }: Options) => (
@@ -106,7 +120,7 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
         :
         <FlatGrid
           itemDimension={width/3}
-          data={this.state.availableDevice.length > 0? this.state.availableDevice : OUTPUT_DEVICES}
+          data={this.state.protectionAvailableDevice.length > 0? this.state.protectionAvailableDevice : OUTPUT_DEVICES}
           style={styles.gridView}
           spacing={20}
           renderItem={({ item }: Options) => (
@@ -115,9 +129,8 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
               <Text style={styles.itemName}>{item.name}</Text>
               <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
               <OnProtection 
-                isAvailable={this.state.availableDevice}
-                currentSensor={item.deviceType}
-                data={this.state.availableData}
+                isAvailable={this.state.protectionAvailableDevice}
+                item={item}
                 hasDevice={this.state.hasDevice}
               />
             </View>

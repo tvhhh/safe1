@@ -10,7 +10,7 @@ type ListItemProps = {
     name: string,
     color: string,
     status: string,
-    subcolor: string,
+    subcolor?: string,
   },
   styles: Object,
 };
@@ -25,23 +25,24 @@ export default class ListItem extends Component<ListItemProps> {
     const {item, styles} = this.props;
 
     var OnProtection;
-    if (item.status === 'On')
+    if (item.status === 'On'){
       OnProtection = (
         <Icon
           name={'toggle-switch'}
-          size={30}
-          color={item.subcolor}
+          size={40}
+          color={'green'}
         />
       );
-    else if (item.status === 'Off')
+    } else if (item.status === 'Off'){
       OnProtection =  (
         <Icon
           name={'toggle-switch-off'}
-          size={30}
+          size={40}
+          color={'black'}
         />
       );
-    else
-        OnProtection = false;
+    } else
+      OnProtection = false;
 
     const Status = item.id !== 1 ? (
       <Text style={{fontSize: 18, color: item.subcolor, fontWeight: 'bold'}}>

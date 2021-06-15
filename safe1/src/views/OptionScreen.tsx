@@ -165,7 +165,7 @@ const AppButton = () => {
   return (
   <View style={{alignItems: 'center'}}>
     <TouchableOpacity
-      onPress={() => {navigation.navigate('RemoteControl');}}
+      onPress={() => {navigation.navigate('Dashboard');}}
       style={[
         {
           paddingHorizontal: 8,

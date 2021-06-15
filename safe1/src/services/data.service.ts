@@ -77,6 +77,20 @@ class DataService {
       .catch(err => { console.error(err); return null });
   }
 
+  getOutputDevices(payload: any): Promise<Device[] | null> {
+    return HttpService.post(`${dataUrl}/getOutputDevices`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Device[] : null)
+      .catch(err => { console.error(err); return null });
+  }
+
+  getInputDevices(payload: any): Promise<Device[] | null> {
+    return HttpService.post(`${dataUrl}/getInputDevices`, payload)
+      .then(response => response.status === 200 ? response.json() : null)
+      .then(json => json !== null ? json as Device[] : null)
+      .catch(err => { console.error(err); return null });
+  }
+
   ping() {
     HttpService.get(`${dataUrl}/ping`)
       .then(response => response.text())

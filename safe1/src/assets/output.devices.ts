@@ -1,12 +1,13 @@
 export const OUTPUT_DEVICES = [
   {
-    name: 'Extractor fans',
+    name: 'Extractor',
     subtitle: 'Propeller devices', 
     icon: 'fan', 
     deviceType:'fan', 
     protection: true, 
     setting:'Fan speed',
-    maxSetting: 255
+    maxSetting: 255,
+    ID: ''
   },
   { 
     name: 'Sprinkler', 
@@ -15,7 +16,8 @@ export const OUTPUT_DEVICES = [
     deviceType:'sprinkler', 
     protection: true, 
     setting: 'Sprinkler controller',
-    maxSetting: 1
+    maxSetting: 1,
+    ID: ''
   },
   { 
     name: 'Fire alarm', 
@@ -24,7 +26,8 @@ export const OUTPUT_DEVICES = [
     deviceType: 'buzzer', 
     protection: true,
     setting: 'Buzzer volume',
-    maxSetting: 1023
+    maxSetting: 1023,
+    ID: ''
   },
   { 
     name: 'Smart door', 
@@ -33,16 +36,18 @@ export const OUTPUT_DEVICES = [
     deviceType:'servo', 
     protection: true,
     setting: 'Door rotation angle',
-    maxSetting: 180
+    maxSetting: 180,
+    ID: ''
   },
   { 
-    name: 'Power system', 
+    name: 'Power', 
     subtitle: 'relay circut', 
     icon: 'flash', 
     deviceType:'power', 
     protection: true,
     setting: 'Power controller',
-    maxSetting: 1
+    maxSetting: 1,
+    ID: ''
   },
 ];
 
@@ -54,5 +59,6 @@ export type typeItem = {
   deviceType: string,
   protection: boolean,
   setting: string,
-  maxSetting: number
+  maxSetting: number,
+  ID: string
 }
