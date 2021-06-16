@@ -24,6 +24,7 @@ func UpdateProtection(db *gorm.DB, params interface{}) (interface{}, error) {
 
 	d := Device{Name: deviceName}
 	if err := db.Model(&d).
+		Select("Name", "Protection", "TriggeredValue").
 		Updates(Device{
 			Name:           deviceName,
 			Protection:     protection,

@@ -15,7 +15,7 @@ const mapStateToProps = (state: State) => ({
 const connector = connect(mapStateToProps);
 
 let availableRegion:  rooms[]
-availableRegion = REGION.map((elem) => ({id: REGION.indexOf(elem), name: elem}))
+availableRegion = REGION.map((elem) => ({id: REGION.indexOf(elem), name: elem.charAt(0).toUpperCase() + elem.slice(1)}))
 interface Props extends ConnectedProps<typeof connector> {
   currentUser: User | null,
   defaultBuilding: Building | undefined,
@@ -48,15 +48,17 @@ class roomButtons extends Component<Props, ButtonsState> {
     if(!this.props.currentUser || !this.props.defaultBuilding) return;
     var devices = this.props.defaultBuilding.devices;
     var avail = new Array;
-    devices.forEach((device: Device) => {
-      var device_region: string = device.region.toLowerCase();
-      if(Object.values(REGION).includes(device_region))
-        var idx: number;
-        idx = REGION.indexOf(device.region.toLowerCase());
-        if(!avail.includes(DEFAULT[idx].title))
-          avail.push(DEFAULT[idx].title);
-    })
-    this.setState({regionState: this.addId(avail)});
+    if(devices.length !== 0){
+      devices.forEach((device: Device) => {
+        var device_region: string = device.region.toLowerCase();
+        if(Object.values(REGION).includes(device_region))
+          var idx: number;
+          idx = REGION.indexOf(device.region.toLowerCase());
+          if(!avail.includes(DEFAULT[idx].title))
+            avail.push(DEFAULT[idx].title);
+      })
+      this.setState({regionState: this.addId(avail)});
+    }
   }
 
   handler(id: number){

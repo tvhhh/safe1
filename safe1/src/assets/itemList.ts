@@ -1,11 +1,4 @@
 export const DEFAULT_ITEMLIST = [
-  { id: 1, 
-    name: 'Protection', 
-    icon: 'security', 
-    color: '#000000',
-    status: 'Off',
-    subcolor: 'green',
-  },
   { id: 2, 
     name: 'Thermostat', 
     icon: 'thermometer', 
@@ -24,13 +17,6 @@ export const DEFAULT_ITEMLIST = [
 ];
 
 export const ITEMLIST = [
-  { id: 1, 
-    name: 'Protection', 
-    icon: 'security', 
-    color: '#000000',
-    status: 'Off',
-    subcolor: 'green',
-  },
   { id: 2, 
     name: 'Thermostat', 
     icon: 'thermometer', 
@@ -47,3 +33,11 @@ export const ITEMLIST = [
     subcolor: '#000',
   },
 ];
+
+export const PROTECTION = 
+  { id: 1, 
+    name: 'Protection', 
+    icon: 'security', 
+    color: '#000000',
+    status: 'Off',
+  }
