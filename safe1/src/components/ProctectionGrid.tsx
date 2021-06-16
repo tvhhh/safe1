@@ -33,8 +33,8 @@ interface ProtectionGridState {
   currentRoom: string,
   settingAvailableDevice: typeItem[],
   protectionAvailableDevice: typeItem[],
-  availableData: Device[],
   hasDevice: boolean,
+  takeDefaultData: boolean,
   isModalVisible: boolean,
   relaySetting: number,
   valueSetting: number
@@ -48,7 +48,7 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
       settingAvailableDevice: OUTPUT_DEVICES,
       protectionAvailableDevice: OUTPUT_DEVICES,
       hasDevice: false,
-      availableData: [],
+      takeDefaultData: false,
       isModalVisible: false,
       relaySetting: 1,
       valueSetting: 0
@@ -62,7 +62,6 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
     var hasDevice: boolean = devices.some(function(value: Device){
       return value.region.toLowerCase() === roomName.toLowerCase()
     });
-    this.setState({hasDevice: hasDevice});
     if(hasDevice){
       var outputData = new Array();
       outputData = devices.filter((device: Device) =>  
@@ -70,8 +69,10 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
         device.deviceType !== 'temperature' && 
         device.deviceType !== 'gas'
       )
-      this.setState({availableData: outputData});
-
+      if(outputData.length > 0){
+        this.setState({hasDevice: true})
+      }
+      
       var AVAILABLE_DEVICES = OUTPUT_DEVICES.filter((item: typeItem) => 
         outputData.find((data: Device) => (data.deviceType === item.deviceType)));
       var DATA = [];
@@ -82,7 +83,6 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
           DATA.push(ele);
         }
       }
-      console.log(DATA.length);
       this.setState({protectionAvailableDevice: AVAILABLE_DEVICES});    
       if(this.props.setNum !== undefined) this.props.setNum(AVAILABLE_DEVICES.length)
 

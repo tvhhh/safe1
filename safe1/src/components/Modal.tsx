@@ -48,7 +48,6 @@ class ModalItem extends React.Component<Props, ModalItemState> {
 
   getInitialSetting = () => {
     let item = this.props.defaultBuilding?.devices.find((item) => item.name === this.props.item.ID);
-    console.log(this.props.defaultBuilding?.devices)
     if(item?.triggeredValue !== undefined){
       return parseInt(item?.triggeredValue);
     }

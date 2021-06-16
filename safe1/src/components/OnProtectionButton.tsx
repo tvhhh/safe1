@@ -43,7 +43,7 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
     componentDidUpdate(prevProps: Props, prevState: OnProtectionState){
         let items = this.props.defaultBuilding?.devices.filter((item) => item.deviceType === this.props.item.deviceType);
         let onProtection = false;
-        items !== undefined ? onProtection = items[0].protection : null;
+        items !== undefined && items.length !== 0 ? onProtection = items[0].protection : null;
         if( onProtection !== prevState.toggle ){
             this.setState({toggle: onProtection})
         }
@@ -93,7 +93,6 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
                 [{ text: "OK" }]
             );
         }
-        
     }
 
     render(){
@@ -105,7 +104,7 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
                 onValueChange={(value) => this.setToggle(value)}
                 value={this.state.toggle}
                 style={styles.onOff}
-                disabled={this.props.isAvailable.length == OUTPUT_DEVICES.length? true : false}
+                disabled={this.props.hasDevice? false : true}
             />
         )
     }
