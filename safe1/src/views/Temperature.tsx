@@ -7,7 +7,7 @@ import {
   View,
   Alert
 } from 'react-native';
-import { Tooltip } from 'react-native-elements/dist/tooltip/Tooltip';
+import { Building } from '@/models';
 import { Svg, Rect, Text as TextSVG }  from 'react-native-svg'
 import LinearGradient from 'react-native-linear-gradient'
 import { LineChart } from 'react-native-chart-kit'
@@ -29,8 +29,9 @@ const mapStateToProps = (state: State) => ({
 
 const connector = connect(mapStateToProps);
 
-interface Props {
+interface Props extends ConnectedProps<typeof connector> {
   navigation: any,
+  defaultBuilding: Building | undefined,
 };
 
 interface CustomState {
@@ -71,7 +72,7 @@ class Temperature extends React.Component<Props, CustomState> {
       devices.forEach((device: Device) => {
         device.data.forEach(data => {
           const time = new Date(data.time)
-          if (temp_data.temp.length === 6) {
+          if (temp_data.temp.length === 7) {
             temp_data.temp.shift()
             temp_data.label.shift()
           }
@@ -134,10 +135,10 @@ class Temperature extends React.Component<Props, CustomState> {
 
   renderData = (temp_data: any) => {
     let data = {
-      labels: temp_data.label,
+      labels: temp_data.label.slice(-7),
       datasets: [
         {
-          data: temp_data.temp,
+          data: temp_data.temp.slice(-7),
           color: () => 'rgba(250, 218, 94, 0.8)'
         }               
       ]
@@ -228,7 +229,13 @@ class Temperature extends React.Component<Props, CustomState> {
             }
           }}
           formatYLabel={(y: string) => Number(y).toString()}
-          formatXLabel = {(x: string) => this.getHourMinuteSecond(new Date(x))}
+          formatXLabel = {(x: string) => {
+            let idx = data.labels.indexOf(x)
+            if (idx % 2 === 0) {
+              return this.getHourMinuteSecond(new Date(x))
+            } 
+            return ""
+          }}
           fromZero
           withVerticalLines={false}
           bezier

@@ -22,12 +22,7 @@
     "@types/react-native-fbsdk": "^3.0.0",
     "@types/react-native-snap-carousel": "^3.8.3",
     "@types/react-native-vector-icons": "^6.4.6",
-<<<<<<< HEAD
-    "es6-symbol": "^3.1.3",
-    "firebase": "^8.6.1",
-=======
     "firebase": "^8.6.5",
->>>>>>> origin
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-chart-kit": "^6.11.0",

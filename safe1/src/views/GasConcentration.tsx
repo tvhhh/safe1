@@ -7,6 +7,7 @@ import {
   View,
   Alert
 } from 'react-native';
+import { Building } from '@/models';
 import { Svg, Rect, Text as TextSVG }  from 'react-native-svg'
 import LinearGradient from 'react-native-linear-gradient'
 import { LineChart } from 'react-native-chart-kit'
@@ -28,12 +29,14 @@ const mapStateToProps = (state: State) => ({
 
 const connector = connect(mapStateToProps);
 
-interface Props {
+interface Props extends ConnectedProps<typeof connector> {
   navigation: any,
+  defaultBuilding: Building | undefined,
 };
 
 interface CustomState {
-  tooltipPos: any
+  tooltipPos: any,
+  sessionTime: string,
 }
 
 class GasConcentration extends React.Component<Props, CustomState> {
@@ -46,7 +49,8 @@ class GasConcentration extends React.Component<Props, CustomState> {
         visible: false,
         time: "",
         value: 0
-      }
+      },
+      sessionTime: "",
     }
   };
   
@@ -71,16 +75,11 @@ class GasConcentration extends React.Component<Props, CustomState> {
       devices.forEach((device: Device) => {
         device.data.forEach(data => {
           const time = new Date(data.time)
-          if (gas_data.gas.length === 6) {
-            gas_data.gas.shift()
-            gas_data.label.shift()
-          }
           gas_data.gas.push(Number(data.value))
           gas_data.label.push(time)
         });
       });
     }
-    console.log(gas_data)
     return gas_data
   }
   
@@ -101,6 +100,35 @@ class GasConcentration extends React.Component<Props, CustomState> {
   checkIfHadDevice = () => {
     return this.getDevices("gas").length !== 0
   }
+
+  lastTriggered = (gas_data: any) => {
+    let len = gas_data.label.length
+    for (let i = len - 1; i >= 0; i--) {
+      if (gas_data.gas[i] === 1) {
+        return gas_data.label[i]
+      }
+    }
+    return -1
+  }
+
+  sessionTime = (date1: Date, date2: Date) => {
+    var delta = Math.abs(date2 - date1) / 1000;
+
+    var days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    var hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    var minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    var seconds = Math.floor(delta % 60); 
+
+    return days.toString() + ':' + this.formatTime(hours) + ':' +
+            this.formatTime(minutes) + ':' + this.formatTime(seconds)
+  }
+
 
   renderDeviceEmptyBuilding = () => {
     return(
@@ -133,12 +161,28 @@ class GasConcentration extends React.Component<Props, CustomState> {
     )  
   }
 
+  componentDidUpdate() {
+    var date1 = new Date(this.lastTriggered(this.getGasData())); 
+    var date2 = new Date();
+    this.interval = setInterval(() => this.setState({ sessionTime: this.sessionTime(date1, date2)}), 1000)
+}
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
+  }
+
+
+
   renderData = (gas_data: any) => {
+    
+    // this.interval = setInterval(this.setState({sessionTime: date1.toTimeString()}), 1000)
+
+    let currCondtion = gas_data.gas[gas_data.gas.length - 1]
     let data = {
-      labels: gas_data.label,
+      labels: gas_data.label.slice(-12),
       datasets: [
         {
-          data: gas_data.gas,
+          data: gas_data.gas.slice(-12),
           color: () => 'rgba(250, 218, 94, 0.8)'
         }               
       ]
@@ -207,6 +251,8 @@ class GasConcentration extends React.Component<Props, CustomState> {
           }}
               data={data}
               width={width} // from react-native
+              verticalLabelRotation={270}
+              xLabelsOffset={30}
               height={300}
               yAxisSuffix=""
               yAxisInterval={1} // optional, defaults to 1
@@ -235,17 +281,55 @@ class GasConcentration extends React.Component<Props, CustomState> {
                 }
                 return ""
               }}
+              formatYLabel = {(y:string) => {
+                if (Number(y) === 1 || Number(y) === 0) {
+                  return Number(y).toString()
+                }
+                return ""
+              }}
               formatXLabel = {(x: string) => this.getHourMinuteSecond(new Date(x))}
               fromZero
               withVerticalLines={false}
               bezier
               style={styles.chart}
             />
-            {gas_data.gas[gas_data.gas.length - 1] !== 1 ? 
-                <MaterialCommunityIcons name = "shield-check" size = {150} color = "white"/>
+            
+            <View style={styles.gasContainer}>
+              {currCondtion !== 1 ? 
+                <MaterialCommunityIcons name="shield-check" size={30} color="white"/>
               :
-                <MaterialCommunityIcons name = "shield-alert" size = {150} color = "white"/>
+                <MaterialCommunityIcons name="shield-alert" size={30} color="white"/>
               }
+              <View style={styles.gasFirstBox}>
+                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>Current condition</Text>
+              </View>
+              <View style={styles.gasSecondBox}>
+                {currCondtion === 1 ?
+                  <Text style={{color:"white"}}>Triggered</Text>
+                :
+                  <Text style={{color:"white"}}>Untriggered</Text>}
+              </View>          
+            </View>
+            <View style={styles.gasContainer}>
+              <MaterialCommunityIcons name="radar" size={30} color='white'/>
+              <View style={styles.gasFirstBox}>
+                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>Last triggered at</Text>
+                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>on</Text>
+              </View>
+              <View style={styles.gasSecondBox}>
+                  <Text style={{color: 'white'}}>{this.getHourMinuteSecond(this.lastTriggered(gas_data))}</Text>
+                  <Text style={{color: 'white'}}>{new Date(this.lastTriggered(gas_data)).toDateString().substring(4)}</Text>
+              </View>          
+            </View>
+            <View style={styles.gasContainer}>
+              <MaterialCommunityIcons name="shield-home" size={30} color='white'/>
+              <View style={styles.gasFirstBox}>
+                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>Session safe time</Text>
+                <Text style={{color: 'white'}}>{this.state.sessionTime}</Text>
+              </View>
+              <View style={styles.gasSecondBox}>
+              </View>        
+            </View>
           </ScrollView>
           : this.renderDeviceEmptyData()}
         </View>
@@ -286,11 +370,23 @@ const styles = StyleSheet.create({
   },
   gasContainer: {
     marginTop: 10,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent:'space-evenly',
     borderRadius: 16,
     width: width * 0.8,
+    height: 80,
     backgroundColor: 'rgba(5, 28, 63, 0.5)'
+  },
+  gasFirstBox: {
+    height: 70,
+    justifyContent: 'space-around',
+    alignItems: 'center'
+  },
+  gasSecondBox: {
+    height: 70,
+    justifyContent: 'space-around',
+    alignItems: 'flex-end'
   },
   gasText: {
     fontSize: 24,
