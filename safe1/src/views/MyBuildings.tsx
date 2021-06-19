@@ -280,7 +280,8 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
 
   onDeviceSubmit = () => {
     let device = this.state.addingDevice;
-    if (device.name.trim().length * device.topic.trim().length * device.region.trim().length === 0) {
+    device = { ...device, name: device.name.trim().replace(/\s\s+/, ' '), region: device.region.trim().replace(/\s\s+/, ' ') }
+    if (device.name.length * device.region.length === 0) {
       Alert.alert(
         "Invalid format",
         "Please fill in all information of your device",
@@ -379,7 +380,7 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
   }
 
   onChangeInvitedEmail = (email: string) => {
-    this.setState({ invitedEmail: email });
+    this.setState({ invitedEmail: email.trim() });
   }
 
   onInvitedEmailSubmit = () => {
@@ -494,13 +495,13 @@ class MyBuildings extends React.Component<Props, MyBuildingState> {
                 style={{ width : '90%' }}
                 selectedValue={this.state.addingDevice.deviceType}
                 onValueChange={(itemValue) => this.onChangeDeviceType(itemValue)}>
-                <Picker.Item label="Fire alarm" value="buzzer" />
-                <Picker.Item label="Extractor fan" value="fan" />
-                <Picker.Item label="Gas sensor" value="gas" />
-                <Picker.Item label="Power system" value="power" />
-                <Picker.Item label="Smart door" value="servo" />
-                <Picker.Item label="Sprinkler" value="sprinkler" />
-                <Picker.Item label="Temperature sensor" value="temperature" />
+                <Picker.Item label="FIRE ALARM" value="buzzer" />
+                <Picker.Item label="EXTRACTOR FAN" value="fan" />
+                <Picker.Item label="GAS SENSOR" value="gas" />
+                <Picker.Item label="POWER SYSTEM" value="power" />
+                <Picker.Item label="SMART DOOR" value="servo" />
+                <Picker.Item label="SPRINKLER" value="sprinkler" />
+                <Picker.Item label="TEMPERATURE SENSOR" value="temperature" />
               </Picker>
               <View style={styles.submitButtonContainer}>
                 <TouchableOpacity style={styles.submitButton} onPress={this.onDeviceSubmit}>
@@ -583,7 +584,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 5,
     paddingHorizontal: 15,
-    width: '100%'
+    width: '100%',
+    borderBottomColor: '#dedede',
+    borderBottomWidth: 1
   },
   buildingInfoContainer: {
     flex: 1,
@@ -591,11 +594,11 @@ const styles = StyleSheet.create({
   },
   buildingName: {
     color: 'rgba(0, 0, 0, 0.8)',
-    fontSize: 18
+    fontSize: 22
   },
   buildingAddress: {
     color: 'rgba(0, 0, 0, 0.6)',
-    fontSize: 16
+    fontSize: 18
   },
   membersContainer: {
     alignItems: 'center',
