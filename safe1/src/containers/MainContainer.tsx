@@ -80,8 +80,8 @@ class MainContainer extends React.Component<Props> {
           <Screen name="RemoteControl" component={RemoteControl} options={{headerShown: false}} />
           <Screen name="OptionScreen" component={OptionScreen} options={{headerShown: false}} />
           <Screen name="RoomScreen" component={RoomScreen} options={{headerShown: false}} />
-          <Screen name="NotificationHistory" component={NotificationHistory} options={{ title: "NOTIFICATION", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
-          <Screen name="NotificationDaily" component={NotificationDaily}options={{ title: "NOTIFICATION DAILY", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed", alignContent: 'center' } }}></Screen>
+          <Screen name="NotificationHistory" component={NotificationHistory} options={{ title: "NOTIFICATION", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed"} }}></Screen>
+          <Screen name="NotificationDaily" component={NotificationDaily}options={{ title: "NOTIFICATION DAILY", headerTitleAlign: 'center', headerTitleStyle: { color: "#fff8dc" }, headerStyle: { backgroundColor: "#6495ed"} }}></Screen>
         </Navigator>
       </NavigationContainer>
     )
