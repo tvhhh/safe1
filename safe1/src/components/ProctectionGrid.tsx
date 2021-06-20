@@ -132,6 +132,7 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
                 isAvailable={this.state.protectionAvailableDevice}
                 item={item}
                 hasDevice={this.state.hasDevice}
+                currentRoom={this.props.selectedRoom}
               />
             </View>
           )}

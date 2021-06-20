@@ -58,7 +58,6 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     let getUpdateItem = this.props.defaultBuilding?.devices.find((item) => item.name === this.props.item.ID);
 
     if(getUpdateItem?.triggeredValue !== prevState.valueSetting.toString() && getUpdateItem?.triggeredValue !== undefined){
-      console.log(this.onDanger())
       this.setState({valueSetting: parseInt(getUpdateItem?.triggeredValue)});
     }
   }
