@@ -129,14 +129,14 @@ class CreateBuilding extends React.Component<Props, CustomState> {
         <View style={styles.deviceInformationRow}>
           <Input 
             style={{ flex: 1, marginHorizontal: 3 }}
-            placeholder="Device's name"
+            placeholder="Device's name (*)"
             fontSize={14}
             value={item.name}
             onChangeText={this.onChangeDeviceName(index)}
           />
           <Input 
             style={{ flex: 1, marginHorizontal: 3 }}
-            placeholder="Device's region"
+            placeholder="Device's region (*)"
             fontSize={14}
             value={item.region}
             onChangeText={this.onChangeDeviceRegion(index)}
@@ -144,16 +144,16 @@ class CreateBuilding extends React.Component<Props, CustomState> {
         </View>
         <View style={styles.deviceInformationRow}>
           <Picker
-            style={{ width: '50%', marginHorizontal: 3, color: 'white' }}
+            style={{ width: '75%', color: 'white' }}
             selectedValue={item.deviceType}
             onValueChange={(itemValue) => this.onChangeDeviceType(index)(itemValue)}>
-            <Picker.Item label="Fire alarm" value="buzzer" />
-            <Picker.Item label="Extractor fan" value="fan" />
-            <Picker.Item label="Gas sensor" value="gas" />
-            <Picker.Item label="Power system" value="power" />
-            <Picker.Item label="Smart door" value="servo" />
-            <Picker.Item label="Sprinkler" value="sprinkler" />
-            <Picker.Item label="Temperature sensor" value="temperature" />
+            <Picker.Item label="FIRE ALARM" value="buzzer" />
+            <Picker.Item label="EXTRACTOR FAN" value="fan" />
+            <Picker.Item label="GAS SENSOR" value="gas" />
+            <Picker.Item label="POWER SYSTEM" value="power" />
+            <Picker.Item label="SMART DOOR" value="servo" />
+            <Picker.Item label="SPRINKLER" value="sprinkler" />
+            <Picker.Item label="TEMPERATURE SENSOR" value="temperature" />
           </Picker>
         </View>
       </View>
@@ -162,8 +162,20 @@ class CreateBuilding extends React.Component<Props, CustomState> {
 
   onSubmit = () => {
     let building = this.state.buildingSettings;
-    building.devices = building.devices.filter((device: Device) => device.name.trim().length * device.topic.trim().length * device.region.trim().length > 0);
+    building.name = building.name.trim().replace(/\s\s+/, ' ');
+    building.address = building.address?.trim().replace(/\s\s+/, ' ');
+    building.devices = building.devices
+      .map((device: Device) => ({ ...device, name: device.name.trim().replace(/\s\s+/, ' '), region: device.region.trim().replace(/\s\s+/, ' ') }))
+      .filter((device: Device) => device.name.length * device.region.length > 0);
     this.setState({ buildingSettings: { ...building } });
+    if (building.name.length == 0) {
+      Alert.alert(
+        "Invalid form",
+        "Please specify your building's name!",
+        [{ text: "OK" }]
+      );
+      return;
+    }
     DataService.createBuilding(building)
       .then(response => {
         if (response === null) {

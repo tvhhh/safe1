@@ -3,7 +3,7 @@ import {View} from 'react-native';
 
 import {Styles} from '@/styles/sectionGrid';
 import ListItem from '@/components/ListItem';
-import { DEFAULT_ITEMLIST, ITEMLIST } from '@/assets/itemList';
+import { DEFAULT_ITEMLIST, ITEMLIST, PROTECTION } from '@/assets/itemList';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User } from '@/models';
@@ -26,59 +26,77 @@ type ItemListType = {
   icon: string;
   color: string;
   status: string;
-  subcolor: string;
+  subcolor?: string;
 }
 interface ListState {
-  ItemList: ItemListType[]
+  ItemList: ItemListType[],
+  Protection: ItemListType
 } 
 
 class List extends React.Component<Props, ListState> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      ItemList: DEFAULT_ITEMLIST
+      ItemList: DEFAULT_ITEMLIST,
+      Protection: PROTECTION
     };
   }
-
+  
   componentDidUpdate( prevProps: Props, prevState: ListState){
     const Celcius = '\u00b0\C';
     const Percent = '%'
     if(!this.props.defaultBuilding) return;
-    var devices = this.props.defaultBuilding.devices;
-    var roomName: string = this.props.selectedRoom;
-    var hasDevice: boolean = devices.some(function(value: Device){
+    let devices = this.props.defaultBuilding.devices;
+    let roomName: string = this.props.selectedRoom;
+    
+    let hasDevice: boolean = devices.some(function(value: Device){
       return value.region.toLowerCase() === roomName.toLowerCase()
     });
-    console.log(this.props.selectedRoom)
     if(hasDevice){
-      var tempData = new Array();
+      let tempData = new Array();
       tempData = devices.filter((device: Device) =>  
         device.region.toLowerCase() === roomName.toLowerCase() && device.deviceType === 'temperature'
       )
+      let outputDevices = devices.filter((device: Device) =>  
+        device.region.toLowerCase() === roomName.toLowerCase() && 
+        device.deviceType !== 'temperature' && 
+        device.deviceType !== 'gas'
+      )
+      let protection = !outputDevices.every((item) => item.protection === true);
+      let OnProtect;
+      protection? OnProtect = 'On' : OnProtect = 'Off';
+      if( OnProtect !== prevState.Protection.status){
+        PROTECTION.status = OnProtect;
+        this.setState({Protection: PROTECTION})
+      }
       if(tempData.length >= 1){
-        var lastedData = tempData[0].data[tempData[0].data.length-1];
-        if(!lastedData && (prevState.ItemList[1].status !== DEFAULT_ITEMLIST[1].status)){
+        let lastedData = tempData[0].data[tempData[0].data.length-1];
+        if(!lastedData && (prevState.ItemList[0].status !== DEFAULT_ITEMLIST[0].status)){
           this.setState({ItemList: DEFAULT_ITEMLIST});
         }
+        
         if(lastedData && lastedData.value){
-          var temp: string = lastedData.value.split('-')[0] + Celcius;
-          var humid: string = lastedData.value.split('-')[1] + Percent;
-          if(temp !== prevState.ItemList[1].status || humid !== prevState.ItemList[2].status){
-            ITEMLIST[1].status = temp;
-            ITEMLIST[2].status = humid;
+          let temp: string = lastedData.value.split('-')[0] + Celcius;
+          let humid: string = lastedData.value.split('-')[1] + Percent;
+          if( temp !== prevState.ItemList[0].status || humid !== prevState.ItemList[1].status){
+            ITEMLIST[0].status = temp;
+            ITEMLIST[1].status = humid;
             this.setState({ItemList: ITEMLIST});
           }        
         }
         // maybe unnecessary
         if(lastedData && lastedData.data){
-          var temp: string = lastedData.data.split('-')[0] + Celcius;
-          var humid: string = lastedData.data.split('-')[1] + Percent;
-          if(temp !== prevState.ItemList[1].status || humid !== prevState.ItemList[2].status){
-            ITEMLIST[1].status = temp;
-            ITEMLIST[2].status = humid;
+          let temp: string = lastedData.data.split('-')[0] + Celcius;
+          let humid: string = lastedData.data.split('-')[1] + Percent;
+          if( temp !== prevState.ItemList[0].status || humid !== prevState.ItemList[1].status){
+            ITEMLIST[0].status = temp;
+            ITEMLIST[1].status = humid;
             this.setState({ItemList: ITEMLIST});
           }  
         }
+      }
+      if(tempData.length === 0 && (prevState.ItemList[0].status !== DEFAULT_ITEMLIST[0].status)){
+        this.setState({ItemList: DEFAULT_ITEMLIST});
       }
     }
   }
@@ -89,15 +107,15 @@ class List extends React.Component<Props, ListState> {
         <View style={{display: 'flex', flexDirection: 'row'}}>
           <ListItem
             styles={{marginRight: 10}}
-            item={this.state.ItemList[0]}
+            item={this.state.Protection}
           />
           <ListItem
             styles={{}}
-            item={this.state.ItemList[1]}
+            item={this.state.ItemList[0]}
           />
           <ListItem
             styles={{marginLeft: 10}}
-            item={this.state.ItemList[2]}
+            item={this.state.ItemList[1]}
           />
         </View>
       </View>

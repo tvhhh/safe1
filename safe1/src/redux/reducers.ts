@@ -65,6 +65,28 @@ const reducer: Reducer<State, Action> = (state=initialState, action: Action): St
           } : device)
     } : undefined;
     return { ...state, buildings: buildings, defaultBuilding: defaultBuilding };
+  case ActionType.UPDATE_PROTECTION:
+    let { _name, protection, triggeredValue } = action.payload;
+    if (_name === undefined || protection === undefined || triggeredValue === undefined) return state;
+    let _buildings = state.buildings.map((building: Building) => ({ 
+      ...building, 
+      devices: building.devices.map((device: Device) =>
+        device.name === _name ? 
+          { ...device, 
+            protection: protection,
+            triggeredValue: triggeredValue 
+          } : device)
+    }));
+    let _defaultBuilding = state.defaultBuilding ? { 
+      ...state.defaultBuilding, 
+      devices: state.defaultBuilding.devices.map((device: Device) =>
+        device.name === _name ? 
+          { ...device, 
+            protection: protection,
+            triggeredValue: triggeredValue 
+          } : device)
+    } : undefined;
+    return { ...state, buildings: _buildings, defaultBuilding: _defaultBuilding };
   default:
     return state;
   }

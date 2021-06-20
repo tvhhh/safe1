@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ViewPropTypes
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,8 +18,8 @@ import actions from '@/redux/actions';
 import AuthService from '@/services/auth.service';
 import ControlService from '@/services/control.service';
 import StorageService from '@/services/storage.service';
-import { Building, Device } from '@/models';
-import {splitDataValue} from '@/views/NotificationDaily'
+import { Building } from '@/models';
+import { splitDataValue } from '@/views/NotificationDaily'
 
 const mapStateToProps = (state: State) => ({
   isConnected: state.isConnected,
@@ -184,17 +183,14 @@ class Home extends React.Component<Props, HomeState> {
         </View>
         <View style={styles.statusContainer}>
           <View style={styles.statusZone}>
-              <View style= {{flexDirection: 'row' }}>
-                <Text style={{paddingRight:20}}>
-                  {this.DisplayTemp(this.props.buildings)}
-                </Text>
-                <Text style={{paddingLeft:60,paddingRight:10}}>
-                  {this.DisplayGas(this.props.buildings)}
-                </Text>
-                
-                {/* <Text style={{paddingLeft:80,fontSize:70,color:'#ffffff'}}>bc</Text> */}
-              </View>
-              
+            <View style= {{flexDirection: 'row' }}>
+              <Text style={{paddingRight:20}}>
+                {this.DisplayTemp(this.props.buildings)}
+              </Text>
+              <Text style={{paddingLeft:60,paddingRight:10}}>
+                {this.DisplayGas(this.props.buildings)}
+              </Text>
+            </View>
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -226,7 +222,7 @@ class Home extends React.Component<Props, HomeState> {
             name="Settings" 
             description="Customize your app" 
             icon={<Feather name="settings" color='white' size={40}/>}
-            onPress={this.navigate("RemoteControl")}
+            onPress={() => {}}
           />
         </View>
         <View style={styles.footerContainer}>
