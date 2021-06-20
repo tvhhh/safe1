@@ -3,8 +3,8 @@ import { StyleSheet, Switch, Alert} from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User, ProtectionMessage } from '@/models';
-import { typeItem } from '@/assets/output.devices';
-import { OUTPUT_DEVICES } from '@/assets/output.devices';
+import { typeItem } from '@/utils/output.devices';
+import { OUTPUT_DEVICES } from '@/utils/output.devices';
 import DataService from '@/services/data.service';
 import actions, { Action } from '@/redux/actions';
 

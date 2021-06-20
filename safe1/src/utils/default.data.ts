@@ -33,3 +33,10 @@ export const REGION = [
   "bathroom",
   "basement",
 ]
+
+
+export type data = {
+  title: string, 
+  num: string,
+  illustration: Object
+}

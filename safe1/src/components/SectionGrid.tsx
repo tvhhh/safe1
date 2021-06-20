@@ -3,7 +3,7 @@ import {View} from 'react-native';
 
 import {Styles} from '@/styles/sectionGrid';
 import ListItem from '@/components/ListItem';
-import { DEFAULT_ITEMLIST, ITEMLIST, PROTECTION } from '@/assets/itemList';
+import { DEFAULT_ITEMLIST, ITEMLIST, PROTECTION } from '@/utils/itemList';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User } from '@/models';
@@ -62,7 +62,7 @@ class List extends React.Component<Props, ListState> {
         device.deviceType !== 'temperature' && 
         device.deviceType !== 'gas'
       )
-      let protection = !outputDevices.every((item) => item.protection === true);
+      let protection = outputDevices.some((item) => item.protection === true);
       let OnProtect;
       protection? OnProtect = 'On' : OnProtect = 'Off';
       if( OnProtect !== prevState.Protection.status){

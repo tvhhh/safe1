@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User, ProtectionMessage } from '@/models';
-import { typeItem } from '@/assets/output.devices';
+import { typeItem } from '@/utils/output.devices';
 import Modal from 'react-native-modal';
 import Slider from '@react-native-community/slider';
 import { DropDown } from './DropDown';
@@ -123,6 +123,31 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     this.setState({isModalVisible: !this.state.isModalVisible})
   }
 
+  gasDectection = (data: { time: Date, value: string }[]) => {
+    console.log(data);
+    if(data.length === 0)
+      return false;
+    if(data.length !== 0 || data !== null){
+      let gasData = Number(data[0].value);
+      if(gasData === 1){
+        return true;
+      }
+    }
+    return false;
+  } 
+
+  onDanger = () => {
+    let gasDevice = this.props.defaultBuilding?.devices.filter((item) => (item.deviceType === 'gas'))
+    let gasDectection;
+    if(gasDevice){
+      gasDevice.map((item) => {
+        gasDectection = this.gasDectection(item.data);
+      })
+    } 
+    console.log(gasDectection)
+    // return true
+  }
+
   render(){
     return(
         <TouchableOpacity onPress={this.props.hasDevice? () => this.toggleModal() : ()=>{}}>
@@ -142,8 +167,8 @@ class ModalItem extends React.Component<Props, ModalItemState> {
                 <View style={styles.content}>
                 <Text style={[styles.contentTitle, {fontWeight: 'bold', fontSize: 23}]}>{this.props.item.setting} setting</Text>
                 {this.props.item.deviceType === 'sprinkler' || this.props.item.deviceType === 'power'?
-                    <View style={{width: width/3}}>
-                        <DropDown handle={this.handleSetting}/>                   
+                    <View style={{width: width/3}}> 
+                      <DropDown handle={this.handleSetting} onDanger={this.onDanger}/>           
                     </View>
                     :
                     <View>

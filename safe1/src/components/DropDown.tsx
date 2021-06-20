@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import React from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-export function DropDown({handle}: any) {
+export function DropDown({handle, onDanger}: any) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -12,6 +12,7 @@ export function DropDown({handle}: any) {
 
   useEffect(() => {
     handle(value);
+    onDanger();
   }, [value])
 
   return (
