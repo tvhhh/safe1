@@ -3,7 +3,6 @@ import { Icon } from 'react-native-elements'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Temperature from './Temperature';
 import GasConcentration from './GasConcentration';
-import Export from './Export';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 const {Navigator, Screen} = createBottomTabNavigator();
@@ -46,21 +45,6 @@ class Dashboard extends React.Component {
                             />)
                         }
                     }}   
-                />
-                <Screen 
-                    name="Export"
-                    component={Export}
-                    options={{
-                        tabBarIcon: ({ color, size }) => {
-                            return(
-                            <Icon
-                                name="export"
-                                type="material-community"
-                                color={color}
-                                size={size}
-                            />)
-                        }
-                    }}
                 />
             </Navigator>
         )
