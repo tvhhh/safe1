@@ -27,6 +27,7 @@ export default StyleSheet.create({
     exampleContainer: {
         paddingVertical: 5,
         top: height/20,
+        width: width - 80,
     },
     exampleContainerDark: {
         backgroundColor: colors.black
@@ -56,7 +57,6 @@ export default StyleSheet.create({
         textAlign: 'center'
     },
     slider: {
-        marginTop: 15,
         overflow: 'visible' // for custom animations
     },
     sliderContentContainer: {

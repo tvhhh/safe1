@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User } from '@/models';
-import { OUTPUT_DEVICES, typeItem } from '@/assets/output.devices';
+import { OUTPUT_DEVICES, typeItem } from '@/utils/output.devices';
 import OnProtection  from '@/components/OnProtectionButton';
 import ModalItem from '@/components/Modal'
 
@@ -132,6 +132,7 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
                 isAvailable={this.state.protectionAvailableDevice}
                 item={item}
                 hasDevice={this.state.hasDevice}
+                currentRoom={this.props.selectedRoom}
               />
             </View>
           )}

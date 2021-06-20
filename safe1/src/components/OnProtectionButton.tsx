@@ -3,8 +3,7 @@ import { StyleSheet, Switch, Alert} from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User, ProtectionMessage } from '@/models';
-import { typeItem } from '@/assets/output.devices';
-import { OUTPUT_DEVICES } from '@/assets/output.devices';
+import { typeItem } from '@/utils/output.devices';
 import DataService from '@/services/data.service';
 import actions, { Action } from '@/redux/actions';
 
@@ -25,7 +24,8 @@ interface Props extends ConnectedProps<typeof connector> {
   updateProtection: (payload: ProtectionMessage) => Action
   isAvailable: typeItem[],
   item: typeItem,
-  hasDevice: boolean
+  hasDevice: boolean,
+  currentRoom: string
 };
 
 interface OnProtectionState {
@@ -41,7 +41,9 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
     }
 
     componentDidUpdate(prevProps: Props, prevState: OnProtectionState){
-        let items = this.props.defaultBuilding?.devices.filter((item) => item.deviceType === this.props.item.deviceType);
+        let items = this.props.defaultBuilding?.devices.filter((item) => 
+            item.deviceType === this.props.item.deviceType &&
+            item.region === this.props.currentRoom);
         let onProtection = false;
         items !== undefined && items.length !== 0 ? onProtection = items[0].protection : null;
         if( onProtection !== prevState.toggle ){
@@ -50,7 +52,9 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
     }
 
     getToggle = () => {
-        let item = this.props.defaultBuilding?.devices.find((item) => item.name === this.props.item.ID);
+        let item = this.props.defaultBuilding?.devices.find((item) => 
+            item.name === this.props.item.ID &&
+            item.region === this.props.currentRoom);
         if(item?.protection !== undefined){
             return item.protection;
         }
@@ -59,7 +63,9 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
 
     setToggle = (value: boolean) => {
         let currentProtection = this.props.item.deviceType;
-        let devices = this.props.defaultBuilding?.devices.filter((item) => item.deviceType === currentProtection);
+        let devices = this.props.defaultBuilding?.devices.filter((item) => 
+            item.deviceType === currentProtection && 
+            item.region === this.props.currentRoom);
         let flag: boolean = true;
         devices?.map((ele) => {
             DataService.updateDeviceProtection({

@@ -1,5 +1,5 @@
 import React from 'react';
-import {DEFAULT} from '@/assets/default.data';
+import {DEFAULT} from '@/utils/default.data';
 import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');

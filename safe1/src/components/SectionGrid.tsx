@@ -3,10 +3,12 @@ import {View} from 'react-native';
 
 import {Styles} from '@/styles/sectionGrid';
 import ListItem from '@/components/ListItem';
-import { DEFAULT_ITEMLIST, ITEMLIST, PROTECTION } from '@/assets/itemList';
+import { DEFAULT_ITEMLIST, ITEMLIST, DEFAULT_PROTECTION } from '@/utils/itemList';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User } from '@/models';
+
+var PROTECTION = {...DEFAULT_PROTECTION};
 
 const mapStateToProps = (state: State) => ({
   currentUser: state.currentUser,
@@ -41,6 +43,28 @@ class List extends React.Component<Props, ListState> {
       Protection: PROTECTION
     };
   }
+
+  componentDidMount(){
+    if(!this.props.defaultBuilding) return;
+    let devices = this.props.defaultBuilding.devices;
+    let roomName: string = this.props.selectedRoom;
+    
+    let hasDevice: boolean = devices.some(function(value: Device){
+      return value.region.toLowerCase() === roomName.toLowerCase()
+    });
+    if(hasDevice){
+      let outputDevices = devices.filter((device: Device) =>  
+        device.region.toLowerCase() === roomName.toLowerCase() && 
+        device.deviceType !== 'temperature' && 
+        device.deviceType !== 'gas'
+      )
+      let protection = outputDevices.some((item) => item.protection === true);
+      let OnProtect;
+      protection? OnProtect = 'On' : OnProtect = 'Off';
+      PROTECTION.status = OnProtect;
+      this.setState({Protection: PROTECTION})
+    }
+  }
   
   componentDidUpdate( prevProps: Props, prevState: ListState){
     const Celcius = '\u00b0\C';
@@ -62,7 +86,7 @@ class List extends React.Component<Props, ListState> {
         device.deviceType !== 'temperature' && 
         device.deviceType !== 'gas'
       )
-      let protection = !outputDevices.every((item) => item.protection === true);
+      let protection = outputDevices.some((item) => item.protection === true);
       let OnProtect;
       protection? OnProtect = 'On' : OnProtect = 'Off';
       if( OnProtect !== prevState.Protection.status){
