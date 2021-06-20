@@ -58,6 +58,7 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     let getUpdateItem = this.props.defaultBuilding?.devices.find((item) => item.name === this.props.item.ID);
 
     if(getUpdateItem?.triggeredValue !== prevState.valueSetting.toString() && getUpdateItem?.triggeredValue !== undefined){
+      console.log(this.onDanger())
       this.setState({valueSetting: parseInt(getUpdateItem?.triggeredValue)});
     }
   }
@@ -124,11 +125,10 @@ class ModalItem extends React.Component<Props, ModalItemState> {
   }
 
   gasDectection = (data: { time: Date, value: string }[]) => {
-    console.log(data);
     if(data.length === 0)
       return false;
     if(data.length !== 0 || data !== null){
-      let gasData = Number(data[0].value);
+      let gasData = Number(data[data.length-1].value);
       if(gasData === 1){
         return true;
       }
@@ -141,11 +141,11 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     let gasDectection;
     if(gasDevice){
       gasDevice.map((item) => {
-        gasDectection = this.gasDectection(item.data);
+        let data = this.gasDectection(item.data);
+        data === true? gasDectection = true : gasDectection = false;
       })
-    } 
-    console.log(gasDectection)
-    // return true
+    }
+    return gasDectection
   }
 
   render(){
@@ -168,7 +168,7 @@ class ModalItem extends React.Component<Props, ModalItemState> {
                 <Text style={[styles.contentTitle, {fontWeight: 'bold', fontSize: 23}]}>{this.props.item.setting} setting</Text>
                 {this.props.item.deviceType === 'sprinkler' || this.props.item.deviceType === 'power'?
                     <View style={{width: width/3}}> 
-                      <DropDown handle={this.handleSetting} onDanger={this.onDanger}/>           
+                      <DropDown handle={this.handleSetting} onDanger={this.onDanger} deviceType={this.props.item.deviceType}/>           
                     </View>
                     :
                     <View>
@@ -231,12 +231,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
     color: '#000',
-  },
-  onOff: {
-    alignItems: 'flex-start',
-    transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
-    width: 50,
-    marginTop: 3,
   },
   content: {
     backgroundColor: 'white',
