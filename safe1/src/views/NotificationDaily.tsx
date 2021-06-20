@@ -120,7 +120,7 @@ class NotificationDaily extends React.Component<Props> {
                 deviceType: device.deviceType,
                 region: device.region,
                 protection: device.protection,
-                data: {time: data.time.toLocaleString(),value: data.value }
+                data: {time: new Date(data.time).toLocaleString(),value: data.value }
               }
               listDeviceForm.push(newDevice);
             })
@@ -133,7 +133,7 @@ class NotificationDaily extends React.Component<Props> {
                 deviceType: device.deviceType,
                 region: device.region,
                 protection: device.protection,
-                data: {time: data.time.toLocaleString(),value: splitDataValue(data.value)}
+                data: {time: new Date(data.time).toLocaleString(),value: splitDataValue(data.value)}
               }
               listDeviceForm.push(newDevice);
             })
@@ -144,7 +144,7 @@ class NotificationDaily extends React.Component<Props> {
 
   renderWarningDevice = () => {
     let listDeviceFormReverse = listDeviceForm.reverse();
-    return listDeviceFormReverse.map((device) => (<View>
+    return listDeviceFormReverse.map((device) => (<View key={device.name.toString()}>
       <DeviceCard nameDevice={device.name} deviceType={device.deviceType} time={device.data.time ? device.data.time : "None"} region={device.region} data={device.data.value ? device.data.value : "None"}></DeviceCard>
     </View>))
   }

@@ -49,15 +49,17 @@ const Body = (props: any) => {
         </Text>
         </TouchableOpacity>
       </View>
-      <FlatList data={props.listBuilding} renderItem={({item}) => 
-      <TouchableOpacity onPress = {()=> props.navigation.navigate('NotificationDaily',{
-                                  index:props.listBuilding.indexOf(item),
-                                  nameBuilding:item.name
-                                  })}>
-        <BuildingCard 
-          nameBuilding={item.name} address={item.address} ownerName={item.owner.displayName}>
-        </BuildingCard>
-      </TouchableOpacity>
+      <FlatList data={props.listBuilding} 
+        keyExtractor={(item, index) => index+"" }
+        renderItem={({item}) => 
+          <TouchableOpacity onPress = {()=> props.navigation.navigate('NotificationDaily',{
+                                      index:props.listBuilding.indexOf(item),
+                                      nameBuilding:item.name
+                                      })}>
+            <BuildingCard 
+              nameBuilding={item.name} address={item.address} ownerName={item.owner.displayName}>
+            </BuildingCard>
+          </TouchableOpacity>
     }></FlatList>
   </View>
   );
@@ -105,7 +107,6 @@ class NotificationHistory extends React.Component<Props> {
     return;
   }
   render() {
-    console.disableYellowBox=true;
     return (
       <View style={styles.option}>
         {this.CheckPushNoti(this.props.buildings)}
