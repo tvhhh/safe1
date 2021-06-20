@@ -144,7 +144,7 @@ class NotificationDaily extends React.Component<Props> {
 
   renderWarningDevice = () => {
     let listDeviceFormReverse = listDeviceForm.reverse();
-    return listDeviceFormReverse.map((device) => (<View>
+    return listDeviceFormReverse.map((device) => (<View key={device.name.toString()}>
       <DeviceCard nameDevice={device.name} deviceType={device.deviceType} time={device.data.time ? device.data.time : "None"} region={device.region} data={device.data.value ? device.data.value : "None"}></DeviceCard>
     </View>))
   }

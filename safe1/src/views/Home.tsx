@@ -138,7 +138,7 @@ class Home extends React.Component<Props, HomeState> {
       }
       if(max == 1){
         return(
-          <View style={{flexDirection:'column',alignContent:'center',width:'50'}}>
+          <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
             <Text style={styles.statusGasType}>GAS :</Text>
             <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
             <Text style={styles.statusGasInf}>{nameDevice}</Text>
@@ -156,7 +156,7 @@ class Home extends React.Component<Props, HomeState> {
       );
     }
     return(
-      <View style={{flexDirection:'column',alignContent:'center',width:50}}>
+      <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
         <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
       </View>
     );
