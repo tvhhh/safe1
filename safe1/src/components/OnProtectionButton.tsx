@@ -66,7 +66,6 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
         let devices = this.props.defaultBuilding?.devices.filter((item) => 
             item.deviceType === currentProtection && 
             item.region === this.props.currentRoom);
-        console.log(devices);
         let flag: boolean = true;
         devices?.map((ele) => {
             DataService.updateDeviceProtection({
