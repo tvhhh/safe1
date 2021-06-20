@@ -120,7 +120,7 @@ class NotificationDaily extends React.Component<Props> {
                 deviceType: device.deviceType,
                 region: device.region,
                 protection: device.protection,
-                data: {time: data.time.toLocaleString(),value: data.value }
+                data: {time: new Date(data.time).toLocaleString(),value: data.value }
               }
               listDeviceForm.push(newDevice);
             })
@@ -133,7 +133,7 @@ class NotificationDaily extends React.Component<Props> {
                 deviceType: device.deviceType,
                 region: device.region,
                 protection: device.protection,
-                data: {time: data.time.toLocaleString(),value: splitDataValue(data.value)}
+                data: {time: new Date(data.time).toLocaleString(),value: splitDataValue(data.value)}
               }
               listDeviceForm.push(newDevice);
             })

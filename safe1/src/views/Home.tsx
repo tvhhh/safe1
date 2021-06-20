@@ -24,6 +24,7 @@ import { splitDataValue } from '@/views/NotificationDaily'
 const mapStateToProps = (state: State) => ({
   isConnected: state.isConnected,
   buildings: state.buildings,
+  defaultBuilding: state.defaultBuilding,
 });
 
 const connector = connect(mapStateToProps);
@@ -80,77 +81,77 @@ class Home extends React.Component<Props, HomeState> {
     if(list){
       let max=0;
       let nameDevice;
-      let nameBuilding;
-      for(let i=list.length-1;i >= 0;i--){
-        for(let k=0; k < list[i].devices.length;k++){
-          if(list[i].devices[k].data.length){   
-            let value=splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
-            if(list[i].devices[k].deviceType=="temperature"){
+      let region;
+        for(let k=0; k < list.devices.length;k++){
+          if(list.devices[k].data.length){   
+            let value=splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
+            if(list.devices[k].deviceType=="temperature"){
               if(Number(value)>= max){
                 max=Number(value);
-                nameDevice=list[i].devices[k].name;
-                nameBuilding=list[i].name;
+                nameDevice=list.devices[k].name;
+                region=list.devices[k].region;
               }
             }
           }
         }  
-      }
       if(max > 40){
         return(
-          <View style={{flexDirection:'column',alignContent:'center',width: '50%'}}>
+          <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
             <Text style={styles.statusGasType}>Temperature :</Text>
-            <Text style={{paddingLeft:20,fontSize:70,color:'#ff3300' }}>{max}</Text>
+            <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
             <Text style={styles.statusGasInf}>{nameDevice}</Text>
-            <Text style={styles.statusGasInf}>{nameBuilding}</Text>
+            <Text style={styles.statusGasInf}>{region}</Text>
           </View>
         );
       }
       return(
-        <View style={{flexDirection:'column',alignContent:'center',width: '50%'}}>
+        <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
           <Text style={styles.statusGasType}>Temperature :</Text>
-          <Text style={{paddingLeft:20,fontSize:70,color:'#66ff66' }}>{max}</Text>
+          <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
           <Text style={styles.statusGasInf}>{nameDevice}</Text>
-          <Text style={styles.statusGasInf}>{nameBuilding}</Text>
+          <Text style={styles.statusGasInf}>{region}</Text>
         </View>
       );
     }
-    return "None";
+    return(
+      <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
+        <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
+      </View>
+    );
   }
   DisplayGas(list:any){
     if(list){
       let max = 0;
       let nameDevice;
-      let nameBuilding;
-      for(let i = 0;i < list.length;i++){
-        for(let k = 0; k < list[i].devices.length;k++){
-          if(list[i].devices[k].data.length){   
-            let value  = splitDataValue(list[i].devices[k].data[list[i].devices[k].data.length-1]?.value);
-            if(list[i].devices[k].deviceType == "gas"){
+      let region;
+        for(let k = 0; k < list.devices.length;k++){
+          if(list.devices[k].data.length){   
+            let value  = splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
+            if(list.devices[k].deviceType == "gas"){
               if(Number(value)>= 0){
                 max = Number(value);
-                nameDevice = list[i].devices[k].name;
-                nameBuilding = list[i].name;
+                nameDevice = list.devices[k].name;
+                region = list.devices[k].region;
               }
             }
           }
         }  
-      }
       if(max == 1){
         return(
-          <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
+          <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
             <Text style={styles.statusGasType}>GAS :</Text>
             <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
             <Text style={styles.statusGasInf}>{nameDevice}</Text>
-            <Text style={styles.statusGasInf}>{nameBuilding}</Text>
+            <Text style={styles.statusGasInf}>{region}</Text>
           </View>
         );
       }
       return(
-        <View style={{flexDirection:'column',width: '50%'}}>
+        <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
           <Text style={styles.statusGasType}>GAS :</Text>
           <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
           <Text style={styles.statusGasInf}>{nameDevice}</Text>
-          <Text style={styles.statusGasInf}>{nameBuilding}</Text>
+          <Text style={styles.statusGasInf}>{region}</Text>
         </View>
       );
     }
@@ -184,12 +185,8 @@ class Home extends React.Component<Props, HomeState> {
         <View style={styles.statusContainer}>
           <View style={styles.statusZone}>
             <View style= {{flexDirection: 'row' }}>
-              <Text style={{paddingRight:20}}>
-                {this.DisplayTemp(this.props.buildings)}
-              </Text>
-              <Text style={{paddingLeft:60,paddingRight:10}}>
-                {this.DisplayGas(this.props.buildings)}
-              </Text>
+                {this.DisplayTemp(this.props.defaultBuilding)}
+                {this.DisplayGas(this.props.defaultBuilding)}
             </View>
           </View>
         </View>
@@ -309,13 +306,13 @@ const styles = StyleSheet.create({
   statusTempType:{
     fontSize:15,
     color:'#ccccff',
-    paddingLeft:20 
+    // paddingLeft:20 
   },
   statusTempInf:{
     alignItems: 'center',
     fontSize:15,
     color:'#ffffff',
-    paddingLeft:40
+    // paddingLeft:40
   },
 
 });
