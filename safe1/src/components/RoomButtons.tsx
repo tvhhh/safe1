@@ -43,6 +43,7 @@ class roomButtons extends Component<Props, ButtonsState> {
   }
 
   componentDidMount(){
+    if(ROOM_DATA.default) return;
     var AVAILABLE_ROOM = ROOM_DATA.map((item: data, index: number) => ({id: index, name: item.title}))
     this.setState({regionState: AVAILABLE_ROOM});
   }

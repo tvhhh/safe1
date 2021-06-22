@@ -84,8 +84,10 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
         }
       }
       this.setState({protectionAvailableDevice: AVAILABLE_DEVICES});    
-      if(this.props.setNum !== undefined) this.props.setNum(AVAILABLE_DEVICES.length)
-
+      if(this.props.setNum !== undefined){
+        this.props.setNum(AVAILABLE_DEVICES.length)
+      } 
+      
       this.setState({settingAvailableDevice: DATA});
     }
   }
