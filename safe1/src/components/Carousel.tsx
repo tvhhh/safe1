@@ -50,7 +50,7 @@ class RoomDevicesCarousel extends PureComponent<Props, IMyComponentState> {
   }
 
   componentDidMount(){
-    if(!this.props.defaultBuilding) return;
+    if(this.props.defaultBuilding === undefined) return;
     let ROOM_DATA = DEFAULT.map((elem) => ({...elem}));
     let ROOM_REGION = REGION.map((elem) => (elem));
     var devices = this.props.defaultBuilding.devices;
