@@ -45,7 +45,11 @@ class List extends React.Component<Props, ListState> {
   }
 
   componentDidMount(){
-    if(!this.props.defaultBuilding) return;
+    if(this.props.defaultBuilding === undefined || this.props.defaultBuilding.devices.length === 0){
+      PROTECTION.status = "Off";
+      this.setState({Protection: PROTECTION})
+      return;
+    }
     let devices = this.props.defaultBuilding.devices;
     let roomName: string = this.props.selectedRoom;
     
@@ -69,7 +73,7 @@ class List extends React.Component<Props, ListState> {
   componentDidUpdate( prevProps: Props, prevState: ListState){
     const Celcius = '\u00b0\C';
     const Percent = '%'
-    if(!this.props.defaultBuilding) return;
+    if(this.props.defaultBuilding === undefined) return;
     let devices = this.props.defaultBuilding.devices;
     let roomName: string = this.props.selectedRoom;
     

@@ -48,7 +48,7 @@ class RoomCarousel extends PureComponent<Props, IMyComponentState> {
   }
 
   componentDidMount(){
-    if(ROOM_DATA.default) return
+    if(ROOM_DATA.default || (this.props.defaultBuilding === undefined)) return
     this.setState({roomData: ROOM_DATA})
   }
 
