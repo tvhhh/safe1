@@ -161,7 +161,7 @@ class Temperature extends React.Component<Props, CustomState> {
                                     tooltipPos: {
                                         ...previousState.tooltipPos, 
                                         value: value,
-                                        time: new Date(data.labels[index]).toDateString().substring(4),
+                                        time: new Date(data.labels[index]),
                                         visible: !previousState.tooltipPos.visible}
                                     }))
                               : 
@@ -170,7 +170,7 @@ class Temperature extends React.Component<Props, CustomState> {
                                     x: x, 
                                     y: y,
                                     value: value,
-                                    time: new Date(data.labels[index]).toDateString().substring(4),
+                                    time: new Date(data.labels[index]),
                                     visible: true
                                   }
                                 })
@@ -182,7 +182,7 @@ class Temperature extends React.Component<Props, CustomState> {
                     x={this.state.tooltipPos.x -40}
                     y={this.state.tooltipPos.y + 10}
                     width="80"  
-                    height="45"
+                    height="70"
                     fill="white"
                     rx={5}
                     />
@@ -192,11 +192,19 @@ class Temperature extends React.Component<Props, CustomState> {
                     fill="black"
                     fontSize="12.5"
                     textAnchor="middle">
-                    {this.state.tooltipPos.time}
+                    {this.state.tooltipPos.time.toDateString().substring(4)}
+                  </TextSVG>
+                  <TextSVG
+                    x={this.state.tooltipPos.x}
+                    y={this.state.tooltipPos.y + 50}
+                    fill="black"
+                    fontSize="12.5"
+                    textAnchor="middle">
+                    {this.getHourMinuteSecond(new Date(this.state.tooltipPos.time))}
                   </TextSVG>
                   <TextSVG
                     x={this.state.tooltipPos.x-5}
-                    y={this.state.tooltipPos.y + 50}
+                    y={this.state.tooltipPos.y + 75}
                     fill="black"
                     fontSize="12.5"
                     textAnchor="middle">
