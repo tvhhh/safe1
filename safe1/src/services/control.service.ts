@@ -68,10 +68,10 @@ class ControlService {
     });
   }
 
-  pub = (device: Device, msg: any) => {
+  pub = (topic: string, msg: any) => {
     this.dispatchMessage({
       action: "pub",
-      topic: device.topic,
+      topic: topic,
       payload: JSON.stringify(msg)
     });
   }

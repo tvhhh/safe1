@@ -69,14 +69,14 @@ class RoomDevicesCarousel extends PureComponent<Props, IMyComponentState> {
             num: room.num, 
             illustration: room.illustration
           }
-          ROOM_DATA.unshift(new_room);
+          ROOM_DATA.push(new_room);
         }else{
           let new_room: data = {
             title: name,
             num: '0',
             illustration: require('@/assets/rooms/default.jpg')
           }
-          ROOM_DATA.unshift(new_room);
+          ROOM_DATA.push(new_room);
         }
       }
     })
@@ -129,7 +129,6 @@ class RoomDevicesCarousel extends PureComponent<Props, IMyComponentState> {
           inactiveSlideOpacity={0.7}
           containerCustomStyle={styles.slider}
           contentContainerCustomStyle={styles.sliderContentContainer}
-          autoplay={true}
           loop={true}
           onSnapToItem={(index) => this.setState({ slider1ActiveSlide: index }) }
         />
