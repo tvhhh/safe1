@@ -132,7 +132,7 @@ class ModalItem extends React.Component<Props, ModalItemState> {
             <Text style={[styles.itemName, {fontSize: 15, textAlign: 'center', fontWeight: '400', fontStyle: 'italic', marginTop: 5}]}>
               {this.props.item.ID}
             </Text>
-            <Modal 
+            {/* <Modal 
               isVisible={this.state.isModalVisible}
               swipeDirection={'down'}
               backdropColor={'#708090'}
@@ -168,7 +168,7 @@ class ModalItem extends React.Component<Props, ModalItemState> {
                 </View>
                 </View>
             </View>
-            </Modal>    
+            </Modal>     */}
             </View>
         </TouchableOpacity>                                        
     )  
