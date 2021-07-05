@@ -4,12 +4,15 @@ import Carousel from 'react-native-snap-carousel';
 import RoomSliderEntry from '@/components/RoomSliderEntry';
 import { sliderHeight, itemHeight, itemWidth } from '@/styles/roomSliderEntry';
 import styles from '@/styles/roomCarousel';
-import {DEFAULT, REGION} from '@/assets/default.data';
+import {DEFAULT, data} from '@/utils/default.data';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
-import { Building, Device, User } from '@/models';
+import { Building, User } from '@/models';
+import { Dimensions } from 'react-native';
+const { width, height} = Dimensions.get('window');
 
 const SLIDER_FIRST_ITEM = 0;
+const ROOM_DATA = require('@/components/Carousel');
 
 const mapStateToProps = (state: State) => ({
   currentUser: state.currentUser,
@@ -26,12 +29,6 @@ interface Props extends ConnectedProps<typeof connector> {
 interface IMyComponentState {
   slider1ActiveSlide: number,
   roomData: data[]
-}
-
-type data = {
-  title: string, 
-  num: string,
-  illustration: Object
 }
 
 type input = {
@@ -51,17 +48,7 @@ class RoomCarousel extends PureComponent<Props, IMyComponentState> {
   }
 
   componentDidMount(){
-    if(!this.props.defaultBuilding) return;
-    let ROOM_DATA = new Array();
-    ROOM_DATA = DEFAULT.map((elem) => ({...elem}));
-    var devices = this.props.defaultBuilding.devices;
-    devices.forEach((device: Device) => {
-      if(Object.values(REGION).includes(device.region.toLowerCase()))
-        var idx: number, value: number;
-        idx = REGION.indexOf(device.region.toLowerCase());
-        value = parseInt(ROOM_DATA[idx].num) + 1;
-        ROOM_DATA[idx].num = value.toString();
-    })
+    if(ROOM_DATA.default || (this.props.defaultBuilding === undefined)) return
     this.setState({roomData: ROOM_DATA})
   }
 
@@ -90,7 +77,8 @@ class RoomCarousel extends PureComponent<Props, IMyComponentState> {
             firstItem={SLIDER_FIRST_ITEM}
             inactiveSlideScale={0.90}
             inactiveSlideOpacity={0.8}
-            containerCustomStyle={styles.slider}
+            containerCustomStyle={this.state.roomData.length === 1? 
+                                  [styles.slider, {bottom: height/8}] : styles.slider}
             contentContainerCustomStyle={styles.sliderContentContainer}
             vertical={true}
             loop={true}

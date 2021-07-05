@@ -34,7 +34,7 @@ class UserAvatarControlScreen extends React.Component<Props> {
             <Avatar
                 size="large"
                 rounded
-                source={require('../assets/img/Hung.jpg')}
+                source={require('../assets/img/avatar.png')}
                 containerStyle={styles.avatar}
             />
         }

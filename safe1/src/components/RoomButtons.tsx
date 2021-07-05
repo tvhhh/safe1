@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native'
-import {DEFAULT, REGION} from '@/assets/default.data';
+import { REGION } from '@/utils/default.data';
 import ScrollingButtonMenu from '@/components/ScrollButton';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User } from '@/models';
-import List from '@/components/SectionGrid'
+import List from '@/components/SectionGrid';
+import { data } from '@/utils/default.data';
 
+const ROOM_DATA = require('@/components/Carousel');
 const mapStateToProps = (state: State) => ({
   currentUser: state.currentUser,
   defaultBuilding: state.defaultBuilding,
@@ -14,6 +16,10 @@ const mapStateToProps = (state: State) => ({
 
 const connector = connect(mapStateToProps);
 
+type rooms = {
+  id: number, 
+  name: string
+} 
 let availableRegion:  rooms[]
 availableRegion = REGION.map((elem) => ({id: REGION.indexOf(elem), name: elem.charAt(0).toUpperCase() + elem.slice(1)}))
 interface Props extends ConnectedProps<typeof connector> {
@@ -21,10 +27,7 @@ interface Props extends ConnectedProps<typeof connector> {
   defaultBuilding: Building | undefined,
 };
 
-type rooms = {
-  id: number, 
-  name: string
-}
+
 interface ButtonsState {
   regionState: any,
   selectedIndex: number
@@ -39,26 +42,10 @@ class roomButtons extends Component<Props, ButtonsState> {
     this.handler = this.handler.bind(this)
   }
 
-  addId = function(arr: string[]){
-    var newArr: {id: number, name: string}[] = arr.map((elem) => ({id: arr.indexOf(elem), name: elem}))
-    return newArr;
-  };
-
   componentDidMount(){
-    if(!this.props.currentUser || !this.props.defaultBuilding) return;
-    var devices = this.props.defaultBuilding.devices;
-    var avail = new Array;
-    if(devices.length !== 0){
-      devices.forEach((device: Device) => {
-        var device_region: string = device.region.toLowerCase();
-        if(Object.values(REGION).includes(device_region))
-          var idx: number;
-          idx = REGION.indexOf(device.region.toLowerCase());
-          if(!avail.includes(DEFAULT[idx].title))
-            avail.push(DEFAULT[idx].title);
-      })
-      this.setState({regionState: this.addId(avail)});
-    }
+    if(ROOM_DATA.default || (this.props.defaultBuilding === undefined)) return;
+    var AVAILABLE_ROOM = ROOM_DATA.map((item: data, index: number) => ({id: index, name: item.title}))
+    this.setState({regionState: AVAILABLE_ROOM});
   }
 
   handler(id: number){

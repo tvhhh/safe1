@@ -34,7 +34,7 @@ export const ITEMLIST = [
   },
 ];
 
-export const PROTECTION = 
+export const DEFAULT_PROTECTION = 
   { id: 1, 
     name: 'Protection', 
     icon: 'security', 
