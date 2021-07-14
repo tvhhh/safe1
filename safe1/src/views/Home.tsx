@@ -77,15 +77,30 @@ class Home extends React.Component<Props, HomeState> {
       console.error(`Error signing out: ${err}`);
     }
   }
+  HomeScreen(list:any){
+    if(list){
+      this.DisplayGas(list);
+      this.DisplayTemp(list);
+    }
+    else{
+      return(
+        <View style={{alignContent:'center',width:'50%'}}>
+          <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
+        </View>
+      );
+    }
+  }
   DisplayTemp(list:any){
     if(list){
       let max=-1;
       let nameDevice;
       let region;
+      let flag = false;
         for(let k=0; k < list.devices.length;k++){
           if(list.devices[k].data.length){   
             let value=splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
             if(list.devices[k].deviceType=="temperature"){
+              flag = true;
               if(Number(value)>= max){
                 max=Number(value);
                 nameDevice=list.devices[k].name;
@@ -94,94 +109,119 @@ class Home extends React.Component<Props, HomeState> {
             }
           }
         }  
-      if(max > 40){
-        return(
-          <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
-            <Text style={styles.statusGasType}>Temperature :</Text>
-            <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
-            <Text style={styles.statusGasInf}>{nameDevice}</Text>
-            <Text style={styles.statusGasInf}>{region}</Text>
-          </View>
-        );
-      }
-      else if(max>0 && max<40){
-        return(
-          <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
-            <Text style={styles.statusGasType}>Temperature :</Text>
-            <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
-            <Text style={styles.statusGasInf}>{nameDevice}</Text>
-            <Text style={styles.statusGasInf}>{region}</Text>
-          </View>
-        );
+      if(flag){
+        if(max > 40){
+          return(
+            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+              <Text style={styles.statusGasType}>Temperature :</Text>
+              <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
+              <Text style={styles.statusGasInf}>{nameDevice}</Text>
+              <Text style={styles.statusGasInf}>{region}</Text>
+            </View>
+          );
+        }
+        else if(max>0 && max<40){
+          return(
+            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+              <Text style={styles.statusGasType}>Temperature :</Text>
+              <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
+              <Text style={styles.statusGasInf}>{nameDevice}</Text>
+              <Text style={styles.statusGasInf}>{region}</Text>
+            </View>
+          );
+        }
+        else{
+          return(
+            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+              <Text style={styles.statusGasType}>Temperature :</Text>
+              <Text style={{fontSize:30,color:'#ffffff' }}>No Data</Text>
+            </View>
+          );
+        }  
       }
       else{
         return(
-          <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+          <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
             <Text style={styles.statusGasType}>Temperature :</Text>
-            <Text style={{fontSize:30,color:'#ffffff' }}>No Data</Text>
+            <Text style={{fontSize:30, color:'#ffffff'}}>No Device</Text>
           </View>
         );
-      }   
+      }  
     }
-    return(
-      <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
-        <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
-      </View>
-    );
+    else{
+      return(
+        <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
+            <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
+          </View>
+      )
+    }
   }
   DisplayGas(list:any){
     if(list){
       let max = -1;
       let nameDevice;
       let region;
-        for(let k = 0; k < list.devices.length;k++){
-          if(list.devices[k].data.length){   
-            let value  = splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
-            if(list.devices[k].deviceType == "gas"){
-              if(Number(value)>= 0){
-                max = Number(value);
-                nameDevice = list.devices[k].name;
-                region = list.devices[k].region;
-              }
+      let flag = false;
+      for(let k = 0; k < list.devices.length;k++){
+        if(list.devices[k].data.length){   
+          let value  = splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
+          if(list.devices[k].deviceType == "gas"){
+            flag = true;
+            if(Number(value)>= 0){
+              max = Number(value);
+              nameDevice = list.devices[k].name;
+              region = list.devices[k].region;
             }
           }
-        }  
-      if(max == 1){
+        }
+      }
+      if(flag){
+        if(max == 1){
+          return(
+            <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
+              <Text style={styles.statusGasType}>Gas :</Text>
+              <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
+              <Text style={styles.statusGasInf}>{nameDevice}</Text>
+              <Text style={styles.statusGasInf}>{region}</Text>
+            </View>
+          );
+        }
+        if(max == 0){
+          return(
+            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+              <Text style={styles.statusGasType}>Gas :</Text>
+              <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
+              <Text style={styles.statusGasInf}>{nameDevice}</Text>
+              <Text style={styles.statusGasInf}>{region}</Text>
+            </View>
+          );
+        }
+        else {
+          return(
+            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+              <Text style={styles.statusGasType}>Gas :</Text>
+              <Text style={{fontSize:30,color:'#ffffff' }}>No Data</Text>
+            </View>
+          );
+        }
+      }
+      else{
         return(
-          <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
+          <View style={{alignContent:'center',width:'50%'}}>
             <Text style={styles.statusGasType}>Gas :</Text>
-            <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
-            <Text style={styles.statusGasInf}>{nameDevice}</Text>
-            <Text style={styles.statusGasInf}>{region}</Text>
+            <Text style={{fontSize:30, color:'#ffffff'}}>No Device</Text>
           </View>
         );
-      }
-      if(max == 0){
-        return(
-          <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
-            <Text style={styles.statusGasType}>Gas :</Text>
-            <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
-            <Text style={styles.statusGasInf}>{nameDevice}</Text>
-            <Text style={styles.statusGasInf}>{region}</Text>
-          </View>
-        );
-      }
-      else {
-        return(
-          <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
-            <Text style={styles.statusGasType}>Gas :</Text>
-            <Text style={{fontSize:30,color:'#ffffff' }}>No Data</Text>
-          </View>
-        );
-      }
+      }   
     }
-    return(
-      <View style={{alignContent:'center',width:'50%'}}>
-        <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
-      </View>
-    );
+    else{
+      return(
+        <View style={{alignContent:'center',width:'50%'}}>
+          <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
+        </View>
+      );
+    }
   }
-
   render() {
     return (
       <LinearGradient 
@@ -205,8 +245,9 @@ class Home extends React.Component<Props, HomeState> {
         <View style={styles.statusContainer}>
           <View style={styles.statusZone}>
             <View style= {{flexDirection: 'row' }}>
-                {this.DisplayTemp(this.props.defaultBuilding)}
-                {this.DisplayGas(this.props.defaultBuilding)}
+                {/* {this.DisplayTemp(this.props.defaultBuilding)}
+                {this.DisplayGas(this.props.defaultBuilding)} */}
+                {this.HomeScreen(this.props.defaultBuilding)}
             </View>
           </View>
         </View>
