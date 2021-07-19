@@ -12,20 +12,20 @@ export const OUTPUT_DEVICES = [
   { 
     name: 'Sprinkler', 
     subtitle: 'Mini pump devices', 
-    icon: 'sprinkler-variant', 
+    icon: 'shower-head', 
     deviceType:'sprinkler', 
     protection: true, 
-    setting: 'Sprinkler controller',
+    setting: 'Sprinkler',
     maxSetting: 1,
     ID: ''
   },
   { 
     name: 'Fire alarm', 
     subtitle: 'buzzer devices', 
-    icon: 'fire', 
+    icon: 'bell-ring', 
     deviceType: 'buzzer', 
     protection: true,
-    setting: 'Buzzer volume',
+    setting: 'Buzzer speaker',
     maxSetting: 1023,
     ID: ''
   },
@@ -35,7 +35,7 @@ export const OUTPUT_DEVICES = [
     icon: 'door-open', 
     deviceType:'servo', 
     protection: true,
-    setting: 'Door rotation angle',
+    setting: 'Door rotation',
     maxSetting: 180,
     ID: ''
   },
@@ -45,7 +45,7 @@ export const OUTPUT_DEVICES = [
     icon: 'flash', 
     deviceType:'power', 
     protection: true,
-    setting: 'Power controller',
+    setting: 'Power circuit',
     maxSetting: 1,
     ID: ''
   },

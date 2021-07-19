@@ -10,7 +10,6 @@ type ListItemProps = {
     name: string,
     color: string,
     status: string,
-    subcolor?: string,
   },
   styles: Object,
 };
@@ -49,7 +48,7 @@ export default class ListItem extends Component<ListItemProps, ListItemState> {
   render(){
     const {item, styles} = this.props;
     const Status = item.id !== 1 ? (
-      <Text style={{fontSize: 18, color: item.subcolor, fontWeight: 'bold'}}>
+      <Text style={{fontSize: 18, color: item.color, fontWeight: 'bold'}}>
         {item.status}
       </Text>
     ) : false;
@@ -70,7 +69,7 @@ export default class ListItem extends Component<ListItemProps, ListItemState> {
             name={item.icon}
             size={40}
             color={item.color}
-            style={{marginBottom: 10}}
+            style={item.id !== 1? {marginBottom: 10} : {marginBottom: 10, marginTop: 15}}
           />
           <Text style={{fontSize: 18, color: 'black', fontWeight: 'bold'}}>
             {item.name}
