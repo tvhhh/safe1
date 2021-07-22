@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/tvhhh/safe1/services/control/utils"
 
@@ -22,8 +23,14 @@ const (
 	UNSUB = "unsub"
 )
 
+const (
+	WaitInterval = 60 * time.Second
+	PingInterval = WaitInterval * 9 / 10
+)
+
 type Client struct {
 	broker      string
+	closeChan   chan struct{}
 	mqttClient  mqtt.Client
 	mqttClient1 mqtt.Client
 	msgChan     chan []byte
@@ -38,6 +45,7 @@ type Client struct {
 func New(conn *websocket.Conn, broker, username, password, username1, password1 string) *Client {
 	return &Client{
 		broker:    broker,
+		closeChan: make(chan struct{}),
 		msgChan:   make(chan []byte),
 		password:  password,
 		password1: password1,
@@ -67,19 +75,24 @@ func Serve(w http.ResponseWriter, r *http.Request, broker, username, password, u
 
 	go c.waitToReceive()
 	go c.listenToMsgChan()
-
-	c.handleDisconnect()
 }
 
 // WebSocket part
 
 func (c *Client) waitToReceive() {
+	c.wsConn.SetReadDeadline(time.Now().Add(WaitInterval))
+	c.wsConn.SetPongHandler(func(string) error {
+		c.wsConn.SetReadDeadline(time.Now().Add(WaitInterval))
+		return nil
+	})
 	for {
 		_, msg, err := c.wsConn.ReadMessage()
 		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.WithFields(log.Fields{"error": err}).Error("Unexpected close error")
 			}
+			c.handleDisconnect()
+			c.wsConn.Close()
 			break
 		}
 		c.request(msg)
@@ -87,8 +100,24 @@ func (c *Client) waitToReceive() {
 }
 
 func (c *Client) listenToMsgChan() {
-	for msg := range c.msgChan {
-		c.respond(msg)
+	ticker := time.NewTicker(PingInterval)
+	defer func() {
+		ticker.Stop()
+	}()
+
+loop:
+	for {
+		select {
+		case msg, ok := <-c.msgChan:
+			if !ok {
+				return
+			}
+			c.respond(msg)
+		case <-ticker.C:
+			c.ping()
+		case <-c.closeChan:
+			break loop
+		}
 	}
 }
 
@@ -176,17 +205,22 @@ func (c *Client) respond(msg []byte) {
 	c.wsConn.WriteMessage(websocket.TextMessage, msg)
 }
 
+func (c *Client) ping() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.wsConn.WriteMessage(websocket.PingMessage, []byte{})
+}
+
 func (c *Client) handleDisconnect() {
-	c.wsConn.SetCloseHandler(func(code int, text string) error {
-		if c.mqttClient != nil {
-			c.mqttClient.Disconnect(250)
-		}
-		if c.mqttClient1 != nil {
-			c.mqttClient1.Disconnect(250)
-		}
-		close(c.msgChan)
-		return nil
-	})
+	if c.mqttClient != nil {
+		c.mqttClient.Disconnect(250)
+	}
+	if c.mqttClient1 != nil {
+		c.mqttClient1.Disconnect(250)
+	}
+	c.closeChan <- struct{}{}
+	close(c.closeChan)
+	close(c.msgChan)
 }
 
 // End WebSocket part
