@@ -58,7 +58,7 @@ class GasConcentration extends React.Component<Props, CustomState> {
         time: 0
       },
       gas_data: {
-        gas: [],
+        data: [],
         time: []
       }
     }
@@ -92,11 +92,24 @@ class GasConcentration extends React.Component<Props, CustomState> {
     }
     return gas_data
   }
+
+  lastTriggerState = (gas_data: any) => {
+    for (let i = gas_data.gas.length - 1; i >= 0; i--) {
+      if(gas_data.gas[i] == 1){
+        return {
+          data: gas_data.gas[i],
+          time: gas_data.label[i]
+        }
+      }
+    }
+    return -1
+  }
   
-  getHourMinuteSecond = (date: Date) => {
+  getHourMinuteSecond = (date: any) => {
     const hour = this.formatTime(date.getHours())
     const minute = this.formatTime(date.getMinutes())
     const second = this.formatTime(date.getSeconds())
+    
     return `${hour}:${minute}:${second}`
   } 
 
@@ -112,18 +125,9 @@ class GasConcentration extends React.Component<Props, CustomState> {
   }
 
 
-  sessionTime = (gas_data: any) => {
-    let len = gas_data.label.length
-    const lastState = {
-      data: len === 0 ? -1 : gas_data.gas[len - 1],
-      time: len === 0 ? 0 : gas_data.label[len - 1]
-    }
-    this.setState({lastState: {
-      data: lastState.data,
-      time: lastState.time
-    }})
+  sessionTime = () => {    
     if (this.state.lastState.data === -1) {
-      return NaN.toString()
+      return "Never Triggered"
     }
     else if(this.state.lastState.data === 1) {
       return "Triggered"
@@ -150,11 +154,16 @@ class GasConcentration extends React.Component<Props, CustomState> {
 
   componentDidMount() {
     let gas_data = this.getGasData()
-    if (this.state.lastState.data === -1) {
-      this.setState({sessionTime: NaN.toString()})
-    } else {
-      this.interval = setInterval(() => this.setState({ sessionTime: this.sessionTime(gas_data) }), 1000);
+    let len = gas_data.gas.length
+    const lastState = {
+      data: len === 0 ? -1 : gas_data.gas[len - 1],
+      time: len === 0 ? 0 : gas_data.label[len - 1]
     }
+    this.setState({lastState: {
+      data: lastState.data,
+      time: lastState.time
+    }})
+    this.interval = setInterval(() => this.setState({ sessionTime: this.sessionTime() }), 1000);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -329,8 +338,15 @@ class GasConcentration extends React.Component<Props, CustomState> {
                 <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>on</Text>
               </View>
               <View style={styles.gasSecondBox}>
-                  <Text style={{color: 'white'}}>{this.getHourMinuteSecond(new Date(this.state.lastState.time))}</Text>
-                  <Text style={{color: 'white'}}>{new Date(this.state.lastState.time).toDateString().substring(4)}</Text>
+                {this.lastTriggerState(gas_data) === -1 ?
+                <View>
+                  <Text style={{color: 'white'}}>{this.lastTriggerState(gas_data)}</Text>
+                </View>
+                :
+                <View>
+                  <Text style={{color: 'white'}}>{this.getHourMinuteSecond(this.lastTriggerState(gas_data).time)}</Text>
+                  <Text style={{color: 'white'}}>{new Date(this.lastTriggerState(gas_data).time).toDateString().substring(4)}</Text>
+                </View>}
               </View>          
             </View>
             <View style={styles.gasContainer}>
