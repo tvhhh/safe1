@@ -4,12 +4,16 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect, ConnectedProps } from 'react-redux';
 import { State } from '@/redux/state';
 import { Building, Device, User, ProtectionMessage } from '@/models';
-import { typeItem } from '@/utils/output.devices';
+import deviceTopics from '@/utils/deviceTopics';
+import pubMessages from '@/utils/pubMessage';
+import {DeviceTopics} from '@/utils/pubMessage';
+import { typeItem } from '@utils/output.devices';
 import Modal from 'react-native-modal';
 import Slider from '@react-native-community/slider';
-import { DropDown } from './DropDown';
 import DataService from '@/services/data.service';
+import ControlService from '@/services/control.service';
 import actions, { Action } from '@/redux/actions';
+import { DeviceType } from '@/models/devices';
 const {height, width} = Dimensions.get('screen')
 
 const mapStateToProps = (state: State) => ({
@@ -33,7 +37,11 @@ interface Props extends ConnectedProps<typeof connector> {
 interface ModalItemState {
   isModalVisible: boolean,
   relaySetting: number,
-  valueSetting: number
+  valueSetting: number,
+  valueDisplay: number,
+  toggle: boolean,
+  // onControl: boolean,
+  icon: boolean
 }
 
 class ModalItem extends React.Component<Props, ModalItemState> {
@@ -42,7 +50,11 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     this.state = {
       isModalVisible: false,
       relaySetting: 1,
-      valueSetting: this.getInitialSetting()
+      valueSetting: this.getInitialSetting(),
+      valueDisplay: this.getInitialSetting(),
+      toggle: false,
+      // onControl: false,
+      icon: this.getActivation()
     };
   }
 
@@ -56,10 +68,25 @@ class ModalItem extends React.Component<Props, ModalItemState> {
 
   componentDidUpdate(prevProps: Props, prevState: ModalItemState){
     let getUpdateItem = this.props.defaultBuilding?.devices.find((item) => item.name === this.props.item.ID);
-
     if(getUpdateItem?.triggeredValue !== prevState.valueSetting.toString() && getUpdateItem?.triggeredValue !== undefined){
       this.setState({valueSetting: parseInt(getUpdateItem?.triggeredValue)});
     }
+  }
+
+  getActivation = () => {
+    if(this.props.hasDevice){
+      let device = this.props.defaultBuilding?.devices.find((item) => item.name === this.props.item.ID)
+      let data = device?.data
+      // console.log(device?.name)
+      if(data !== undefined && data.length !== 0){
+        let latestData = data[data.length-1]
+        // console.log(latestData)
+        if(Number(latestData.value) !== 0){
+          return true
+        }
+      }
+    }
+    return false
   }
 
   toggleModal(){
@@ -72,6 +99,10 @@ class ModalItem extends React.Component<Props, ModalItemState> {
 
   handleValue = (value: number) => {
     this.setState({valueSetting: Math.round(value)})
+  }
+
+  handleDisplay = (value: number) => {
+    this.setState({valueDisplay: Math.round(value)})
   }
 
   updateData = () => {
@@ -107,10 +138,6 @@ class ModalItem extends React.Component<Props, ModalItemState> {
             [{ text: "OK" }]
           );
         } else {
-          Alert.alert(
-            "Successfully update setting",
-            "Your setting has been updated!",
-          );
           let msg: ProtectionMessage = {
             _name: response.name, 
             protection: response.protection, 
@@ -147,14 +174,49 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     return gasDectection
   }
 
+  pressIcon = () => {
+    let value:any = !this.state.icon
+    let topic = deviceTopics[this.props.item.deviceType as DeviceType]
+    let msg = pubMessages[topic as DeviceTopics]
+    let data;
+    if(this.props.item.deviceType === 'sprinkler' || this.props.item.deviceType === 'power'){
+      data = Number(value)
+    }else{
+      data = this.state.valueSetting
+    }
+
+    if(value){
+      msg = {
+        ...msg,
+        name: this.props.item.ID,
+        data: data.toString(),
+      }
+    }else{
+      msg = {
+        ...msg,
+        name: this.props.item.ID,
+        data: "0"
+      }
+    }
+    ControlService.pub(topic, msg)
+    this.setState({icon: !this.state.icon})
+  }
+
   render(){
     return(
-        <TouchableOpacity onPress={this.props.hasDevice? () => this.toggleModal() : ()=>{}}>
+        <TouchableOpacity onPress={this.props.hasDevice? () => this.toggleModal() : () => {}}>
             <View style={[styles.itemContainer, { backgroundColor: '#fff', alignItems: 'center' }]}>
-            <Icon name={this.props.item.icon} size={55}/>
+            <Icon 
+              name={this.props.item.icon} 
+              size={55}
+              onPress={!this.props.hasDevice || (this.props.item.deviceType == 'power' && this.onDanger())? 
+                () => {} : 
+                () => this.pressIcon()}
+              style={this.state.icon? {color: '#1EC639'} : {color: '#000000'}}
+            />
             <Text style={[styles.itemName, {fontSize: 30, textAlign: 'center', }]}>{this.props.item.name}</Text>
-            <Text style={[styles.itemName, {fontSize: 15, textAlign: 'center', fontWeight: '400', fontStyle: 'italic', marginTop: 5}]}>
-              {this.props.item.ID}
+            <Text style={[styles.itemName, {fontSize: 20, textAlign: 'center', fontWeight: '400', fontStyle: 'italic', marginTop: 2}]}>
+              {!this.props.hasDevice? 'No devices' : this.props.item.ID}
             </Text>
             {/* <Modal 
               isVisible={this.state.isModalVisible}
@@ -166,22 +228,33 @@ class ModalItem extends React.Component<Props, ModalItemState> {
                 <View style={styles.content}>
                 <Text style={[styles.contentTitle, {fontWeight: 'bold', fontSize: 23}]}>{this.props.item.setting} setting</Text>
                 {this.props.item.deviceType === 'sprinkler' || this.props.item.deviceType === 'power'?
-                    <View style={{width: width/3}}> 
-                      <DropDown handle={this.handleSetting} onDanger={this.onDanger} deviceType={this.props.item.deviceType}/>           
+                    <View style={{width: width/2, alignItems: 'center'}}>
+                      <Text 
+                        style={{
+                          fontSize: 20, 
+                          textAlign: 'center', 
+                          fontWeight: '400', 
+                          fontStyle: 'italic', 
+                          fontFamily: 'Roboto',
+                          width: width/2}}
+                      >
+                        Sorry, this devices currently has no setting options !
+                      </Text>           
                     </View>
                     :
                     <View>
                         <Text style={styles.contentTitle} numberOfLines={2}>
-                            Adjust value from 0 to {this.props.item.maxSetting}{"\n"} 
-                            Current value is {Math.round(this.state.valueSetting) }
+                            Adjust value from {this.props.item.deviceType === 'fan'? -255 : 0} to {this.props.item.maxSetting}{"\n"} 
+                            Current value is {Math.round(this.state.valueDisplay) } 
                         </Text>
                         <Slider
                             style={{width: 200, height: 40, marginHorizontal: 30, transform: [{scaleY: 1.5}]}}
-                            minimumValue={0}
+                            minimumValue={this.props.item.deviceType === 'fan'? -255 : 0}
                             maximumValue={this.props.item.maxSetting}
                             minimumTrackTintColor="#000000"
                             maximumTrackTintColor="#000000"
-                            onValueChange={value => this.handleValue(value)}
+                            onSlidingComplete={value => this.handleValue(value)}
+                            onValueChange={value => this.handleDisplay(value)}
                             value={this.state.valueSetting}
                         />
                     </View>
@@ -245,4 +318,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: 'center'
   },
+  onOff: {
+    alignItems: 'center',
+    transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
+    width: 50,
+    marginTop: 3,
+  }
 });

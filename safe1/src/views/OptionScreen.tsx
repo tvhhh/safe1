@@ -30,7 +30,8 @@ const Setting = (props: any) => {
   return (
     <View style={styles.body}>
       <Text style={[bodyStyles.intro, {textAlign: 'center'}]} numberOfLines={2}>
-        Manual setting for each device
+        Click icon to activate{"\n"}
+        Touch to change the setting
       </Text>
       <ProtectionGrid selectedRoom={props.room} isSetting={true}/>
     </View>
@@ -44,12 +45,18 @@ const Monitor = (props: any) => {
     <View style={styles.body}>
       <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
         Now, Temperature is
-        <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {props.temp}{celcius}</Text> 
+        {isNaN(props.temp) ? 
+          <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {props.temp}</Text> :
+          <Text style={{fontWeight: 'bold', color: '#FA582F'}}> {props.temp}{celcius}</Text>
+        }
       </Text>
       <ThermoMonitor temp={props.temp}/>
       <Text style={[bodyStyles.intro, bodyStyles.introThermo]}>
         And Humidity is
-        <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {props.humid}%</Text> 
+        {isNaN(props.humid) ? 
+          <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {props.humid}</Text> :
+          <Text style={{fontWeight: 'bold', color: '#3B2BFF'}}> {props.humid}%</Text>
+        }
       </Text>
       <HumidityMonitor humid={props.humid}/>
       <AppButton/>
@@ -76,8 +83,8 @@ interface OptionState {
 }  
 
 const tempData = {
-  temp: 0,
-  humid: 0
+  temp: NaN,
+  humid: NaN
 }
 class OptionScreen extends React.Component<Props, OptionState> {
   constructor(props: Props) {

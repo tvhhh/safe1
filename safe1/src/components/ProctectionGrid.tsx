@@ -11,9 +11,6 @@ import ModalItem from '@/components/Modal'
 
 const {height, width} = Dimensions.get('screen')
 
-interface Options {
-  item: typeItem
-}
 
 const mapStateToProps = (state: State) => ({
   currentUser: state.currentUser,
@@ -45,16 +42,57 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
     super(props);
     this.state = {
       currentRoom: '',
-      settingAvailableDevice: OUTPUT_DEVICES,
+      settingAvailableDevice: this.getSettingAvailableDevice(),
       protectionAvailableDevice: OUTPUT_DEVICES,
-      hasDevice: false,
+      hasDevice: this.checkDevices(),
       takeDefaultData: false,
       isModalVisible: false,
       relaySetting: 1,
       valueSetting: 0
     };
   }
+
+  checkDevices = () => {
+    let roomName: string = this.props.selectedRoom;
+    let outputDevices = this.props.defaultBuilding?.devices.filter((device: Device) =>  
+      device.region.toLowerCase() === roomName.toLowerCase() && 
+      device.deviceType !== 'temperature' && 
+      device.deviceType !== 'gas'
+    )
+    if(outputDevices !== undefined){
+      return outputDevices.length > 0
+    }
+    return false
+  }
   
+  getSettingAvailableDevice = () => {
+    if(!this.props.defaultBuilding) return OUTPUT_DEVICES;
+    var devices = this.props.defaultBuilding.devices;
+    var roomName: string = this.props.selectedRoom;
+    var hasDevice: boolean = devices.some(function(value: Device){
+      return value.region.toLowerCase() === roomName.toLowerCase()
+    });
+    if(hasDevice){
+      var outputDevices = devices.filter((device: Device) =>  
+        device.region.toLowerCase() === roomName.toLowerCase() && 
+        device.deviceType !== 'temperature' && 
+        device.deviceType !== 'gas'
+      )
+      var AVAILABLE_DEVICES = OUTPUT_DEVICES.filter((item: typeItem) => 
+        outputDevices.find((data: Device) => (data.deviceType === item.deviceType)));
+      var DATA = [];
+      for(let i = 0; i < outputDevices.length; i++){
+        let item = AVAILABLE_DEVICES.find((item) => item.deviceType === outputDevices[i].deviceType);
+        if(item !== undefined){
+          let ele = {...item, ID: outputDevices[i].name};
+          DATA.push(ele);
+        }
+      }
+      return DATA
+    }
+    return OUTPUT_DEVICES
+  }
+
   componentDidMount(){
     if(!this.props.defaultBuilding) return;
     var devices = this.props.defaultBuilding.devices;
@@ -63,32 +101,19 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
       return value.region.toLowerCase() === roomName.toLowerCase()
     });
     if(hasDevice){
-      var outputData = new Array();
-      outputData = devices.filter((device: Device) =>  
+      var outputDevices = new Array();
+      outputDevices = devices.filter((device: Device) =>  
         device.region.toLowerCase() === roomName.toLowerCase() && 
         device.deviceType !== 'temperature' && 
         device.deviceType !== 'gas'
       )
-      if(outputData.length > 0){
-        this.setState({hasDevice: true})
-      }
-      
       var AVAILABLE_DEVICES = OUTPUT_DEVICES.filter((item: typeItem) => 
-        outputData.find((data: Device) => (data.deviceType === item.deviceType)));
-      var DATA = [];
-      for(let i = 0; i < outputData.length; i++){
-        let item = AVAILABLE_DEVICES.find((item) => item.deviceType === outputData[i].deviceType);
-        if(item !== undefined){
-          let ele = {...item, ID: outputData[i].name};
-          DATA.push(ele);
-        }
-      }
+        outputDevices.find((data: Device) => (data.deviceType === item.deviceType)));
+
       this.setState({protectionAvailableDevice: AVAILABLE_DEVICES});    
       if(this.props.setNum !== undefined){
         this.props.setNum(AVAILABLE_DEVICES.length)
       } 
-      
-      this.setState({settingAvailableDevice: DATA});
     }
   }
 
@@ -115,7 +140,7 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
           data={this.state.settingAvailableDevice.length > 0? this.state.settingAvailableDevice : OUTPUT_DEVICES}
           style={styles.gridView}
           spacing={20}
-          renderItem={({ item }: Options) => (
+          renderItem={({ item }) => (
             <ModalItem item={item} hasDevice={this.state.hasDevice}/>
           )}
         />
@@ -125,7 +150,7 @@ class ProtectionGrid extends React.Component<Props, ProtectionGridState> {
           data={this.state.protectionAvailableDevice.length > 0? this.state.protectionAvailableDevice : OUTPUT_DEVICES}
           style={styles.gridView}
           spacing={20}
-          renderItem={({ item }: Options) => (
+          renderItem={({ item }) => (
             <View style={[styles.itemContainer, { backgroundColor: '#fff' }]}>
               <Icon name={item.icon} size={50}/>
               <Text style={styles.itemName}>{item.name}</Text>

@@ -3,16 +3,14 @@ export const DEFAULT_ITEMLIST = [
     name: 'Thermostat', 
     icon: 'thermometer', 
     color: '#F84018',
-    status: '0\u00b0\C',
-    subcolor: '#000',
+    status: 'NaN',
   },
   {
     id: 3,
     name: 'Humidity',
     icon: 'water-percent',
     color: '#434FEA',
-    status: '0%',
-    subcolor: '#000',
+    status: 'NaN',
   },
 ];
 
@@ -22,7 +20,6 @@ export const ITEMLIST = [
     icon: 'thermometer', 
     color: '#F84018',
     status: '',
-    subcolor: '#000',
   },
   {
     id: 3,
@@ -30,7 +27,6 @@ export const ITEMLIST = [
     icon: 'water-percent',
     color: '#434FEA',
     status: '',
-    subcolor: '#000',
   },
 ];
 
