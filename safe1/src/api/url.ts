@@ -1,4 +1,4 @@
-const apiUrl = "192.168.1.125";
+const apiUrl = "10.0.2.2";
 
 export const chatUrl = `ws://${apiUrl}/chat`;
 export const controlUrl = `ws://${apiUrl}/control`;

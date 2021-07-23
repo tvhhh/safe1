@@ -79,19 +79,29 @@ class Home extends React.Component<Props, HomeState> {
   }
   HomeScreen(list:any){
     if(list){
-      this.DisplayGas(list);
-      this.DisplayTemp(list);
+      if(list.devices.length > 0){
+        {this.DisplayGas(list)};
+        {this.DisplayTemp(list)};
+      }
+      else{
+        return(
+          <View style={{alignContent:'center',width:'50%'}}>
+            <Text style={{fontSize:30, color:'#ffffff'}}>No Devices</Text>
+          </View>
+        );
+      }
     }
     else{
       return(
         <View style={{alignContent:'center',width:'50%'}}>
-          <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
+          <Text style={{fontSize:30, color:'#ffffff'}}>No Building</Text>
         </View>
       );
     }
   }
   DisplayTemp(list:any){
     if(list){
+      // console.log(list)
       let max=-1;
       let nameDevice;
       let region;
@@ -110,6 +120,7 @@ class Home extends React.Component<Props, HomeState> {
           }
         }  
       if(flag){
+        // console.log("ten devices:"+nameDevice)
         if(max > 40){
           return(
             <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
@@ -158,6 +169,7 @@ class Home extends React.Component<Props, HomeState> {
   }
   DisplayGas(list:any){
     if(list){
+      // console.log('gas')
       let max = -1;
       let nameDevice;
       let region;
@@ -165,6 +177,7 @@ class Home extends React.Component<Props, HomeState> {
       for(let k = 0; k < list.devices.length;k++){
         if(list.devices[k].data.length){   
           let value  = splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
+          // console.log(list.devices[k].data[list.devices[k].data.length-1]?.value)
           if(list.devices[k].deviceType == "gas"){
             flag = true;
             if(Number(value)>= 0){
@@ -176,6 +189,7 @@ class Home extends React.Component<Props, HomeState> {
         }
       }
       if(flag){
+        // console.log("ten device cua gas:"+ nameDevice)
         if(max == 1){
           return(
             <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
