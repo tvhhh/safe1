@@ -37,6 +37,8 @@ interface Props extends ConnectedProps<typeof connector> {
 interface CustomState {
   tooltipPos: any,
   sessionTime: string,
+  lastState: any,
+  gas_data: any
 }
 
 class GasConcentration extends React.Component<Props, CustomState> {
@@ -51,6 +53,14 @@ class GasConcentration extends React.Component<Props, CustomState> {
         value: 0
       },
       sessionTime: "",
+      lastState: {
+        data: 0,
+        time: 0
+      },
+      gas_data: {
+        data: [],
+        time: []
+      }
     }
   };
   
@@ -82,11 +92,24 @@ class GasConcentration extends React.Component<Props, CustomState> {
     }
     return gas_data
   }
+
+  lastTriggerState = (gas_data: any) => {
+    for (let i = gas_data.gas.length - 1; i >= 0; i--) {
+      if(gas_data.gas[i] == 1){
+        return {
+          data: gas_data.gas[i],
+          time: gas_data.label[i]
+        }
+      }
+    }
+    return -1
+  }
   
-  getHourMinuteSecond = (date: Date) => {
+  getHourMinuteSecond = (date: any) => {
     const hour = this.formatTime(date.getHours())
     const minute = this.formatTime(date.getMinutes())
     const second = this.formatTime(date.getSeconds())
+    
     return `${hour}:${minute}:${second}`
   } 
 
@@ -101,32 +124,49 @@ class GasConcentration extends React.Component<Props, CustomState> {
     return this.getDevices("gas").length !== 0
   }
 
-  lastTriggered = (gas_data: any) => {
-    let len = gas_data.label.length
-    for (let i = len - 1; i >= 0; i--) {
-      if (gas_data.gas[i] === 1) {
-        return gas_data.label[i]
-      }
+
+  sessionTime = () => {    
+    if (this.state.lastState.data === -1) {
+      return "Never Triggered"
     }
-    return -1
+    else if(this.state.lastState.data === 1) {
+      return "Triggered"
+    } else {
+      var date1 = this.state.lastState.time
+      var date2 = Date.now()
+      var delta = Math.abs(date2 - date1) / 1000;
+
+      var days = Math.floor(delta / 86400);
+      delta -= days * 86400;
+
+      var hours = Math.floor(delta / 3600) % 24;
+      delta -= hours * 3600;
+
+      var minutes = Math.floor(delta / 60) % 60;
+      delta -= minutes * 60;
+
+      var seconds = Math.floor(delta % 60); 
+
+      return days.toString() + ' days : ' + this.formatTime(hours) + 'h : ' +
+              this.formatTime(minutes) + 'm : ' + this.formatTime(seconds)+'s'
+    }
   }
 
-  sessionTime = (date1: Date, date2: Date) => {
-    var delta = Math.abs(date2 - date1) / 1000;
-
-    var days = Math.floor(delta / 86400);
-    delta -= days * 86400;
-
-    var hours = Math.floor(delta / 3600) % 24;
-    delta -= hours * 3600;
-
-    var minutes = Math.floor(delta / 60) % 60;
-    delta -= minutes * 60;
-
-    var seconds = Math.floor(delta % 60); 
-
-    return days.toString() + ':' + this.formatTime(hours) + ':' +
-            this.formatTime(minutes) + ':' + this.formatTime(seconds)
+  componentDidMount() {
+    let gas_data = this.getGasData()
+    let len = gas_data.gas.length
+    const lastState = {
+      data: len === 0 ? -1 : gas_data.gas[len - 1],
+      time: len === 0 ? 0 : gas_data.label[len - 1]
+    }
+    this.setState({lastState: {
+      data: lastState.data,
+      time: lastState.time
+    }})
+    this.interval = setInterval(() => this.setState({ sessionTime: this.sessionTime() }), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
 
@@ -161,22 +201,8 @@ class GasConcentration extends React.Component<Props, CustomState> {
     )  
   }
 
-  componentDidUpdate() {
-    var date1 = new Date(this.lastTriggered(this.getGasData())); 
-    var date2 = new Date();
-    this.interval = setInterval(() => this.setState({ sessionTime: this.sessionTime(date1, date2)}), 1000)
-}
-
-  componentWillUnmount() {
-    clearInterval(this.interval)
-  }
-
-
 
   renderData = (gas_data: any) => {
-    
-    // this.interval = setInterval(this.setState({sessionTime: date1.toTimeString()}), 1000)
-
     let currCondtion = gas_data.gas[gas_data.gas.length - 1]
     let data = {
       labels: gas_data.label.slice(-12),
@@ -250,7 +276,7 @@ class GasConcentration extends React.Component<Props, CustomState> {
           </View> : null
           }}
               data={data}
-              width={width} // from react-native
+              width={width * 1.1} // from react-native
               verticalLabelRotation={270}
               xLabelsOffset={30}
               height={300}
@@ -280,13 +306,8 @@ class GasConcentration extends React.Component<Props, CustomState> {
                   return Number(y).toString()
                 }
                 return ""
-              }}
-              formatYLabel = {(y:string) => {
-                if (Number(y) === 1 || Number(y) === 0) {
-                  return Number(y).toString()
                 }
-                return ""
-              }}
+              }
               formatXLabel = {(x: string) => this.getHourMinuteSecond(new Date(x))}
               fromZero
               withVerticalLines={false}
@@ -317,8 +338,15 @@ class GasConcentration extends React.Component<Props, CustomState> {
                 <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>on</Text>
               </View>
               <View style={styles.gasSecondBox}>
-                  <Text style={{color: 'white'}}>{this.getHourMinuteSecond(this.lastTriggered(gas_data))}</Text>
-                  <Text style={{color: 'white'}}>{new Date(this.lastTriggered(gas_data)).toDateString().substring(4)}</Text>
+                {this.lastTriggerState(gas_data) === -1 ?
+                <View>
+                  <Text style={{color: 'white'}}>{this.lastTriggerState(gas_data)}</Text>
+                </View>
+                :
+                <View>
+                  <Text style={{color: 'white'}}>{this.getHourMinuteSecond(this.lastTriggerState(gas_data).time)}</Text>
+                  <Text style={{color: 'white'}}>{new Date(this.lastTriggerState(gas_data).time).toDateString().substring(4)}</Text>
+                </View>}
               </View>          
             </View>
             <View style={styles.gasContainer}>
