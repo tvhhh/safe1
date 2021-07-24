@@ -80,8 +80,10 @@ class Home extends React.Component<Props, HomeState> {
   HomeScreen(list:any){
     if(list){
       if(list.devices.length > 0){
-        {this.DisplayGas(list)};
-        {this.DisplayTemp(list)};
+        let buffer = []
+        buffer[0]= this.DisplayTemp(list)
+        buffer[1]= this.DisplayGas(list)
+        return buffer;
       }
       else{
         return(
@@ -107,10 +109,10 @@ class Home extends React.Component<Props, HomeState> {
       let region;
       let flag = false;
         for(let k=0; k < list.devices.length;k++){
-          if(list.devices[k].data.length){   
-            let value=splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
-            if(list.devices[k].deviceType=="temperature"){
-              flag = true;
+          if(list.devices[k].deviceType=="temperature"){
+            flag = true;
+            if(list.devices[k].data.length){ 
+              let value=splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
               if(Number(value)>= max){
                 max=Number(value);
                 nameDevice=list.devices[k].name;
@@ -123,7 +125,7 @@ class Home extends React.Component<Props, HomeState> {
         // console.log("ten devices:"+nameDevice)
         if(max > 40){
           return(
-            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+            <View key={0} style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
               <Text style={styles.statusGasType}>Temperature :</Text>
               <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
               <Text style={styles.statusGasInf}>{nameDevice}</Text>
@@ -133,7 +135,7 @@ class Home extends React.Component<Props, HomeState> {
         }
         else if(max>0 && max<40){
           return(
-            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+            <View key={0} style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
               <Text style={styles.statusGasType}>Temperature :</Text>
               <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
               <Text style={styles.statusGasInf}>{nameDevice}</Text>
@@ -143,7 +145,7 @@ class Home extends React.Component<Props, HomeState> {
         }
         else{
           return(
-            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+            <View key={0} style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
               <Text style={styles.statusGasType}>Temperature :</Text>
               <Text style={{fontSize:30,color:'#ffffff' }}>No Data</Text>
             </View>
@@ -152,7 +154,7 @@ class Home extends React.Component<Props, HomeState> {
       }
       else{
         return(
-          <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
+          <View key={0} style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
             <Text style={styles.statusGasType}>Temperature :</Text>
             <Text style={{fontSize:30, color:'#ffffff'}}>No Device</Text>
           </View>
@@ -161,7 +163,7 @@ class Home extends React.Component<Props, HomeState> {
     }
     else{
       return(
-        <View style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
+        <View key={0} style={{flexDirection:'column',alignContent:'center',width:'50%'}}>
             <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
           </View>
       )
@@ -169,17 +171,16 @@ class Home extends React.Component<Props, HomeState> {
   }
   DisplayGas(list:any){
     if(list){
-      // console.log('gas')
+      // console.log(list)
       let max = -1;
       let nameDevice;
       let region;
       let flag = false;
       for(let k = 0; k < list.devices.length;k++){
-        if(list.devices[k].data.length){   
-          let value  = splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
-          // console.log(list.devices[k].data[list.devices[k].data.length-1]?.value)
-          if(list.devices[k].deviceType == "gas"){
-            flag = true;
+        if(list.devices[k].deviceType == "gas"){
+          flag = true;
+          if(list.devices[k].data.length){   
+            let value  = splitDataValue(list.devices[k].data[list.devices[k].data.length-1]?.value);
             if(Number(value)>= 0){
               max = Number(value);
               nameDevice = list.devices[k].name;
@@ -192,7 +193,7 @@ class Home extends React.Component<Props, HomeState> {
         // console.log("ten device cua gas:"+ nameDevice)
         if(max == 1){
           return(
-            <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
+            <View key={1} style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
               <Text style={styles.statusGasType}>Gas :</Text>
               <Text style={{fontSize:70,color:'#ff3300' }}>{max}</Text>
               <Text style={styles.statusGasInf}>{nameDevice}</Text>
@@ -202,7 +203,7 @@ class Home extends React.Component<Props, HomeState> {
         }
         if(max == 0){
           return(
-            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+            <View key={1} style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
               <Text style={styles.statusGasType}>Gas :</Text>
               <Text style={{fontSize:70,color:'#66ff66' }}>{max}</Text>
               <Text style={styles.statusGasInf}>{nameDevice}</Text>
@@ -212,7 +213,7 @@ class Home extends React.Component<Props, HomeState> {
         }
         else {
           return(
-            <View style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
+            <View key={1} style={{justifyContent:'center',alignItems:'center',width: '50%'}}>
               <Text style={styles.statusGasType}>Gas :</Text>
               <Text style={{fontSize:30,color:'#ffffff' }}>No Data</Text>
             </View>
@@ -221,7 +222,7 @@ class Home extends React.Component<Props, HomeState> {
       }
       else{
         return(
-          <View style={{alignContent:'center',width:'50%'}}>
+          <View key={1} style={{alignContent:'center',width:'50%'}}>
             <Text style={styles.statusGasType}>Gas :</Text>
             <Text style={{fontSize:30, color:'#ffffff'}}>No Device</Text>
           </View>
@@ -230,7 +231,7 @@ class Home extends React.Component<Props, HomeState> {
     }
     else{
       return(
-        <View style={{alignContent:'center',width:'50%'}}>
+        <View key={1} style={{alignContent:'center',width:'50%'}}>
           <Text style={{fontSize:50, color:'#ffffff'}}>empty</Text>
         </View>
       );
