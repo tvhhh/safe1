@@ -1,5 +1,5 @@
-const apiUrl = "192.168.1.125";
+import { API_URL } from '@env';
 
-export const chatUrl = `ws://${apiUrl}/chat`;
-export const controlUrl = `ws://${apiUrl}/control`;
-export const dataUrl = `http://${apiUrl}/data`;
+export const chatUrl = `ws://${API_URL}/chat`;
+export const controlUrl = `ws://${API_URL}/control`;
+export const dataUrl = `http://${API_URL}/data`;

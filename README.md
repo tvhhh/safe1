@@ -129,17 +129,6 @@ docker-compose down
 ```
 
 # Step by step to build and run services
-Open file `url.ts` in `safe1/src/api` directory and edit as follow
-```
-# If you use your Android device
-const apiUrl = "localhost:3000"
-
-# If you use Android emulator
-const apiUrl = "10.0.2.2"
-
-# Or another option that always works
-const apiUrl = "YOUR_IP_ADDRESS"
-```
 
 Build and run services
 ```
