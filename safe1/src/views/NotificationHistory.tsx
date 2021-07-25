@@ -96,7 +96,7 @@ class NotificationHistory extends React.Component<Props> {
               }
             }
             else if(list[i].devices[k].deviceType=="temperature"){
-              if(Number(value)>40){
+              if(Number(value)>60){
                 this.createAlert(list[i].devices[k], list[i].name,i);
               }
             }

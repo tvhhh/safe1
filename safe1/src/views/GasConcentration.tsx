@@ -340,7 +340,7 @@ class GasConcentration extends React.Component<Props, CustomState> {
               <View style={styles.gasSecondBox}>
                 {this.lastTriggerState(gas_data) === -1 ?
                 <View>
-                  <Text style={{color: 'white'}}>{this.lastTriggerState(gas_data)}</Text>
+                  <Text style={{color: 'white'}}>Never Triggered</Text>
                 </View>
                 :
                 <View>

@@ -125,7 +125,7 @@ class NotificationDaily extends React.Component<Props> {
               listDeviceForm.push(newDevice);
             })
         } else {
-          device.data.filter((data) => { return Number(splitDataValue(data.value)) > 40 })
+          device.data.filter((data) => { return Number(splitDataValue(data.value)) > 60 })
             .map((data) => {
               var newDevice: DeviceForm = {
                 name: device.name,

@@ -252,7 +252,7 @@ class Temperature extends React.Component<Props, CustomState> {
             <View style={styles.tempContainer}>
               <Feather name = "sun" size = {30} color = "white"/>
               <View style={styles.tempFirstBox}>
-                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>highest temperature</Text>
+                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>Highest temperature</Text>
               </View>
               <View style={styles.tempSecondBox}>
                 <Text style={{color:"white"}}>{Math.max(...temp_data.temp)}°C</Text>
@@ -261,7 +261,7 @@ class Temperature extends React.Component<Props, CustomState> {
             <View style={styles.tempContainer}>
               <FontAwesome name = "snowflake-o" size = {30} color = "white"/>
               <View style={styles.tempFirstBox}>
-                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>lowest temperature</Text>
+                <Text style={{color: "rgba(255, 255, 255, 0.3)"}}>Lowest temperature</Text>
               </View>
               <View style={styles.tempSecondBox}>
                 <Text style={{color:"white"}}>{Math.min(...temp_data.temp)}°C</Text>
