@@ -36,7 +36,6 @@ interface Props extends ConnectedProps<typeof connector> {
 
 interface ModalItemState {
   isModalVisible: boolean,
-  relaySetting: number,
   valueSetting: number,
   valueDisplay: number,
   toggle: boolean,
@@ -49,11 +48,9 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     super(props);
     this.state = {
       isModalVisible: false,
-      relaySetting: 1,
       valueSetting: this.getInitialSetting(),
       valueDisplay: this.getInitialSetting(),
       toggle: false,
-      // onControl: false,
       icon: this.getActivation()
     };
   }
@@ -93,10 +90,6 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     this.setState({isModalVisible: !this.state.isModalVisible})
   }
 
-  handleSetting = (value: number) => {
-    this.setState({relaySetting: value});
-  }
-
   handleValue = (value: number) => {
     this.setState({valueSetting: Math.round(value)})
   }
@@ -107,10 +100,13 @@ class ModalItem extends React.Component<Props, ModalItemState> {
 
   updateData = () => {
     var data: number = -1;
-    if(this.props.item.deviceType === 'sprinkler' || this.props.item.deviceType === 'power'){
-        data = this.state.relaySetting;
-    }else{
-        data = this.state.valueSetting;
+    if(this.props.item.deviceType === 'sprinkler'){
+      data = 1;
+    }else if(this.props.item.deviceType === 'power'){
+      data = 0;
+    }
+    else{
+      data = this.state.valueSetting;
     }
     
     if(!this.props.defaultBuilding || data === null){
@@ -127,9 +123,9 @@ class ModalItem extends React.Component<Props, ModalItemState> {
         );
     }else{
         DataService.updateDeviceProtection({
-            deviceName: currentDevice.name,
-            protection: currentDevice.protection,
-            triggeredValue: data.toString()
+          deviceName: currentDevice.name,
+          protection: currentDevice.protection,
+          triggeredValue: data.toString()
         }).then(response => {
         if (response === null) {
           Alert.alert(
@@ -147,7 +143,7 @@ class ModalItem extends React.Component<Props, ModalItemState> {
         }
         }).catch(err => console.error(err));
     }
-    this.setState({isModalVisible: !this.state.isModalVisible})
+    this.setState({isModalVisible: !this.state.isModalVisible});
   }
 
   gasDectection = (data: { time: Date, value: string }[]) => {
@@ -218,54 +214,57 @@ class ModalItem extends React.Component<Props, ModalItemState> {
             <Text style={[styles.itemName, {fontSize: 20, textAlign: 'center', fontWeight: '400', fontStyle: 'italic', marginTop: 2}]}>
               {!this.props.hasDevice? 'No devices' : this.props.item.ID}
             </Text>
-            {/* <Modal 
+            <Modal 
               isVisible={this.state.isModalVisible}
               swipeDirection={'down'}
               backdropColor={'#708090'}
               backdropOpacity={0.8}
+              useNativeDriver={true} 
             >
-            <View style={{backgroundColor: '#FFFFFF', height: 200}}>
-                <View style={styles.content}>
-                <Text style={[styles.contentTitle, {fontWeight: 'bold', fontSize: 23}]}>{this.props.item.setting} setting</Text>
-                {this.props.item.deviceType === 'sprinkler' || this.props.item.deviceType === 'power'?
-                    <View style={{width: width/2, alignItems: 'center'}}>
-                      <Text 
-                        style={{
-                          fontSize: 20, 
-                          textAlign: 'center', 
-                          fontWeight: '400', 
-                          fontStyle: 'italic', 
-                          fontFamily: 'Roboto',
-                          width: width/2}}
-                      >
-                        Sorry, this devices currently has no setting options !
-                      </Text>           
-                    </View>
-                    :
-                    <View>
-                        <Text style={styles.contentTitle} numberOfLines={2}>
-                            Adjust value from {this.props.item.deviceType === 'fan'? -255 : 0} to {this.props.item.maxSetting}{"\n"} 
-                            Current value is {Math.round(this.state.valueDisplay) } 
-                        </Text>
-                        <Slider
-                            style={{width: 200, height: 40, marginHorizontal: 30, transform: [{scaleY: 1.5}]}}
-                            minimumValue={this.props.item.deviceType === 'fan'? -255 : 0}
-                            maximumValue={this.props.item.maxSetting}
-                            minimumTrackTintColor="#000000"
-                            maximumTrackTintColor="#000000"
-                            onSlidingComplete={value => this.handleValue(value)}
-                            onValueChange={value => this.handleDisplay(value)}
-                            value={this.state.valueSetting}
-                        />
-                    </View>
+              <View style={{backgroundColor: '#FFFFFF', height: 200}}>
+              <View style={styles.content}>
+              <Text style={[styles.contentTitle, {fontWeight: 'bold', fontSize: 23}]}>{this.props.item.setting} setting</Text>
+              {this.props.item.deviceType === 'sprinkler' || this.props.item.deviceType === 'power'?
+                  <View style={{width: width/2, alignItems: 'center'}}>
+                    <Text 
+                      style={{
+                        fontSize: 20, 
+                        textAlign: 'center', 
+                        fontWeight: '400', 
+                        fontStyle: 'italic', 
+                        fontFamily: 'Roboto',
+                        width: width/2}}
+                    >
+                      Sorry, this devices currently has no setting options !
+                    </Text>           
+                  </View>
+                  :
+                  <View>
+                    <Text style={styles.contentTitle} numberOfLines={2}>
+                        Adjust value from {this.props.item.deviceType === 'fan'? -255 : 0} to {this.props.item.maxSetting}{"\n"} 
+                        Current value is {Math.round(this.state.valueDisplay) } 
+                    </Text>
+                    <Slider
+                        style={{width: 200, height: 40, marginHorizontal: 30, transform: [{scaleY: 1.5}]}}
+                        minimumValue={this.props.item.deviceType === 'fan'? -255 : 0}
+                        maximumValue={this.props.item.maxSetting}
+                        minimumTrackTintColor="#000000"
+                        maximumTrackTintColor="#000000"
+                        onSlidingComplete={value => this.handleValue(value)}
+                        onValueChange={value => this.handleDisplay(value)}
+                        value={this.state.valueSetting}
+                    />
+                  </View>
                 }
 
                 <View style={{marginTop: 20, zIndex: -10}}>
-                    <Button onPress={() => this.updateData()} title="Close"/>
+                    <Button 
+                      onPress={() => this.updateData()} 
+                      title="Close"/>
                 </View>
                 </View>
             </View>
-            </Modal>     */}
+            </Modal>    
             </View>
         </TouchableOpacity>                                        
     )  
