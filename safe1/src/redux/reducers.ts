@@ -36,7 +36,13 @@ const reducer: Reducer<State, Action> = (state=initialState, action: Action): St
   case ActionType.SET_CURRENT_USER:
     return { ...state, currentUser: action.payload };
   case ActionType.SET_DEFAULT_BUILDING:
-    return { ...state, defaultBuilding: action.payload };
+    return { 
+      ...state,
+      buildings: state.buildings.map((building: Building) => 
+        building.name === state.defaultBuilding?.name ? state.defaultBuilding : building
+      ),
+      defaultBuilding: action.payload
+    };
   case ActionType.SET_INVITATIONS:
     return { ...state, invitations: action.payload };
   case ActionType.UPDATE_DATA:
@@ -53,40 +59,23 @@ const reducer: Reducer<State, Action> = (state=initialState, action: Action): St
             ] 
           } : device)
     }));
-    let defaultBuilding = state.defaultBuilding ? { 
-      ...state.defaultBuilding, 
-      devices: state.defaultBuilding.devices.map((device: Device) =>
-        device.name === name ? 
-          { ...device, 
-            data: [ 
-              ...(device.data || []), 
-              { time: new Date(), value: data } 
-            ] 
-          } : device)
-    } : undefined;
+    let defaultBuilding = state.buildings.find((building: Building) => building.name === state.defaultBuilding?.name);
     return { ...state, buildings: buildings, defaultBuilding: defaultBuilding };
   case ActionType.UPDATE_PROTECTION:
     let { _name, protection, triggeredValue } = action.payload;
     if (_name === undefined || protection === undefined || triggeredValue === undefined) return state;
-    let _buildings = state.buildings.map((building: Building) => ({ 
-      ...building, 
-      devices: building.devices.map((device: Device) =>
-        device.name === _name ? 
-          { ...device, 
-            protection: protection,
-            triggeredValue: triggeredValue 
-          } : device)
-    }));
-    let _defaultBuilding = state.defaultBuilding ? { 
-      ...state.defaultBuilding, 
-      devices: state.defaultBuilding.devices.map((device: Device) =>
-        device.name === _name ? 
-          { ...device, 
-            protection: protection,
-            triggeredValue: triggeredValue 
-          } : device)
-    } : undefined;
-    return { ...state, buildings: _buildings, defaultBuilding: _defaultBuilding };
+    return { 
+      ...state, 
+      defaultBuilding: state.defaultBuilding ? { 
+        ...state.defaultBuilding, 
+        devices: state.defaultBuilding.devices.map((device: Device) =>
+          device.name === _name ? 
+            { ...device, 
+              protection: protection,
+              triggeredValue: triggeredValue 
+            } : device)
+      } : undefined 
+    };
   default:
     return state;
   }
