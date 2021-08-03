@@ -59,7 +59,17 @@ const reducer: Reducer<State, Action> = (state=initialState, action: Action): St
             ] 
           } : device)
     }));
-    let defaultBuilding = state.buildings.find((building: Building) => building.name === state.defaultBuilding?.name);
+    let defaultBuilding = state.defaultBuilding ? { 
+      ...state.defaultBuilding, 
+      devices: state.defaultBuilding.devices.map((device: Device) =>
+        device.name === name ? 
+          { ...device, 
+            data: [ 
+              ...(device.data || []), 
+              { time: new Date(), value: data } 
+            ] 
+          } : device)
+    } : undefined;
     return { ...state, buildings: buildings, defaultBuilding: defaultBuilding };
   case ActionType.UPDATE_PROTECTION:
     let { _name, protection, triggeredValue } = action.payload;
