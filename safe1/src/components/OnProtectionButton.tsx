@@ -43,7 +43,7 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
     componentDidUpdate(prevProps: Props, prevState: OnProtectionState){
         let items = this.props.defaultBuilding?.devices.filter((item) => 
             item.deviceType === this.props.item.deviceType &&
-            item.region === this.props.currentRoom);
+            item.region.toLowerCase() === this.props.currentRoom.toLowerCase());
         let onProtection = false;
         items !== undefined && items.length !== 0 ? onProtection = items[0].protection : null;
         if( onProtection !== prevState.toggle ){
@@ -54,7 +54,7 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
     getToggle = () => {
         let item = this.props.defaultBuilding?.devices.find((item) => 
             item.name === this.props.item.ID &&
-            item.region === this.props.currentRoom);
+            item.region.toLowerCase() === this.props.currentRoom.toLowerCase());
         if(item?.protection !== undefined){
             return item.protection;
         }
@@ -65,7 +65,7 @@ class OnProtection extends React.Component<Props, OnProtectionState>  {
         let currentProtection = this.props.item.deviceType;
         let devices = this.props.defaultBuilding?.devices.filter((item) => 
             item.deviceType === currentProtection && 
-            item.region === this.props.currentRoom);
+            item.region.toLowerCase() === this.props.currentRoom.toLowerCase());
         let flag: boolean = true;
         devices?.map((ele) => {
             DataService.updateDeviceProtection({
