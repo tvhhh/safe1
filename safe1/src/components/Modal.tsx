@@ -74,10 +74,8 @@ class ModalItem extends React.Component<Props, ModalItemState> {
     if(this.props.hasDevice){
       let device = this.props.defaultBuilding?.devices.find((item) => item.name === this.props.item.ID)
       let data = device?.data
-      // console.log(device?.name)
       if(data !== undefined && data.length !== 0){
         let latestData = data[data.length-1]
-        // console.log(latestData)
         if(Number(latestData.value) !== 0){
           return true
         }
